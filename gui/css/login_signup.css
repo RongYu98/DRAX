@@ -44,6 +44,7 @@ span{
     text-align: center;
     display: block;
 }
+/* text */
 /* logo */
 .wrap-logo{
     text-align: center;
@@ -52,12 +53,12 @@ span{
     width: 30%;
     line-height: 1.2;
 }
+/* logo */
 /* inputs */
 .wrap-form-input{
     position: relative;
     width: 100%;
     border-bottom: 2px solid #adadad;
-    margin-bottom: 37px;
 }
 input{            
     color: #555;
@@ -71,8 +72,19 @@ input{
     border: none;
     overflow: visible;
 }
+/* inputs */
 /* login button */
 button{
     width: 200px;
     line-height: 1.2;
+}
+/* login button */
+/* input helper */
+.helper{
+    font-size: 12px;
+    text-align: left;
+}
+/* input helper */
+.btm-space{
+    margin-bottom: 37px;
 }
