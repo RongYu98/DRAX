@@ -19,13 +19,19 @@
                 <div class="wrap-logo btm-space">
                     <img class="logo" src="img/logo.png" alt="logo">
                 </div>
-                <div class="wrap-form-input btm-space">
-                    <input type="text" name="username" placeholder="Username" required>
-                </div>
-                <div class="wrap-form-input btm-space">
-                    <input type="password" name="password" placeholder="Password" required>
+                <div class="btm-space">
+                    <div class="wrap-form-input">
+                        <input type="text" name="username" placeholder="Username" minlength="4" maxlength="32" required>
+                    </div>
+                    <p class="helper">4 ~ 32 length</p>    
                 </div>
                 <div class="btm-space">
+                    <div class="wrap-form-input">
+                        <input type="password" name="password" placeholder="Password" minlength="8" maxlength="128" required>
+                    </div>
+                    <p class="helper">8 ~ 128 length with number, alphabet, and special character</p>    
+                </div>
+                <div>
                     <button class="btn btn-primary" type="submit">Sign up</button>
                 </div>
             </form>
