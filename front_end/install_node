@@ -5,6 +5,8 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+# for ubunut based distos only
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -;
+apt update;
 sudo apt install nodejs;
-npm --g npx;
+npm install --g npx;
