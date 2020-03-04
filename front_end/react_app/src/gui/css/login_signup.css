@@ -4,8 +4,8 @@
     height: 100%;
     width: 100%;
     overflow: hidden;
-
 }
+
 #bg-inner {
     height: 100%;
     width: 100%;
@@ -14,7 +14,7 @@
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
-    background-image: url('../img/bg.png');
+    background-image: url("../img/bg.png");
 }
 .wrap-form{
     position: absolute;
@@ -90,3 +90,15 @@ button{
 .btm-space{
     margin-bottom: 37px;
 }
+
+div.signup_login_container{
+    /* Full height */
+    height: 100%;
+    max-width: 100%;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url("../img/bg.png");
+}
+

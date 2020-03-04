@@ -1,4 +1,5 @@
 import React from "react";
+import '../gui/css/main.css';
 
 class Main extends React.Component{
     constructor(props) {
@@ -7,7 +8,7 @@ class Main extends React.Component{
 
     render() {
         return(
-            <div>
+            <div className='center_container'>
                 <h1>This page has nothing yet</h1>
             </div>
         )

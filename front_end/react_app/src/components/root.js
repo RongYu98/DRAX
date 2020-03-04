@@ -11,7 +11,6 @@ class Root extends React.Component{
 
     render() {
         return(
-            <div>
                 <BrowserRouter>
                     <Switch>
                         <Route  path="/" exact component={Main}/>
@@ -19,7 +18,6 @@ class Root extends React.Component{
                         <Route  path="/signup" component={Signup}/>
                     </Switch>
                 </BrowserRouter>
-            </div>
         )
     }
 }
