@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -;
+sudo apt install nodejs;
+npm --g npx;
