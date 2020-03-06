@@ -3,7 +3,7 @@ import '../gui/css/common.css';
 import '../gui/css/login_signup.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../gui/img/logo.png';
-import {SERVER_URL} from "../common/constants";
+import {SERVER_URL} from "../common/Constants";
 
 const SIGNUP_ENDPOINT = '/signup';
 
@@ -43,7 +43,10 @@ class Signup extends React.Component{
             if(response_json.status !== 200){
                 throw new Error(response_json.result);
             }else{
-                this.props.history.push('/login');
+                this.props.history.push({
+                    pathname: '/login',
+                    state: { username: this.state.username }
+                });
             }
         }catch (err) {
             this.setState({err_msg: err.message});

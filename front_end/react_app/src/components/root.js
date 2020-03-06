@@ -3,7 +3,8 @@ import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
 import Login from "./login";
 import Main from "./main";
 import Signup from "./signup";
-import {ProtectedRoute} from "../common/protectedRoute";
+import {ProtectedRoute} from "../common/ProtectedRoute";
+import {IfAuthenticatedRoute} from "../common/IfAuthenticatedRoute";
 
 class Root extends React.Component{
     constructor(props) {
@@ -27,9 +28,10 @@ class Root extends React.Component{
                                 }
                             }/>}
                         />
-                        <Route  path="/login" component={Login}/>
-                        <Route  path="/signup" component={Signup}/>
-                        {/*/main will redirect to login if not authenticated else serve the main main content*/}
+                        {/* /login and /signed up will redirect to main if already loggined*/}
+                        <IfAuthenticatedRoute  path="/login" component={Login}/>
+                        <IfAuthenticatedRoute  path="/signup" component={Signup}/>
+                        {/*/main will redirect to login if not authenticated else serve the main content*/}
                         <ProtectedRoute path="/main" component={Main}/>
                     </Switch>
                 </BrowserRouter>
