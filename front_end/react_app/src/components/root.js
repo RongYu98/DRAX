@@ -1,8 +1,9 @@
 import React from 'react';
-import {BrowserRouter, Route, Switch} from "react-router-dom";
+import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
 import Login from "./login";
 import Main from "./main";
 import Signup from "./signup";
+import {ProtectedRoute} from "../common/protectedRoute";
 
 class Root extends React.Component{
     constructor(props) {
@@ -12,10 +13,22 @@ class Root extends React.Component{
     render() {
         return(
                 <BrowserRouter>
+                    {/*redirects to /main if landed on / */}
                     <Switch>
-                        <Route  path="/" exact component={Main}/>
+                        <Route exact path='/'  component={(props) =>
+                            <Redirect {...props} to={
+                                {
+                                    pathname: "/main",
+                                    state: {
+                                        from: props.location
+                                    }
+                                }
+                            }/>}
+                        />
                         <Route  path="/login" component={Login}/>
                         <Route  path="/signup" component={Signup}/>
+                        {/*/main will redirect to login if not authenticated else serve the main main content*/}
+                        <ProtectedRoute path="/main" component={Main}/>
                     </Switch>
                 </BrowserRouter>
         )

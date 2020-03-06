@@ -102,3 +102,6 @@ div.signup_login_container{
     background-image: url("../img/bg.png");
 }
 
+div.invalid_msg{
+    color:red;
+}
