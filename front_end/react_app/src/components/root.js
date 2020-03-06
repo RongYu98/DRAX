@@ -11,6 +11,8 @@ class Root extends React.Component{
     }
 
     render() {
+        // will need to do something here to check if an authenticated session(from cookies or what not) is in place.
+        // will probably just make request to server to verify if there is a valid session since cookies can be stale.
         return(
                 <BrowserRouter>
                     {/*redirects to /main if landed on / */}
