@@ -1,4 +1,4 @@
-import {SERVER_URL} from "./constants";
+import {SERVER_URL} from "./Constants";
 
 const LOGIN_ENDPOINT = '/login';
 class Authenticator{

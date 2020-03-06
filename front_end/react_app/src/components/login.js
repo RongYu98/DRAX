@@ -4,7 +4,7 @@ import '../gui/css/login_signup.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Link} from "react-router-dom";
 import Logo from '../gui/img/logo.png';
-import authenticator from "../common/authenticator";
+import authenticator from "../common/Authenticator";
 
 class Login extends React.Component{
     constructor(props) {
@@ -12,7 +12,7 @@ class Login extends React.Component{
         this.state = {
             invalid_msg: '',
             password: '',
-            username: ''
+            username: '' // if user name is pass from sign up
         };
         this.setPassword = this.setPassword.bind(this);
         this.setUserName = this.setUserName.bind(this);
@@ -42,6 +42,12 @@ class Login extends React.Component{
 
     setUserName(event){
         this.setState({username: event.target.value});
+    }
+
+    componentDidMount(){
+        if(this.props.location.state.username){
+            this.setState({username: this.props.location.state.username}); // if user name is passed from the sign up
+        }
     }
 
     render() {
