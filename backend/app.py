@@ -1,4 +1,6 @@
 from flask import Flask, request, session, jsonify
+from flask_cors import CORS
+
 from mongoengine import *
 
 from account import Account
@@ -7,12 +9,9 @@ import hashUtils
 
 connect('account', host='localhost', port=27017)
 
-# 11.27
-
-
 app = Flask(__name__)
 app.secret_key = 'Kats Trilling is AWESOME!'
-
+CORS(app)
 
 @app.route('/signup', methods=['POST'])
 def signup():
