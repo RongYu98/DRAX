@@ -15,8 +15,12 @@ class Authenticator{
             let response = await fetch(
                 SERVER_URL + LOGIN_ENDPOINT,
                 {
-                    method: 'post',
-                    body: body
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({username: username , password: password})
                 }
             );
             if(!response.ok) throw new Error(response.statusText);
