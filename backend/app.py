@@ -19,7 +19,7 @@ def signup():
     info = request.json
 
     # check there is a username and password
-    if 'username' not in info or 'password' not in info:
+    if info==None or 'username' not in info or 'password' not in info:
         return jsonify(status = 400, result = "Missing Fields")
     print(info)
     username = str(info['username'])
@@ -51,7 +51,7 @@ def login():
     info = request.json
 
     # check there is a username and password
-    if 'username' not in info or 'password' not in info:
+    if info==None or 'username' not in info or 'password' not in info:
         return jsonify(status = 400, result = "Invalid Login")
     username = str(info['username'])
     password = str(info['password'])
