@@ -16,7 +16,7 @@ CORS(app)
 @app.route('/signup', methods=['POST'])
 def signup():
     info = request.json
-
+    print(request.form.get('username'))
     # check there is a username and password
     if info==None or 'username' not in info or 'password' not in info:
         return jsonify(status = 400, result = "Missing Fields")
