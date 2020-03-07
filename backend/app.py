@@ -71,7 +71,14 @@ def login():
         return jsonify(status = 400, result = "Invalid Login")
 
 
-                          
+
+@app.route('/api/alive', methods=['POST'])
+def alive():
+    if 'username' not in session or session['username']==None:
+        return jsonify(status=400, result="Not Logged In")
+    return jsonify(status=200, result="OK")
+
+                 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9000, debug=True)
     
