@@ -1,8 +1,4 @@
 /* filters */
-#filters-dropdown-content{
-    padding: 20px 0px 20px 30px;
-    max-width: 90%;
-}
 #filters-dropdown-content td{width: 33%;}
 #admission-rate, #major1, #major2, #size, #tuition, #act-composite-min, #act-composite-max{width: 100px;height: 25px;}
 #sat-ebrw-min, #sat-ebrw-max, #sat-math-min, #sat-math-max{width: 125px;height: 25px;}
@@ -13,7 +9,6 @@
     outline: none;
     cursor: pointer;
 }
-label[for="strict"],label[for="lax"]{cursor: pointer;}
 /* filters */
 
 /* result */
@@ -23,11 +18,3 @@ label[for="strict"],label[for="lax"]{cursor: pointer;}
 .item-info td{width: 25%;}
 .item-info td b{font-size: 20px;}
 /* result */
-
-/* common */
-tr{
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-
