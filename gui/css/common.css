@@ -102,18 +102,6 @@ select{
 }
 /* menu */
 
-/* logout */
-.wrap-log-out{
-    text-align: center;
-    top: 100%;
-}
-#log-out{
-    font-size: 20px;
-    font-weight: bold;
-    color: #595efaf7;
-    
-}
-/* logout */
 /* left menu */
 
 /* right content */
