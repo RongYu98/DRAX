@@ -32,11 +32,15 @@ class Signup extends React.Component{
         event.preventDefault();
         try{
             let response = await fetch(SERVER_URL + SIGNUP_ENDPOINT,
-            {
-                    method: 'post',
-                    body: {username: this.state.username, password: this.state.password}
-                }
-            );
+                {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({username: this.state.username , password: this.state.password})
+                    }
+                )
 
             if(!response.ok) throw new Error(response.statusText);
             let response_json = await response.json();
