@@ -1,4 +1,6 @@
 from flask import Flask, request, session, jsonify
+from flask_cors import CORS
+
 from mongoengine import *
 
 from account import Account
@@ -7,19 +9,16 @@ import hashUtils
 
 connect('account', host='localhost', port=27017)
 
-# 11.27
-
-
 app = Flask(__name__)
 app.secret_key = 'Kats Trilling is AWESOME!'
-
+CORS(app)
 
 @app.route('/signup', methods=['POST'])
 def signup():
     info = request.json
-
+    print(request.form.get('username'))
     # check there is a username and password
-    if 'username' not in info or 'password' not in info:
+    if info==None or 'username' not in info or 'password' not in info:
         return jsonify(status = 400, result = "Missing Fields")
     print(info)
     username = str(info['username'])
@@ -51,7 +50,7 @@ def login():
     info = request.json
 
     # check there is a username and password
-    if 'username' not in info or 'password' not in info:
+    if info==None or 'username' not in info or 'password' not in info:
         return jsonify(status = 400, result = "Invalid Login")
     username = str(info['username'])
     password = str(info['password'])
@@ -72,7 +71,14 @@ def login():
         return jsonify(status = 400, result = "Invalid Login")
 
 
-                          
+
+@app.route('/api/alive', methods=['POST'])
+def alive():
+    if 'username' not in session or session['username']==None:
+        return jsonify(status=400, result="Not Logged In")
+    return jsonify(status=200, result="OK")
+
+                 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9000, debug=True)
     
