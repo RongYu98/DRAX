@@ -1,0 +1,19 @@
+/* result */
+#plot-btn{
+    position: absolute;
+    right:0;
+}
+.list-group-item > h5{
+    color: black;
+    width: 50%;
+}
+h5:nth-child(2) {
+    text-align: end;
+}
+/* result */
+
+
+/* common */
+tr{
+    width: 100%;
+}
