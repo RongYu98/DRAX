@@ -18,9 +18,8 @@ label[for="strict"],label[for="lax"]{cursor: pointer;}
 
 /* result */
 #sort-btn{position: absolute;right:0;}
-.college-name{color: black;width: 75%;}
+.college-name{color: black;width: 80%;}
 #college-list button a{min-width: 120px;}
-.location{margin-left: 10px;}
 .item-info td{width: 25%;}
 .item-info td b{font-size: 20px;}
 /* result */
