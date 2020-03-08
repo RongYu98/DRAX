@@ -10,7 +10,7 @@ body {
 button, a{
     border: none;
 }
-select, button, a{
+select, button, a, label.custom-control-label{
     cursor: pointer;
 }
 a:focus, button:focus, input:focus {
