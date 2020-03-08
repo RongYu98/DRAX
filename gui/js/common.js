@@ -4,7 +4,7 @@ $( document ).ready(function() {
     $('#filters-dropdown-btn').on("click", function(){
         var isDisplayed =  $("#filters-dropdown-content").css('display')
         if(isDisplayed == "none"){
-            $('#filters-dropdown-content').show();
+            $('#filters-dropdown-content').css("display", "flex");
         }
         else{
             $('#filters-dropdown-content').hide();     
@@ -35,7 +35,6 @@ $( document ).ready(function() {
         var isDisplayed = target.next().css("display");
         if(isDisplayed == "none"){
             target.next().css("display", "flex");
-            target.next().show();
         }
         else{
             target.next().hide();
