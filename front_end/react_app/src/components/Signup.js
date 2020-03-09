@@ -1,7 +1,5 @@
 import React from "react";
-import '../gui/css/common.css';
 import '../gui/css/login_signup.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../gui/img/logo.png';
 import {SERVER_URL} from "../common/Constants";
 
