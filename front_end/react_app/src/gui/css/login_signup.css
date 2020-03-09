@@ -11,6 +11,14 @@
     line-height: 1.2;
 }
 
+/* text */
+span.form-title{
+    font-size: 30px;
+    line-height: 1.2;
+    text-align: center;
+    display: block;
+}
+
 
 
 /*********************************************************************************** END ************************************************************************************/
@@ -59,13 +67,7 @@
     width: 100%;
     font-size: 15px;
 }
-/* text */
-span{
-    font-size: 30px;            
-    line-height: 1.2;
-    text-align: center;
-    display: block;
-}
+
 /* text */
 /* logo */
 .wrap-logo{
