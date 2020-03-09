@@ -84,7 +84,7 @@ class Signup extends React.Component{
                             </div>
                             <div>
                                 <div className='invalid_msg'>{this.state.err_msg}</div>
-                                <button onClick={this.register} className="btn btn-primary" type="submit">Sign up</button>
+                                <button onClick={this.register} className="login-button btn btn-primary" type="submit">Sign up</button>
                             </div>
                         </form>
                     </div>

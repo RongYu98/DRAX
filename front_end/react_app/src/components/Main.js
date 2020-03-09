@@ -19,7 +19,7 @@ class Main extends React.Component{
         return(
             <div className="wrap-dashboard">
                 <div className="left-menu">
-                    <div className="wrap-logo btm-space"><img className="logo" src={Logo} alt="logo"/></div>
+                    <div className="wrap-logo btm-space-main"><img className="panel-logo" src={Logo} alt="logo"/></div>
                     <div>
                         {/* put chosen="true" to corresponding menu button */}
                         {/* for each menu button, replace # with appropriate end point  */}

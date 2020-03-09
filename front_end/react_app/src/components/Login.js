@@ -12,7 +12,7 @@ class Login extends React.Component{
         this.state = {
             invalid_msg: '',
             password: '',
-            username: '' // if user name is pass from sign up
+            username: ''
         };
         this.setPassword = this.setPassword.bind(this);
         this.setUserName = this.setUserName.bind(this);
@@ -68,7 +68,7 @@ class Login extends React.Component{
                             </div>
                             <div className='invalid_msg'>{this.state.invalid_msg}</div>
                             <div>
-                                <button onClick={this.login} className="btn btn-primary login-btn" type="submit">Log in</button>
+                                <button onClick={this.login} className="btn login-button btn-primary login-btn" type="submit">Log in</button>
                             </div>
                             <Link to={{ pathname: '/signup'}}>Sign up</Link>
                         </form>

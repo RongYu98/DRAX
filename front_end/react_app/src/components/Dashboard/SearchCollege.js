@@ -1,6 +1,5 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../gui/css/common.css';
 import '../../gui/css/search_college.css';
 
 class SeachCollege extends React.Component{
