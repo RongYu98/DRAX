@@ -45,7 +45,7 @@ class Login extends React.Component{
     }
 
     componentDidMount(){
-        if(this.props.location.state.username){
+        if(this.props.location.state && this.props.location.state.username){
             this.setState({username: this.props.location.state.username}); // if user name is passed from the sign up
         }
     }

@@ -1,10 +1,10 @@
-import {SERVER_URL} from "./Constants";
+import {SERVER_URL, STATUS_OK, DEBUGGING} from "./Constants";
 
 const LOGIN_ENDPOINT = '/login';
 class Authenticator{
 
     constructor() {
-        this.authenticated = false;
+        this.authenticated = (DEBUGGING) ? true : false;
     }
 
 
