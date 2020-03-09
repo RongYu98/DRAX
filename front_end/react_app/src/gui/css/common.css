@@ -4,6 +4,12 @@
     margin: 0;
 }
 
+.list-group-item {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+}
+
 
 
 /*********************************************************************************** END ************************************************************************************/
@@ -161,11 +167,7 @@ label[for="strict"],label[for="lax"]{cursor: pointer;}
     font-weight: bold;
     font-size: 30px;
 }
-.list-group-item{
-    display:flex;
-    flex-direction:row;
-    justify-content: space-around;
-}
+
 .list-group-item:hover{
     background-color: #c3c5f7f7;
 }
