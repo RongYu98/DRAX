@@ -1,4 +1,4 @@
-const SERVER_URL = "http://localhost:9000"; // dont know yet
+const SERVER_URL = "http://localhost:9000";
 const STATUS_OK = 200; // shouldve created this sooner
 const DEBUGGING = true;
 

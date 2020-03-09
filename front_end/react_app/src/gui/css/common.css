@@ -1,3 +1,15 @@
+/* react styling fixes */
+
+.btm-space-main{
+    margin: 0;
+}
+
+
+
+/*********************************************************************************** END ************************************************************************************/
+
+
+
 /* common */
 body, html {
     font-family: 'Actor';
@@ -70,7 +82,7 @@ select{
 .wrap-logo{
     text-align: center;
 }
-.logo{
+.panel-logo{
     width: 50%;
     line-height: 1.2;
 }
@@ -171,5 +183,7 @@ label[for="strict"],label[for="lax"]{cursor: pointer;}
     color: white;
     background-color: #007bff;
 }
+
+
 /* result */
 /* right content */
