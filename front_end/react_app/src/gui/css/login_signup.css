@@ -19,6 +19,19 @@ span.form-title{
     display: block;
 }
 
+input[name="password"], input[name="username"]{
+    color: #555;
+    line-height: 1.2;
+    display: block;
+    width: 100%;
+    height: 45px;
+    background: 0 0;
+    padding: 0 5px;
+    outline: none;
+    border: none;
+    overflow: visible;
+}
+
 
 
 /*********************************************************************************** END ************************************************************************************/
@@ -84,18 +97,7 @@ span.form-title{
     width: 100%;
     border-bottom: 2px solid #adadad;
 }
-input{            
-    color: #555;
-    line-height: 1.2;
-    display: block;
-    width: 100%;
-    height: 45px;
-    background: 0 0;
-    padding: 0 5px;
-    outline: none;
-    border: none;
-    overflow: visible;
-}
+
 
 /* login button */
 /* input helper */
