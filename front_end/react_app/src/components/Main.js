@@ -1,7 +1,4 @@
 import React from "react";
-import '../gui/css/main.css';
-import '../gui/css/common.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../gui/img/logo.png';
 import College from '../gui/img/college.png';
 import Application from '../gui/img/application.png';
