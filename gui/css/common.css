@@ -1,21 +1,3 @@
-/* react styling fixes */
-
-.btm-space-main{
-    margin: 0;
-}
-
-.list-group-item {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-around !important;
-}
-
-
-
-/*********************************************************************************** END ************************************************************************************/
-
-
-
 /* common */
 body, html {
     font-family: 'Actor';
@@ -88,7 +70,7 @@ select{
 .wrap-logo{
     text-align: center;
 }
-.panel-logo{
+.logo{
     width: 50%;
     line-height: 1.2;
 }
@@ -167,7 +149,11 @@ label[for="strict"],label[for="lax"]{cursor: pointer;}
     font-weight: bold;
     font-size: 30px;
 }
-
+.list-group-item{
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+}
 .list-group-item:hover{
     background-color: #c3c5f7f7;
 }
@@ -185,7 +171,5 @@ label[for="strict"],label[for="lax"]{cursor: pointer;}
     color: white;
     background-color: #007bff;
 }
-
-
 /* result */
 /* right content */
