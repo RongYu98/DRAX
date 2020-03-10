@@ -38,7 +38,7 @@
     font-size: 15px;
 }
 /* text */
-span{
+span.form-title{
     font-size: 30px;            
     line-height: 1.2;
     text-align: center;
@@ -60,7 +60,7 @@ span{
     width: 100%;
     border-bottom: 2px solid #adadad;
 }
-input{            
+input[name="username"], input[name="password"]{            
     color: #555;
     line-height: 1.2;
     display: block;
@@ -74,7 +74,7 @@ input{
 }
 /* inputs */
 /* login button */
-button{
+button.login-btn{
     width: 200px;
     line-height: 1.2;
 }
