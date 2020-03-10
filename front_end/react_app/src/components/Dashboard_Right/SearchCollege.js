@@ -1,12 +1,83 @@
 import React from "react";
 import '../../gui/css/search_college.css';
+import CollegeItem from "./CollegeItem";
 
 class SeachCollege extends React.Component{
-    constructor(props) {
-        super(props);
+
+    static show = {
+        display : "flex"
     }
 
+    static hide = {
+        display: "None"
+    }
+
+    constructor(props) {
+        super(props);
+        this.filter_dropdown_content = React.createRef();
+        this.state = {
+            show_filter: false,
+            ranking_value: "-",
+            current_page_num: 1
+        }
+
+        this.filter_drop_down_clicked = this.filter_drop_down_clicked.bind(this);
+        this.slider_input = this.slider_input.bind(this);
+        this.page_clicked = this.page_clicked.bind(this);
+
+        this.current_page_btn = React.createRef();
+    }
+
+
+    filter_drop_down_clicked(event){
+
+        this.setState({show_filter: !this.state.show_filter});
+    }
+
+    slider_input(event){
+        let new_value = event.target.value;
+        if (new_value === "0"){
+            new_value = "-";
+        }else{
+            new_value = (new_value === "601") ? "600+" : new_value;
+        }
+        console.log(new_value);
+        this.setState({ranking_value:new_value});
+    }
+
+    page_clicked(event){
+       let button = event.target;
+       let number = button.innerHTML;
+       this.setState({current_page_num: parseInt(number)})
+    }
+
+    // this will depend on the colleges
+    get_page_buttons(){
+        let page_list = [];
+        for(let i = 1 ; i <= 3; i++){
+            page_list.push(
+                <li  key={`key-${i}`} className="page-item">
+                    <button ref={(ref) => {
+                        if(this.state.current_page_num === i){
+                            this.current_page_btn = ref;
+                        }
+                    }}onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                </li>
+            )
+        }
+        return page_list;
+    }
+
+    // dont know where to pull this data from
+    get_colleges(){
+
+    }
+
+
+
     render() {
+        let dummy_page_lists = this.get_page_buttons();
+
         return (
             <div className="right-content">
                 <div className="wrap-search-result">
@@ -24,11 +95,10 @@ class SeachCollege extends React.Component{
                         </div>
                         <div className="filters-box">
                             <div className="filters-dropdown">
-                                <button className="btn btn-secondary shadow-none" type="button"
-                                        id="filters-dropdown-btn">
+                                <button className="btn btn-secondary shadow-none" type="button" id="filters-dropdown-btn" onClick={this.filter_drop_down_clicked}>
                                     filters
                                 </button>
-                                <div id="filters-dropdown-content">
+                                <div style={(this.state.show_filter) ? SeachCollege.show : SeachCollege.hide} ref={this.filter_dropdown_content}  id="filters-dropdown-content">
                                     <table>
                                         <tbody>
                                         <tr>
@@ -39,11 +109,11 @@ class SeachCollege extends React.Component{
                                                            max={100}/>
                                                 </div>
                                             </td>
-                                            <td><b>Max ranking</b><span id="ranking-val">-</span>
+                                            <td><b>Max ranking</b><span id="ranking-val">{this.state.ranking_value}</span>
                                                 <div className="wrap-filter">
                                                     {/* 0 means no preference, 601 means 600 + */}
                                                     <input type="range" min={0} max={601} defaultValue={0}
-                                                           className="slider" id="ranking"/>
+                                                           className="slider" id="ranking" onInput={this.slider_input}/>
                                                 </div>
                                             </td>
                                             <td><b>Major</b>
@@ -203,71 +273,16 @@ class SeachCollege extends React.Component{
                         {/* Initially, there should be no tags inside the tag below. */}
                         {/* Frontend ajax should add tags with data inside the tag below */}
                         <div className="list-group" id="college-list">
-                            <button className="list-group-item list-group-item-action">
-                                {/* data should be included inside h5 tag */}
-                                <h5 className="college-name">State University of New York, Albany</h5>
-                                {/* replace # with Track Application menu end point  */}
-                                <a href="#">Track Application</a>
-                                {/* data should be included inside h5 tag */}
-                                <h5>NY</h5>
-                            </button>
-                            <div className="item-info">
-                                <table>
-                                    <tbody>
-                                    <tr>
-                                        {/* data should be included inside b tags */}
-                                        <td><b>Public</b><br/><label>Institution</label></td>
-                                        <td><b>50%</b><br/><label>Admission rate</label></td>
-                                        <td><b>90%</b><br/><label>Completion rate</label></td>
-                                        <td/>
-                                    </tr>
-                                    <tr>
-                                        <td><b>$20000</b><br/><label>Tuition</label></td>
-                                        <td><b>$20000</b><br/><label>Median debt amount</label></td>
-                                        <td><b>100</b><br/><label>Ranking</label></td>
-                                        <td><b>5000</b><br/><label>Size</label></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <button className="list-group-item list-group-item-action">
-                                <h5 className="college-name">State University of New York, Stony Brook</h5>
-                                <a href="#">Track Application</a>
-                                <h5>NY</h5>
-                            </button>
-                            <div className="item-info">
-                                <table>
-                                    <tbody>
-                                    <tr>
-                                        <td><b>Public</b><br/><label>Institution</label></td>
-                                        <td><b>50%</b><br/><label>Admission rate</label></td>
-                                        <td><b>90%</b><br/><label>Completion rate</label></td>
-                                        <td/>
-                                    </tr>
-                                    <tr>
-                                        <td><b>$20000</b><br/><label>Tuition</label></td>
-                                        <td><b>$20000</b><br/><label>Median debt amount</label></td>
-                                        <td><b>100</b><br/><label>Ranking</label></td>
-                                        <td><b>5000</b><br/><label>Size</label></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <CollegeItem data= { {name: "test", state: "nowhere", institution: "public" , admission_rate: "50%", tuition:"$2000", debt:"$20000", completion: "90%", ranking: "100", size: "5000"}}/>
                         </div>
                         <nav>
                             {/* Initially, there should be no tags inside the tag below. */}
                             <ul className="pagination" id="pagination">
                                 {/* "active" class below means the current active page button  */}
                                 {/* first page button must be active in default after completing search */}
-                                <li className="page-item">
-                                    <button className="page-link shadow-none active">1</button>
-                                </li>
-                                <li className="page-item">
-                                    <button className="page-link shadow-none">2</button>
-                                </li>
-                                <li className="page-item">
-                                    <button className="page-link shadow-none">3</button>
-                                </li>
+                                {
+                                    dummy_page_lists
+                                }
                             </ul>
                         </nav>
                     </div>
