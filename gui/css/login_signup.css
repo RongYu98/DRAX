@@ -1,45 +1,3 @@
-/* react styling fixes */
-
-.btm-space-main{
-    margin: 0;
-}
-
-/* inputs */
-/* login button */
-.login-button{
-    width: 200px;
-    line-height: 1.2;
-}
-
-/* text */
-span.form-title{
-    font-size: 30px;
-    line-height: 1.2;
-    text-align: center;
-    display: block;
-}
-
-input[name="password"], input[name="username"]{
-    color: #555;
-    line-height: 1.2;
-    display: block;
-    width: 100%;
-    height: 45px;
-    background: 0 0;
-    padding: 0 5px;
-    outline: none;
-    border: none;
-    overflow: visible;
-}
-
-
-
-/*********************************************************************************** END ************************************************************************************/
-
-
-
-
-
 #bg-outer{
     text-align: center;
     z-index: 0;
@@ -47,16 +5,15 @@ input[name="password"], input[name="username"]{
     width: 100%;
     overflow: hidden;
 }
-
 #bg-inner {
     height: 100%;
     width: 100%;
     position: fixed;
+    background-image: url('../img/bg.png');
     background-size: cover;    
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
-    background-image: url("../img/bg.png");
 }
 .wrap-form{
     position: absolute;
@@ -80,7 +37,13 @@ input[name="password"], input[name="username"]{
     width: 100%;
     font-size: 15px;
 }
-
+/* text */
+span{
+    font-size: 30px;            
+    line-height: 1.2;
+    text-align: center;
+    display: block;
+}
 /* text */
 /* logo */
 .wrap-logo{
@@ -97,8 +60,24 @@ input[name="password"], input[name="username"]{
     width: 100%;
     border-bottom: 2px solid #adadad;
 }
-
-
+input{            
+    color: #555;
+    line-height: 1.2;
+    display: block;
+    width: 100%;
+    height: 45px;
+    background: 0 0;
+    padding: 0 5px;
+    outline: none;
+    border: none;
+    overflow: visible;
+}
+/* inputs */
+/* login button */
+button{
+    width: 200px;
+    line-height: 1.2;
+}
 /* login button */
 /* input helper */
 .helper{
@@ -109,19 +88,4 @@ input[name="password"], input[name="username"]{
 /* input helper */
 .btm-space{
     margin-bottom: 37px;
-}
-
-div.signup_login_container{
-    /* Full height */
-    height: 100%;
-    max-width: 100%;
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-image: url("../img/bg.png");
-}
-
-div.invalid_msg{
-    color:red;
 }

@@ -1,7 +1,5 @@
 import React from "react";
-import '../gui/css/common.css';
 import '../gui/css/login_signup.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import {Link} from "react-router-dom";
 import Logo from '../gui/img/logo.png';
 import authenticator from "../common/Authenticator";
@@ -12,7 +10,7 @@ class Login extends React.Component{
         this.state = {
             invalid_msg: '',
             password: '',
-            username: '' // if user name is pass from sign up
+            username: ''
         };
         this.setPassword = this.setPassword.bind(this);
         this.setUserName = this.setUserName.bind(this);
@@ -45,7 +43,7 @@ class Login extends React.Component{
     }
 
     componentDidMount(){
-        if(this.props.location.state.username){
+        if(this.props.location.state && this.props.location.state.username){
             this.setState({username: this.props.location.state.username}); // if user name is passed from the sign up
         }
     }
@@ -68,7 +66,7 @@ class Login extends React.Component{
                             </div>
                             <div className='invalid_msg'>{this.state.invalid_msg}</div>
                             <div>
-                                <button onClick={this.login} className="btn btn-primary login-btn" type="submit">Log in</button>
+                                <button onClick={this.login} className="btn login-button btn-primary login-btn" type="submit">Log in</button>
                             </div>
                             <Link to={{ pathname: '/signup'}}>Sign up</Link>
                         </form>

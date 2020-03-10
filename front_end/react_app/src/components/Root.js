@@ -1,8 +1,10 @@
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'; // global css
+import '../gui/css/common.css'; // global css
 import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
-import Login from "./login";
-import Main from "./main";
-import Signup from "./signup";
+import Login from "./Login";
+import Main from "./Main";
+import Signup from "./Signup";
 import {ProtectedRoute} from "../common/ProtectedRoute";
 import {IfAuthenticatedRoute} from "../common/IfAuthenticatedRoute";
 

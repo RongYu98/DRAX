@@ -1,7 +1,5 @@
 import React from "react";
-import '../gui/css/common.css';
 import '../gui/css/login_signup.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../gui/img/logo.png';
 import {SERVER_URL} from "../common/Constants";
 
@@ -84,7 +82,7 @@ class Signup extends React.Component{
                             </div>
                             <div>
                                 <div className='invalid_msg'>{this.state.err_msg}</div>
-                                <button onClick={this.register} className="btn btn-primary" type="submit">Sign up</button>
+                                <button onClick={this.register} className="login-button btn btn-primary" type="submit">Sign up</button>
                             </div>
                         </form>
                     </div>
