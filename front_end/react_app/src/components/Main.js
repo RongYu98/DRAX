@@ -5,11 +5,22 @@ import Application from '../gui/img/application.png';
 import MyPage from '../gui/img/mypage.png';
 import Logout from '../gui/img/logout.png';
 import SeachCollege from "./Dashboard_Right/SearchCollege";
+import Authenticator from "../common/Authenticator";
 
 
 class Main extends React.Component{
     constructor(props) {
         super(props);
+        this.logout_clicked = this.logout_clicked.bind(this);
+    }
+
+    async logout_clicked(){
+        let username = Authenticator.getUserName();
+        await Authenticator.logout();
+        this.props.history.push({
+                    pathname: '/login',
+                    state: { username:username }
+                });
     }
 
     render() {
@@ -32,8 +43,8 @@ class Main extends React.Component{
                             <div className="wrap-icon"><img src={MyPage} alt="mypage"/></div>
                             <div>My Page</div>
                         </button>
-                        <button >
-                            <div className="wrap-icon"><img src={Logout} alt="logout"/></div>
+                        <button onClick={this.logout_clicked} >
+                            <div className="wrap-icon"><img src={Logout}  alt="logout"/></div>
                             <div>Log out</div>
                         </button>
                     </div>

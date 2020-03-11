@@ -18,7 +18,7 @@
 
 /* common */
 body, html {
-    font-family: 'Actor';
+    font-family: 'Actor' !important;
 }
 body {           
     padding: 0;
