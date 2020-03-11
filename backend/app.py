@@ -70,7 +70,6 @@ def login():
     else:
         return jsonify(status = 400, result = "Invalid Login")
 
-
 @app.route('/api/logout', methods=['POST'])
 def logout():
     if 'username' in session and session['username'] != None:

@@ -1,4 +1,6 @@
 $( document ).ready(function() {
+    $('.carousel').carousel('pause');
+    
     // target : filters button
     // event handler which hides/shows filters
     $('#filters-dropdown-btn').on("click", function(){
@@ -29,7 +31,7 @@ $( document ).ready(function() {
     });
     
     // target : result items
-    // event handler which hides/shows .item-info div whenever .list-group-item button is clicked
+    // event handler which hides/shows .item-info div/.carousel div whenever .list-group-item button is clicked
     $(".list-group-item").on("click", function(){
         var target = $(this);
         var isDisplayed = target.next().css("display");
