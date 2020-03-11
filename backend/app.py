@@ -11,9 +11,9 @@ connect('account', host='localhost', port=27017)
 
 app = Flask(__name__)
 app.secret_key = 'Kats Trilling is AWESOME!'
-CORS(app)
+CORS(app, supports_credentials=True) # may wish to disable cross origin in the cloud server for security
 
-@app.route('/signup', methods=['POST'])
+@app.route('/api/signup', methods=['POST'])
 def signup():
     info = request.json
     print(request.form.get('username'))
@@ -45,7 +45,7 @@ def signup():
         return jsonify(status = 400, result = "Username already taken.")
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     info = request.json
 
@@ -71,12 +71,21 @@ def login():
         return jsonify(status = 400, result = "Invalid Login")
 
 
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    if 'username' in session and session['username'] != None:
+        session['username'] = None
+        return jsonify(status=200, result="Logged Out")
+    return jsonify(status=400, result="Not Logged In")
 
 @app.route('/api/alive', methods=['POST'])
 def alive():
     if 'username' not in session or session['username']==None:
         return jsonify(status=400, result="Not Logged In")
     return jsonify(status=200, result="OK")
+
+
+
 
                  
 if __name__ == "__main__":

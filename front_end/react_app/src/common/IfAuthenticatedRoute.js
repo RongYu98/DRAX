@@ -3,11 +3,11 @@ import {Route, Redirect} from 'react-router-dom';
 import authenticator from "./Authenticator";
 
 export const IfAuthenticatedRoute = ({path, component: Component, ...rest}) => {
-    let isLoggined = authenticator.isAuthenticated();
+    let authenticated = authenticator.isAuthenticated();
     return(
         <Route {...path} render={
             (props) => {
-               return (isLoggined) ? <Redirect to={
+               return (authenticated) ? <Redirect to={
                    {
                        pathname: "/main",
                        state: {
