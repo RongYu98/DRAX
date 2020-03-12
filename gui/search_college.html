@@ -56,7 +56,7 @@
                                     <table>
                                         <tr>
                                             <td><b>Admission rate (%)</b>
-                                                <div class="wrap-filter">
+                                                <div class="wrap-filter range">
                                                     <input type="number" class="form-control shadow-none" id="admission-rate-min" placeholder="0 - 100" min="0" max="100">
                                                     - <input type="number" class="form-control shadow-none" id="admission-rate-max" placeholder="0 - 100" min="0" max="100">
                                                 </div>
@@ -165,21 +165,22 @@
                                         <tr>
                                             <!-- frontend javascript should check whether the min is less than or eqal to max -->
                                             <td><b>SAT EBRW score</b>
-                                                <div class="wrap-filter">
-                                                    min <input type="number" class="form-control shadow-none" id="sat-ebrw-min" placeholder="200 - 800" min="200" max="800">
-                                                    max <input type="number" class="form-control shadow-none" id="sat-ebrw-max" placeholder="200 - 800" min="200" max="800">
+                                                <div class="wrap-filter range">
+                                                    <input type="number" class="form-control shadow-none" id="sat-ebrw-min" placeholder="200 - 800" min="200" max="800">
+                                                    - <input type="number" class="form-control shadow-none" id="sat-ebrw-max" placeholder="200 - 800" min="200" max="800">
                                                 </div>
                                             </td>
                                             <td><b>SAT Math score</b>
-                                                <div class="wrap-filter">
-                                                    min <input type="number" class="form-control shadow-none" id="sat-math-min" placeholder="200 - 800" min="200" max="800">
-                                                    max <input type="number" class="form-control shadow-none" id="sat-math-max" placeholder="200 - 800" min="200" max="800">
+                                                <div class="wrap-filter range">
+                                                    <input type="number" class="form-control shadow-none" id="sat-math-min" placeholder="200 - 800" min="200" max="800">
+                                                    - <input type="number" class="form-control shadow-none" id="sat-math-max" placeholder="200 - 800" min="200" max="800">
                                                 </div>
+                                                
                                             </td>
                                             <td><b>ACT Composite score</b>
-                                                <div class="wrap-filter">
-                                                    min <input type="number" class="form-control shadow-none" id="act-composite-min" placeholder="1 - 36" min="1" max="36">
-                                                    max <input type="number" class="form-control shadow-none" id="act-composite-max" placeholder="1 - 36" min="1" max="36">
+                                                <div class="wrap-filter range">
+                                                    <input type="number" class="form-control shadow-none" id="act-composite-min" placeholder="1 - 36" min="1" max="36">
+                                                    - <input type="number" class="form-control shadow-none" id="act-composite-max" placeholder="1 - 36" min="1" max="36">
                                                 </div>
                                             </td>
                                         </tr>
@@ -200,68 +201,16 @@
                     </div>
                     <div class="wrap-result">
                         <div class="result-top">
-                            <span class="result-text">Results</span>
-                            <button type="button" id="sort-btn" class="btn btn-primary shadow-none">sort by college recommendation</button>
+                            
                         </div>
                         <!-- Initially, there should be no tags inside the tag below. -->
                         <!-- Frontend ajax should add tags with data inside the tag below -->
                         <div class="list-group" id="college-list">
-                            <button class="list-group-item list-group-item-action">
-                                <!-- data should be included inside h5 tag -->
-                                <h5 class="college-name">State University of New York, Albany</h5>
-                                <!-- replace # with Track Application menu end point  -->
-                                <a href="#">Track Application</a>
-                                <!-- data should be included inside h5 tag -->
-                                <h5>NY</h5>
-                            </button>
-                            <div class="item-info">
-                                <table>
-                                    <tr>
-                                        <!-- data should be included inside b tags -->
-                                        <td><b>Public</b><br><label>Institution</label></td>
-                                        <td><b>50%</b><br><label>Admission rate</label></td>
-                                        <td><b>90%</b><br><label>Completion rate</label></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td><b>$20000</b><br><label>Tuition</label></td>
-                                        <td><b>$20000</b><br><label>Median debt amount</label></td>
-                                        <td><b>100</b><br><label>Ranking</label></td>
-                                        <td><b>5000</b><br><label>Size</label></td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <button class="list-group-item list-group-item-action">
-                                <h5 class="college-name">State University of New York, Stony Brook</h5>
-                                <a href="#">Track Application</a>
-                                <h5>NY</h5>
-                            </button>
-                            <div class="item-info">
-                                <table>
-                                    <tr>
-                                        <td><b>Public</b><br><label>Institution</label></td>
-                                        <td><b>50%</b><br><label>Admission rate</label></td>
-                                        <td><b>90%</b><br><label>Completion rate</label></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td><b>$20000</b><br><label>Tuition</label></td>
-                                        <td><b>$20000</b><br><label>Median debt amount</label></td>
-                                        <td><b>100</b><br><label>Ranking</label></td>
-                                        <td><b>5000</b><br><label>Size</label></td>
-                                    </tr>
-                                </table>
-                            </div>
+                            
                         </div>
                         <nav>
                             <!-- Initially, there should be no tags inside the tag below. -->
-                            <ul class="pagination" id="pagination">
-                                <!-- "active" class below means the current active page button  -->
-                                <!-- first page button must be active in default after completing search -->
-                                <li class="page-item"><button class="page-link shadow-none active">1</button></li>
-                                <li class="page-item"><button class="page-link shadow-none">2</button></li>
-                                <li class="page-item"><button class="page-link shadow-none">3</button></li>
-                            </ul>
+                           
                         </nav>
                     </div>
                 </div>
