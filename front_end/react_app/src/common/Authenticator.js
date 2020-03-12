@@ -65,7 +65,6 @@ class Authenticator{
     }
 
     async checkAlive(){
-        console.log("logging out");
         try{
            let response = await fetch(
                 SERVER_URL + ALIVE_ENDPOITN,
@@ -82,7 +81,7 @@ class Authenticator{
             let response_json = await response.json();
             this.authenticated = (response_json.status === STATUS_OK);
         }catch (err) {
-            alert(`Failed to check /api/alive, error msg: ${err.message}\nDefaulting to ${this.authenticated}`);
+            alert(`Failed to check /api/alive, error msg: ${err.message}\nDefaulting loggined to ${this.authenticated}`);
         }
     }
 

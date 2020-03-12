@@ -21,36 +21,33 @@ class Root extends React.Component{
     componentDidMount() {
         // sets if the there was existing initial session only.
         Authenticator.checkAlive().then(()=>{
-            this.setState({valid_session: Authenticator.isAuthenticated()});
+            this.setState({valid_initial_session: Authenticator.isAuthenticated()});
         });
     }
 
 
     render() {
-        if(this.state.session === null){
-            return (
-                <div /> // return blank page until check alive is run
-            )
-        }
         return(
                 <BrowserRouter>
-                    {/*redirects to /main if landed on / */}
+                    {/*redirects to /main/search if landed on / */}
                     <Switch>
-                        <Route exact path='/'  component={(props) =>
-                            <Redirect {...props} to={
+                        <Route exact path='/'  component={(props) =>{
+                            console.log("redirected");
+                            return(<Redirect {...props} to={
                                 {
-                                    pathname: "/main",
+                                    pathname: "/main/search",
                                     state: {
                                         from: props.location
                                     }
                                 }
-                            }/>}
+                            }/>);
+                        }}
                         />
                         {/* /login and /signed up will redirect to main if already loggined*/}
-                        <IfAuthenticatedRoute  path="/login" component={Login}/>
-                        <IfAuthenticatedRoute  path="/signup" component={Signup}/>
+                        <IfAuthenticatedRoute session={this.state.valid_initial_session} path="/login" component={Login}/>
+                        <IfAuthenticatedRoute session={this.state.valid_initial_session} path="/signup" component={Signup}/>
                         {/*/main will redirect to login if not authenticated else serve the main content*/}
-                        <ProtectedRoute path="/main" component={Main}/>
+                        <ProtectedRoute session={this.state.valid_initial_session} path="/main" component={Main}/>
                         <Route component={Not_Found}/>
                     </Switch>
                 </BrowserRouter>
