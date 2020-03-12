@@ -6,7 +6,8 @@ import MyPage from '../gui/img/mypage.png';
 import Logout from '../gui/img/logout.png';
 import SeachCollege from "./Dashboard_Right/SearchCollege";
 import Authenticator from "../common/Authenticator";
-
+import {BrowserRouter, Route, Switch, Redirect, Link} from "react-router-dom";
+import style from '../gui/css/center.module.css';
 
 class Main extends React.Component{
     constructor(props) {
@@ -48,8 +49,11 @@ class Main extends React.Component{
                             <div>Log out</div>
                         </button>
                     </div>
+                    <Link to={{ pathname: '/main/search'}}>test</Link>
                 </div>
-                <SeachCollege />
+                <Route path='/main/search' component={SeachCollege} />
+                <Route path='/main/track_application' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
+                <Route path='/main/my_page' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
             </div>
         )
     }

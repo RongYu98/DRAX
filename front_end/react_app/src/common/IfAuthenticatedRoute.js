@@ -2,9 +2,15 @@ import React from "react";
 import {Route, Redirect} from 'react-router-dom';
 import authenticator from "./Authenticator";
 
-export const IfAuthenticatedRoute = ({path, component: Component, ...rest}) => {
+export const IfAuthenticatedRoute = ({session, path, component: Component, ...rest}) => {
     let authenticated = authenticator.isAuthenticated();
-    return(
+    if(session === null){
+        return (
+            // show blank page until check alive resolves
+            <div />
+        )
+    }else{
+        return(
         <Route {...path} render={
             (props) => {
                return (authenticated) ? <Redirect to={
@@ -20,4 +26,6 @@ export const IfAuthenticatedRoute = ({path, component: Component, ...rest}) => {
         }
         />
     );
+    }
+
 };

@@ -1,6 +1,9 @@
 import React from "react";
 import '../../gui/css/search_college.css';
 import CollegeItem from "./CollegeItem";
+import {SERVER_URL, STATUS_OK} from "../../common/Constants";
+
+const RECOMMENDED_COLLEGE_ENDPOINT = ''; // what is the end point???
 
 class SeachCollege extends React.Component{
 
@@ -14,18 +17,18 @@ class SeachCollege extends React.Component{
 
     constructor(props) {
         super(props);
-        this.filter_dropdown_content = React.createRef();
         this.state = {
             show_filter: false,
             ranking_value: "-",
-            current_page_num: 1
+            current_page_num: 1,
+            college_list: []
         }
-
+        this.button_list = []
         this.filter_drop_down_clicked = this.filter_drop_down_clicked.bind(this);
         this.slider_input = this.slider_input.bind(this);
         this.page_clicked = this.page_clicked.bind(this);
-
-        this.current_page_btn = React.createRef();
+        this.get_colleges = this.get_colleges.bind(this);
+        this.fetch_new_college_list = this.fetch_new_college_list.bind(this);
     }
 
 
@@ -54,30 +57,124 @@ class SeachCollege extends React.Component{
     // this will depend on the colleges
     get_page_buttons(){
         let page_list = [];
-        for(let i = 1 ; i <= 3; i++){
-            page_list.push(
-                <li  key={`key-${i}`} className="page-item">
-                    <button ref={(ref) => {
-                        if(this.state.current_page_num === i){
-                            this.current_page_btn = ref;
-                        }
-                    }}onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
-                </li>
-            )
+        let new_button_list = [];
+        let max_pages = this.state.college_list.length / 10;
+        let next_ten_pages = this.state.current_page_num + 9;
+        let old_beginning = this.button_list[0];
+        let old_end = this.button_list[this.button_list.length - 1];
+
+        if(this.state.current_page_num === 1){
+            console.log("1");
+            for(let i = 1 ; i <= max_pages && i <= next_ten_pages; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if(this.state.current_page_num === old_end && !(this.button_list.length < 10)){
+            console.log("old end");
+            for(let i = old_end; i <= max_pages && i <= next_ten_pages; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if(this.state.current_page_num === old_beginning){
+            console.log("old beginning");
+            let previous_ten = this.state.current_page_num - 9;
+            if(previous_ten < 1) previous_ten = 1;
+            for(let i = previous_ten ; i <= max_pages && i <= old_beginning; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if((this.state.current_page_num in this.button_list) || (this.button_list.length < 10)){
+            console.log("unchanged");
+            for(let i = old_beginning ; i <= old_end; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
         }
+
+        this.button_list = new_button_list;
         return page_list;
     }
 
-    // dont know where to pull this data from
-    get_colleges(){
-
+    // dont know where to pull this data from, using a dummy list for testing
+    async fetch_new_college_list(){
+        // try{
+        //     let response = await fetch(SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT);
+        //     if(response.status !== STATUS_OK) throw new Error(response.statusText);
+        //     let response_json = await response.json();
+        //     console.log(response_json.data);
+        //     this.setState({college_list: response_json.data});
+        // }catch (err) {
+        //     alert(`failed to fetch new college list, err msg: ${err.message}`);
+        // }
+        let list = [];
+        for(let i = 0; i < 831; i++){
+            list.push({
+                institution: `test ${i + 1}`,
+                tuition: `test ${i + 1}`,
+                admission_rate: `test ${i + 1}`,
+                debt: `test ${i + 1}`,
+                completion_rate: `test ${i + 1}`,
+                rank: `test ${i + 1}`,
+                region: `test ${i + 1}`,
+                name: `test ${i + 1}`,
+                college_id: `test_${i + 1}`,
+                size: `test_${i + 1}`
+            });
+        }
+        this.setState({college_list: list});
     }
 
 
+    get_colleges(){
+        let list = [];
+        let beginning = (this.state.current_page_num === 1) ? 0 : this.state.current_page_num * 10;
+        let end_index = beginning + 10;
+        for(let i = beginning; (i < this.state.college_list.length) && (i < end_index); i++){
+            let college = this.state.college_list[i];
+            list.push(
+               <CollegeItem key={`college_key-${i}`} data= {
+                   {
+                       name: college.name,
+                       state: college.region,
+                       institution: college.institution,
+                       admission_rate: college.admission_rate,
+                       tuition: college.tuition,
+                       debt: college.debt,
+                       completion: college.completion_rate,
+                       ranking: college.rank,
+                       size: college.size,
+                       college_id: college.college_id
+                    }
+               }/>
+            )
+        }
+        return list;
+    }
+
+    async componentDidMount() {
+        await this.fetch_new_college_list();
+    }
+
 
     render() {
-        let dummy_page_lists = this.get_page_buttons();
-
+        let dummy_college_list = this.get_colleges();
+        let page_lists = this.get_page_buttons();
         return (
             <div className="right-content">
                 <div className="wrap-search-result">
@@ -273,7 +370,9 @@ class SeachCollege extends React.Component{
                         {/* Initially, there should be no tags inside the tag below. */}
                         {/* Frontend ajax should add tags with data inside the tag below */}
                         <div className="list-group" id="college-list">
-                            <CollegeItem data= { {name: "test", state: "nowhere", institution: "public" , admission_rate: "50%", tuition:"$2000", debt:"$20000", completion: "90%", ranking: "100", size: "5000"}}/>
+                            {
+                                dummy_college_list
+                            }
                         </div>
                         <nav>
                             {/* Initially, there should be no tags inside the tag below. */}
@@ -281,7 +380,7 @@ class SeachCollege extends React.Component{
                                 {/* "active" class below means the current active page button  */}
                                 {/* first page button must be active in default after completing search */}
                                 {
-                                    dummy_page_lists
+                                    page_lists
                                 }
                             </ul>
                         </nav>

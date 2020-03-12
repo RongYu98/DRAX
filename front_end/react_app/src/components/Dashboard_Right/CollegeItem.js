@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 
 class CollegeItem extends React.Component{
@@ -17,12 +18,12 @@ class CollegeItem extends React.Component{
     }
 
     render() {
-        let {state, name, institution, admission_rate, tuition, debt, completion, ranking, size} = this.props.data;
+        let {college_id, state, name, institution, admission_rate, tuition, debt, completion, ranking, size} = this.props.data;
         return(
             <React.Fragment>
                 <button className="list-group-item list-group-item-action" onClick={this.show_college_details}>
                     <h5 className="college-name">{name}</h5>
-                    <a href="#">Track Application</a>
+                    <Link to={{ pathname: `/main/track_application/${college_id}`}}>Track Application</Link>
                     <h5>{state}</h5>
                 </button>
                 <div className="item-info" style={this.state.display}>
