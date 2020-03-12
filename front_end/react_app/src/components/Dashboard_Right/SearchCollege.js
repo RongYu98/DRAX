@@ -44,7 +44,6 @@ class SeachCollege extends React.Component{
         }else{
             new_value = (new_value === "601") ? "600+" : new_value;
         }
-        console.log(new_value);
         this.setState({ranking_value:new_value});
     }
 
@@ -54,17 +53,32 @@ class SeachCollege extends React.Component{
        this.setState({current_page_num: parseInt(number)})
     }
 
+     is_whole_number(n) {
+        let result = (n - Math.floor(n)) !== 0;
+
+        if (result)
+            return false;
+        else
+            return true;
+    }
+
+
     // this will depend on the colleges
     get_page_buttons(){
         let page_list = [];
         let new_button_list = [];
         let max_pages = this.state.college_list.length / 10;
+        if(!this.is_whole_number(max_pages)) {
+            max_pages = Math.floor(max_pages) + 1;
+        }
         let next_ten_pages = this.state.current_page_num + 9;
         let old_beginning = this.button_list[0];
         let old_end = this.button_list[this.button_list.length - 1];
+        if(this.state.college_list.length <= 10) {
+            max_pages = 1;
+        }
 
         if(this.state.current_page_num === 1){
-            console.log("1");
             for(let i = 1 ; i <= max_pages && i <= next_ten_pages; i++){
                 new_button_list.push(i);
                 page_list.push(
@@ -73,8 +87,7 @@ class SeachCollege extends React.Component{
                     </li>
                 )
             }
-        }else if(this.state.current_page_num === old_end && !(this.button_list.length < 10)){
-            console.log("old end");
+        }else if(this.state.current_page_num === old_end && !(this.button_list.length < 10) && (this.state.current_page_num !== max_pages)){
             for(let i = old_end; i <= max_pages && i <= next_ten_pages; i++){
                 new_button_list.push(i);
                 page_list.push(
@@ -84,7 +97,6 @@ class SeachCollege extends React.Component{
                 )
             }
         }else if(this.state.current_page_num === old_beginning){
-            console.log("old beginning");
             let previous_ten = this.state.current_page_num - 9;
             if(previous_ten < 1) previous_ten = 1;
             for(let i = previous_ten ; i <= max_pages && i <= old_beginning; i++){
@@ -95,8 +107,7 @@ class SeachCollege extends React.Component{
                     </li>
                 )
             }
-        }else if((this.state.current_page_num in this.button_list) || (this.button_list.length < 10)){
-            console.log("unchanged");
+        }else if((this.button_list.includes(this.state.current_page_num)) || (this.button_list.length < 10)){
             for(let i = old_beginning ; i <= old_end; i++){
                 new_button_list.push(i);
                 page_list.push(
@@ -123,7 +134,7 @@ class SeachCollege extends React.Component{
         //     alert(`failed to fetch new college list, err msg: ${err.message}`);
         // }
         let list = [];
-        for(let i = 0; i < 831; i++){
+        for(let i = 0; i < 830; i++){
             list.push({
                 institution: `test ${i + 1}`,
                 tuition: `test ${i + 1}`,
@@ -143,8 +154,9 @@ class SeachCollege extends React.Component{
 
     get_colleges(){
         let list = [];
-        let beginning = (this.state.current_page_num === 1) ? 0 : this.state.current_page_num * 10;
+        let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
         let end_index = beginning + 10;
+
         for(let i = beginning; (i < this.state.college_list.length) && (i < end_index); i++){
             let college = this.state.college_list[i];
             list.push(
