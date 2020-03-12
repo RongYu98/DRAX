@@ -43,6 +43,18 @@ class Root extends React.Component{
                             }/>);
                         }}
                         />
+                        <Route exact path='/main'  component={(props) =>{
+                            console.log("redirected");
+                            return(<Redirect {...props} to={
+                                {
+                                    pathname: "/main/search",
+                                    state: {
+                                        from: props.location
+                                    }
+                                }
+                            }/>);
+                        }}
+                        />
                         {/* /login and /signed up will redirect to main if already loggined*/}
                         <IfAuthenticatedRoute session={this.state.valid_initial_session} path="/login" component={Login}/>
                         <IfAuthenticatedRoute session={this.state.valid_initial_session} path="/signup" component={Signup}/>
