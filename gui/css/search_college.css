@@ -1,10 +1,10 @@
 /* filters */
 #filters-dropdown-content td{width: 33%;}
-#filters-dropdown-content > table > tbody > tr:nth-child(1) > td:nth-child(1) > div{display: flex;}
-#admission-rate-min{margin-right: 5px;}
-#admission-rate-max{margin-left: 5px;}
+.range{display: flex;}
+#admission-rate-min, #sat-ebrw-min, #sat-math-min, #act-composite-min{margin-right: 5px;}
+#admission-rate-max, #sat-ebrw-max, #sat-math-max, #act-composite-max{margin-left: 5px;}
 #admission-rate-min, #admission-rate-max, #major1, #major2, #size, #tuition, #act-composite-min, #act-composite-max{width: 100px;height: 25px;}
-#sat-ebrw-min, #sat-ebrw-max, #sat-math-min, #sat-math-max{width: 125px;height: 25px;}
+#sat-ebrw-min, #sat-ebrw-max, #sat-math-min, #sat-math-max{width: 115px;height: 25px;}
 #ranking-val{color: red;font-weight: bold;padding-left: 5px;}
 .slider {
     height: 25px;
