@@ -183,7 +183,7 @@ class SeachCollege extends React.Component{
     }
 
     async componentDidMount() {
-        // await this.fetch_new_college_list();
+        await this.fetch_new_college_list();
     }
 
 
