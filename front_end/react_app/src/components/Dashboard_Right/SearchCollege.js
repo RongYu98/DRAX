@@ -23,7 +23,7 @@ class SeachCollege extends React.Component{
             current_page_num: 1,
             college_list: []
         }
-        this.button_list = []
+        this.button_list = [];
         this.filter_drop_down_clicked = this.filter_drop_down_clicked.bind(this);
         this.slider_input = this.slider_input.bind(this);
         this.page_clicked = this.page_clicked.bind(this);
@@ -117,7 +117,10 @@ class SeachCollege extends React.Component{
                 )
             }
         }
-
+        if(this.state.college_list.length === 0){
+            this.button_list = [];
+            return [];
+        }
         this.button_list = new_button_list;
         return page_list;
     }
@@ -148,7 +151,7 @@ class SeachCollege extends React.Component{
                 size: `test_${i + 1}`
             });
         }
-        this.setState({college_list: list});
+        this.setState({current_page_num: 1, college_list: list});
     }
 
 
@@ -180,7 +183,7 @@ class SeachCollege extends React.Component{
     }
 
     async componentDidMount() {
-        await this.fetch_new_college_list();
+        // await this.fetch_new_college_list();
     }
 
 
@@ -324,31 +327,27 @@ class SeachCollege extends React.Component{
                                         <tr>
                                             {/* frontend javascript should check whether the min is less than or eqal to max */}
                                             <td><b>SAT EBRW score</b>
-                                                <div className="wrap-filter">
-                                                    min <input type="number" className="form-control shadow-none"
-                                                               id="sat-ebrw-min" placeholder="200 - 800" min={200}
-                                                               max={800}/>
-                                                    max <input type="number" className="form-control shadow-none"
-                                                               id="sat-ebrw-max" placeholder="200 - 800" min={200}
-                                                               max={800}/>
+                                                <div className="wrap-filter range">
+                                                    <input type="number" className="form-control shadow-none" id="sat-ebrw-min" placeholder="200 - 800" min={200} max={800} />
+                                                    - <input type="number" className="form-control shadow-none" id="sat-ebrw-max" placeholder="200 - 800" min={200} max={800} />
                                                 </div>
                                             </td>
-                                            <td><b>SAT Math score</b>
-                                                <div className="wrap-filter">
-                                                    min <input type="number" className="form-control shadow-none"
+                                            <td><b>SAT Math score</b> <br/>
+                                                <div style={ {display: "inline-flex"}} className="wrap-filter">
+                                                     <input type="number" className="form-control shadow-none"
                                                                id="sat-math-min" placeholder="200 - 800" min={200}
-                                                               max={800}/>
-                                                    max <input type="number" className="form-control shadow-none"
+                                                               max={800}/> &nbsp;-&nbsp;
+                                                     <input type="number" className="form-control shadow-none"
                                                                id="sat-math-max" placeholder="200 - 800" min={200}
                                                                max={800}/>
                                                 </div>
                                             </td>
                                             <td><b>ACT Composite score</b>
                                                 <div className="wrap-filter">
-                                                    min <input type="number" className="form-control shadow-none"
+                                                     <input  type="number" className="form-control shadow-none"
                                                                id="act-composite-min" placeholder="1 - 36" min={1}
                                                                max={36}/>
-                                                    max <input type="number" className="form-control shadow-none"
+                                                     - <input type="number" className="form-control shadow-none"
                                                                id="act-composite-max" placeholder="1 - 36" min={1}
                                                                max={36}/>
                                                 </div>
@@ -375,9 +374,15 @@ class SeachCollege extends React.Component{
                     <div className="wrap-result">
                         <div className="result-top">
                             <span className="result-text">Results</span>
-                            <button type="button" id="sort-btn" className="btn btn-secondary shadow-none">sort by
-                                college recommendation
-                            </button>
+
+                            {
+                                (this.state.college_list.length > 1) ?
+                                    (<button onClick={this.fetch_new_college_list} type="button" id="sort-btn" className="btn btn-secondary shadow-none">sort by
+                                        college recommendation
+                                    </button>) :
+                                    null
+                            }
+
                         </div>
                         {/* Initially, there should be no tags inside the tag below. */}
                         {/* Frontend ajax should add tags with data inside the tag below */}
@@ -403,4 +408,4 @@ class SeachCollege extends React.Component{
     }
 }
 
-export default SeachCollege
+export default SeachCollege;

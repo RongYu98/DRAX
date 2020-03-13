@@ -8,11 +8,21 @@ import SeachCollege from "./Dashboard_Right/SearchCollege";
 import Authenticator from "../common/Authenticator";
 import {BrowserRouter, Route, Switch, Redirect, Link} from "react-router-dom";
 import style from '../gui/css/center.module.css';
+import {Not_Found} from "./Not_Found";
 
 class Main extends React.Component{
+    static tab_enum =  {
+            SEARCH: 'search',
+            TRACK: 'track',
+            MY_PAGE: 'my_page'
+        }
+
     constructor(props) {
         super(props);
         this.logout_clicked = this.logout_clicked.bind(this);
+        this.state = {
+            current_tab: Main.tab_enum.SEARCH // defaulting to search
+        }
     }
 
     async logout_clicked(){
@@ -24,6 +34,14 @@ class Main extends React.Component{
                 });
     }
 
+    tab_button_clicked(tab){
+        this.setState({current_tab: tab})
+        this.props.history.push({
+                    pathname: `/main/${tab}`
+                });
+    }
+
+
     render() {
         return(
             <div className="wrap-dashboard">
@@ -32,15 +50,18 @@ class Main extends React.Component{
                     <div>
                         {/* put chosen="true" to corresponding menu button */}
                         {/* for each menu button, replace # with appropriate end point  */}
-                        <button chosen="true">
+                        <button chosen={`${(this.state.current_tab === Main.tab_enum.SEARCH)}`}
+                                onClick={() => this.tab_button_clicked(Main.tab_enum.SEARCH)}>
                             <div className="wrap-icon"><img src={College} alt="college"/></div>
                             <div>Search College</div>
                         </button>
-                        <button >
+                        <button chosen={`${(this.state.current_tab === Main.tab_enum.TRACK)}`}
+                                onClick={() => this.tab_button_clicked(Main.tab_enum.TRACK)}>
                             <div className="wrap-icon"><img src={Application} alt="application"/></div>
                             <div>Track Application</div>
                         </button>
-                        <button >
+                        <button chosen={`${(this.state.current_tab === Main.tab_enum.MY_PAGE)}`}
+                                onClick={() => this.tab_button_clicked(Main.tab_enum.MY_PAGE)} >
                             <div className="wrap-icon"><img src={MyPage} alt="mypage"/></div>
                             <div>My Page</div>
                         </button>
@@ -49,11 +70,14 @@ class Main extends React.Component{
                             <div>Log out</div>
                         </button>
                     </div>
-                    <Link to={{ pathname: '/main/search'}}>test</Link>
                 </div>
-                <Route path='/main/search' component={SeachCollege} />
-                <Route path='/main/track_application' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
-                <Route path='/main/my_page' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
+                <Switch>
+                    <Route path='/main/search' component={SeachCollege} />
+                    <Route path='/main/track' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
+                    <Route path='/main/my_page/:college_id' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
+                    <Route  component={Not_Found}/>
+                </Switch>
+
             </div>
         )
     }
