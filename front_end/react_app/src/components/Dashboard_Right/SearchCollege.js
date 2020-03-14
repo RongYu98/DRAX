@@ -19,9 +19,20 @@ class SeachCollege extends React.Component{
         super(props);
         this.state = {
             show_filter: false,
-            ranking_value: "-",
             current_page_num: 1,
-            college_list: []
+            college_list: [],
+            filter_data: {
+                name: "",
+                admission_rate: "",
+                location: '',
+                sat_ebrw: {min: '', max: ''},
+                max_ranking: '-',
+                size: '',
+                sat_math: {min: '', max: ''},
+                major: {left: '', right: ''},
+                max_tuition: '',
+                act: {min: '', max: ''}
+            }
         }
         this.button_list = [];
         this.filter_drop_down_clicked = this.filter_drop_down_clicked.bind(this);
@@ -29,6 +40,7 @@ class SeachCollege extends React.Component{
         this.page_clicked = this.page_clicked.bind(this);
         this.get_colleges = this.get_colleges.bind(this);
         this.fetch_new_college_list = this.fetch_new_college_list.bind(this);
+        this.search_clicked = this.search_clicked.bind(this);
     }
 
 
@@ -44,7 +56,7 @@ class SeachCollege extends React.Component{
         }else{
             new_value = (new_value === "601") ? "600+" : new_value;
         }
-        this.setState({ranking_value:new_value});
+        this.setState({filter_data:{...this.state.filter_data, max_ranking: new_value}});
     }
 
     page_clicked(event){
@@ -61,6 +73,7 @@ class SeachCollege extends React.Component{
         else
             return true;
     }
+
 
 
     // this will depend on the colleges
@@ -186,6 +199,13 @@ class SeachCollege extends React.Component{
         await this.fetch_new_college_list();
     }
 
+    set_none_scores_filter_data(data){
+        this.setState({filter_data: {...this.state.filter_data, ...data}});
+    }
+
+    search_clicked(event){
+        console.log(this.state.filter_data);
+    }
 
     render() {
         let dummy_college_list = this.get_colleges();
@@ -196,10 +216,14 @@ class SeachCollege extends React.Component{
                     <div className="wrap-search-filters">
                         <div className="search-box">
                             <div className="input-group mb-3">
-                                <input type="text" className="form-control shadow-none" placeholder="College Name"
-                                       aria-label="College Name" aria-describedby="search-btn"/>
+                                <input onChange={(event)=>{this.set_none_scores_filter_data({name: event.target.value})}}
+                                       value={this.state.filter_data.name}
+                                       type="text" className="form-control shadow-none"
+                                       placeholder="College Name"
+                                       aria-label="College Name" aria-describedby="search-btn"
+                                />
                                 <div className="input-group-append">
-                                    <button className="btn btn-outline-secondary shadow-none" type="button"
+                                    <button onClick={this.search_clicked} className="btn btn-outline-secondary shadow-none" type="button"
                                             id="search-btn">Search
                                     </button>
                                 </div>
@@ -221,11 +245,13 @@ class SeachCollege extends React.Component{
                                                            max={100}/>
                                                 </div>
                                             </td>
-                                            <td><b>Max ranking</b><span id="ranking-val">{this.state.ranking_value}</span>
+                                            <td><b>Max ranking</b><span id="ranking-val">{this.state.filter_data.max_ranking}</span>
                                                 <div className="wrap-filter">
                                                     {/* 0 means no preference, 601 means 600 + */}
                                                     <input type="range" min={0} max={601} defaultValue={0}
-                                                           className="slider" id="ranking" onInput={this.slider_input}/>
+                                                           className="slider" id="ranking"
+                                                           onChange={this.slider_input}
+                                                    />
                                                 </div>
                                             </td>
                                             <td><b>Major</b>
@@ -326,30 +352,73 @@ class SeachCollege extends React.Component{
                                         <tr style={{height: '15px'}}/>
                                         <tr>
                                             {/* frontend javascript should check whether the min is less than or eqal to max */}
-                                            <td><b>SAT EBRW score</b>
-                                                <div className="wrap-filter range">
-                                                    <input type="number" className="form-control shadow-none" id="sat-ebrw-min" placeholder="200 - 800" min={200} max={800} />
-                                                    - <input type="number" className="form-control shadow-none" id="sat-ebrw-max" placeholder="200 - 800" min={200} max={800} />
+                                            <td><b>SAT EBRW score</b><br/>
+                                                <div style={{display: "inline-flex"}} className="wrap-filter range">
+                                                    <input onChange={(event)=>{
+                                                        let new_min = event.target.value;
+                                                        let old_sat_ebrw = this.state.filter_data.sat_ebrw;
+                                                        this.setState({filter_data: {...this.state.filter_data, sat_ebrw: {...old_sat_ebrw, min: new_min}}})
+                                                    }}
+                                                           value={this.state.filter_data.sat_ebrw.min} type="number" className="form-control shadow-none" id="sat-ebrw-min" placeholder="200 - 800" min={200} max={800}
+                                                    />
+                                                    &nbsp;-&nbsp;
+                                                    <input onChange={(event)=>{
+                                                        let new_max = event.target.value;
+                                                        let old_sat_ebrw = this.state.filter_data.sat_ebrw;
+                                                        this.setState({filter_data: {...this.state.filter_data, sat_ebrw: {...old_sat_ebrw, max: new_max}}})
+                                                    }}
+                                                           value={this.state.filter_data.sat_ebrw.max} type="number" className="form-control shadow-none" id="sat-ebrw-max" placeholder="200 - 800" min={200} max={800}
+                                                    />
                                                 </div>
                                             </td>
                                             <td><b>SAT Math score</b> <br/>
                                                 <div style={ {display: "inline-flex"}} className="wrap-filter">
-                                                     <input type="number" className="form-control shadow-none"
-                                                               id="sat-math-min" placeholder="200 - 800" min={200}
-                                                               max={800}/> &nbsp;-&nbsp;
-                                                     <input type="number" className="form-control shadow-none"
-                                                               id="sat-math-max" placeholder="200 - 800" min={200}
-                                                               max={800}/>
+                                                     <input onChange={(event)=>{
+                                                        let new_min = event.target.value;
+                                                        let old_sat_math = this.state.filter_data.sat_math;
+                                                        this.setState({filter_data: {...this.state.filter_data, sat_math: {...old_sat_math, min: new_min}}})
+                                                    }}
+                                                            value={this.state.filter_data.sat_math.min}
+                                                            type="number" className="form-control shadow-none"
+                                                            id="sat-math-min" placeholder="200 - 800" min={200}
+                                                            max={800}
+                                                     />
+                                                     &nbsp;-&nbsp;
+                                                     <input onChange={(event)=>{
+                                                        let new_max = event.target.value;
+                                                        let old_sat_math = this.state.filter_data.sat_math;
+                                                        this.setState({filter_data: {...this.state.filter_data, sat_math: {...old_sat_math, max: new_max}}})
+                                                    }}
+                                                            value={this.state.filter_data.sat_math.max}
+                                                            type="number" className="form-control shadow-none"
+                                                            id="sat-math-max" placeholder="200 - 800" min={200}
+                                                            max={800}
+                                                     />
                                                 </div>
                                             </td>
-                                            <td><b>ACT Composite score</b>
-                                                <div className="wrap-filter">
-                                                     <input  type="number" className="form-control shadow-none"
-                                                               id="act-composite-min" placeholder="1 - 36" min={1}
-                                                               max={36}/>
-                                                     - <input type="number" className="form-control shadow-none"
-                                                               id="act-composite-max" placeholder="1 - 36" min={1}
-                                                               max={36}/>
+                                            <td><b>ACT Composite score</b><br/>
+                                                <div style={{display:"inline-flex"}} className="wrap-filter">
+                                                     <input onChange={(event)=>{
+                                                        let new_min = event.target.value;
+                                                        let old_act = this.state.filter_data.act;
+                                                        this.setState({filter_data: {...this.state.filter_data, act: {...old_act, min: new_min}}})
+                                                    }}
+                                                            value={this.state.filter_data.act.min}
+                                                            type="number" className="form-control shadow-none"
+                                                            id="act-composite-min" placeholder="1 - 36" min={1}
+                                                            max={36}
+                                                     />
+                                                     &nbsp;-&nbsp;
+                                                     <input onChange={(event)=>{
+                                                        let new_max = event.target.value;
+                                                        let old_act = this.state.filter_data.act;
+                                                        this.setState({filter_data: {...this.state.filter_data, act: {...old_act, max: new_max}}})
+                                                    }}
+                                                            value={this.state.filter_data.act.max}
+                                                            type="number" className="form-control shadow-none"
+                                                            id="act-composite-max" placeholder="1 - 36" min={1}
+                                                            max={36}
+                                                     />
                                                 </div>
                                             </td>
                                         </tr>
