@@ -26,6 +26,7 @@ select{
     border-radius: 5px;
     border-color: rgb(207, 207, 207);
 }
+.overflow-hidden{overflow: hidden;}
 /* common */
 
 /* dashboard */
