@@ -15,7 +15,8 @@
 /* filters */
 
 /* result */
-div.result-top > div{display: inline;position: absolute; right: 0; }
+div.result-top > div{display: inline;position: absolute; right: 0;}
+.dropdown-menu{z-index: 1;}
 div.result-top > div > button {width: 204px;}
 .sort-option:hover{background-color: rgb(211, 210, 210);}
 .college-name{color: black;width: 80%;}
