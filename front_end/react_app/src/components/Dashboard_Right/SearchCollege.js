@@ -1,6 +1,7 @@
 import React from "react";
 import '../../gui/css/search_college.css';
 import CollegeItem from "./CollegeItem";
+import {DropdownButton, Dropdown} from "react-bootstrap";
 import {SERVER_URL, STATUS_OK} from "../../common/Constants";
 
 const RECOMMENDED_COLLEGE_ENDPOINT = ''; // what is the end point???
@@ -15,6 +16,13 @@ class SeachCollege extends React.Component{
         display: "None"
     }
 
+    static sort_enum = {
+        NAME: "name",
+        COST: "cost",
+        RANKING: "rank",
+        RECOMMENDATION: "recommendation"
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -23,7 +31,7 @@ class SeachCollege extends React.Component{
             college_list: [],
             filter_data: {
                 name: "",
-                admission_rate: "",
+                admission_rate: {min: "", max: ""},
                 location: '',
                 sat_ebrw: {min: '', max: ''},
                 max_ranking: '-',
@@ -41,6 +49,25 @@ class SeachCollege extends React.Component{
         this.get_colleges = this.get_colleges.bind(this);
         this.fetch_new_college_list = this.fetch_new_college_list.bind(this);
         this.search_clicked = this.search_clicked.bind(this);
+        this.sort_clicked = this.sort_clicked.bind(this);
+    }
+
+    sort_clicked(event){
+        console.log(event);
+        switch (event) {
+            case SeachCollege.sort_enum.NAME:
+                // sort by name
+                break;
+            case SeachCollege.sort_enum.COST:
+                // sort by attendance
+                break;
+            case SeachCollege.sort_enum.RANKING:
+                // sort by rank
+                break;
+            case SeachCollege.sort_enum.RECOMMENDATION:
+                // sort by recommendation
+                break;
+        }
     }
 
 
@@ -232,17 +259,29 @@ class SeachCollege extends React.Component{
                         <div className="filters-box">
                             <div className="filters-dropdown">
                                 <button className="btn btn-secondary shadow-none" type="button" id="filters-dropdown-btn" onClick={this.filter_drop_down_clicked}>
-                                    filters
+                                    Filters
                                 </button>
                                 <div style={(this.state.show_filter) ? SeachCollege.show : SeachCollege.hide} ref={this.filter_dropdown_content}  id="filters-dropdown-content">
                                     <table>
                                         <tbody>
                                         <tr>
-                                            <td><b>Max admission rate (%)</b>
-                                                <div className="wrap-filter">
-                                                    <input type="number" className="form-control shadow-none"
-                                                           id="admission-rate" placeholder="0 - 100" min={0}
-                                                           max={100}/>
+                                            <td><b>Admission rate (%)</b><br/>
+                                                <div style={{display: "inline-flex"}} className="wrap-filter range">
+                                                    <input onChange={(event)=>{
+                                                        let new_min = event.target.value;
+                                                        let admissionRate = this.state.filter_data.admission_rate;
+                                                        this.setState({filter_data: {...this.state.filter_data, admission_rate: {...admissionRate, min: new_min}}})
+                                                    }}
+                                                           value={this.state.filter_data.sat_ebrw.min} type="number" className="form-control shadow-none" id="sat-ebrw-min" placeholder="0 - 100" min={200} max={800}
+                                                    />
+                                                    &nbsp;-&nbsp;
+                                                    <input onChange={(event)=>{
+                                                        let new_max = event.target.value;
+                                                        let admissionRate = this.state.filter_data.admission_rate;
+                                                        this.setState({filter_data: {...this.state.filter_data, sat_ebrw: {...admissionRate, max: new_max}}})
+                                                    }}
+                                                           value={this.state.filter_data.sat_ebrw.max} type="number" className="form-control shadow-none" id="sat-ebrw-max" placeholder="0 - 100" min={200} max={800}
+                                                    />
                                                 </div>
                                             </td>
                                             <td><b>Max ranking</b><span id="ranking-val">{this.state.filter_data.max_ranking}</span>
@@ -276,57 +315,11 @@ class SeachCollege extends React.Component{
                                                 <div className="wrap-filter">
                                                     <select id="location">
                                                         {/* - means no preference */}
-                                                        <option value="-">-</option>
-                                                        <option value="AL">AL</option>
-                                                        <option value="AK">AK</option>
-                                                        <option value="AZ">AZ</option>
-                                                        <option value="AR">AR</option>
-                                                        <option value="CA">CA</option>
-                                                        <option value="CO">CO</option>
-                                                        <option value="CT">CT</option>
-                                                        <option value="DE">DE</option>
-                                                        <option value="FL">FL</option>
-                                                        <option value="GA">GA</option>
-                                                        <option value="HI">HI</option>
-                                                        <option value="ID">ID</option>
-                                                        <option value="IL">IL</option>
-                                                        <option value="IN">IN</option>
-                                                        <option value="IA">IA</option>
-                                                        <option value="KS">KS</option>
-                                                        <option value="KY">KY</option>
-                                                        <option value="LA">LA</option>
-                                                        <option value="ME">ME</option>
-                                                        <option value="MD">MD</option>
-                                                        <option value="MA">MA</option>
-                                                        <option value="MI">MI</option>
-                                                        <option value="MN">MN</option>
-                                                        <option value="MS">MS</option>
-                                                        <option value="MO">MO</option>
-                                                        <option value="MT">MT</option>
-                                                        <option value="NE">NE</option>
-                                                        <option value="NV">NV</option>
-                                                        <option value="NH">NH</option>
-                                                        <option value="NJ">NJ</option>
-                                                        <option value="NM">NM</option>
-                                                        <option value="NY">NY</option>
-                                                        <option value="NC">NC</option>
-                                                        <option value="ND">ND</option>
-                                                        <option value="OH">OH</option>
-                                                        <option value="OK">OK</option>
-                                                        <option value="OR">OR</option>
-                                                        <option value="PA">PA</option>
-                                                        <option value="RI">RI</option>
-                                                        <option value="SC">SC</option>
-                                                        <option value="SD">SD</option>
-                                                        <option value="TN">TN</option>
-                                                        <option value="TX">TX</option>
-                                                        <option value="UT">UT</option>
-                                                        <option value="VT">VT</option>
-                                                        <option value="VA">VA</option>
-                                                        <option value="WA">WA</option>
-                                                        <option value="WV">WV</option>
-                                                        <option value="WI">WI</option>
-                                                        <option value="WY">WY</option>
+                                                        <option value="Midwest">Midwest</option>
+                                                        <option value="Northeast">Northeast</option>
+                                                        <option value="South">South</option>
+                                                        <option value="West">West</option>
+                                                        <option value="Other">Other</option>
                                                     </select>
                                                 </div>
                                             </td>
@@ -341,13 +334,12 @@ class SeachCollege extends React.Component{
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td><b>Max tuition (k $)</b>
+                                            <div>
+                                                <b>Max cost of attendance (k $)</b>
                                                 <div className="wrap-filter">
-                                                    <input type="number" className="form-control shadow-none"
-                                                           id="tuition" placeholder="1 - 100" min={1} max={100}/>
+                                                  <input type="number" className="form-control shadow-none" id="cost-of-attendance" placeholder="1 - 100" min={1} max={100} />
                                                 </div>
-                                            </td>
-                                            <td/>
+                                            </div>
                                         </tr>
                                         <tr style={{height: '15px'}}/>
                                         <tr>
@@ -430,12 +422,12 @@ class SeachCollege extends React.Component{
                                 <div className="custom-control custom-radio">
                                     <input type="radio" id="strict" name="customRadio"
                                            className="custom-control-input"/>
-                                    <label className="custom-control-label" htmlFor="strict">strict</label>
+                                    <label className="custom-control-label" htmlFor="Strict">strict</label>
                                 </div>
                                 <div className="custom-control custom-radio">
                                     <input type="radio" id="lax" name="customRadio"
                                            className="custom-control-input"/>
-                                    <label className="custom-control-label" htmlFor="lax">lax</label>
+                                    <label className="custom-control-label" htmlFor="Lax">lax</label>
                                 </div>
                             </div>
                         </div>
@@ -446,9 +438,13 @@ class SeachCollege extends React.Component{
 
                             {
                                 (this.state.college_list.length > 1) ?
-                                    (<button onClick={this.fetch_new_college_list} type="button" id="sort-btn" className="btn btn-secondary shadow-none">sort by
-                                        college recommendation
-                                    </button>) :
+                                    <DropdownButton id="dropdown-basic-button" title="Sort By" onSelect={this.sort_clicked}>
+                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.NAME}>College name</Dropdown.Item>
+                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.COST}>Cost of Attendance</Dropdown.Item>
+                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.RANKING}>Ranking</Dropdown.Item>
+                                        <Dropdown.Item eventKey={SeachCollege.sort_enum.RECOMMENDATION}>Recommendation Score</Dropdown.Item>
+                                    </DropdownButton>
+                                    :
                                     null
                             }
 
