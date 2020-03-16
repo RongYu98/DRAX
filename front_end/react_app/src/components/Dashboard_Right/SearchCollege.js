@@ -334,12 +334,14 @@ class SeachCollege extends React.Component{
                                                     </select>
                                                 </div>
                                             </td>
-                                            <div>
-                                                <b>Max cost of attendance (k $)</b>
+                                            <td><b>Max cost of attendance (k $)</b>
                                                 <div className="wrap-filter">
-                                                  <input type="number" className="form-control shadow-none" id="cost-of-attendance" placeholder="1 - 100" min={1} max={100} />
+                                                    <input type="number" className="form-control shadow-none"
+                                                           id="cost-of-attendance" placeholder="1 - 100" min="1"
+                                                           max="100" />
                                                 </div>
-                                            </div>
+                                            </td>
+                                            <td></td>
                                         </tr>
                                         <tr style={{height: '15px'}}/>
                                         <tr>
@@ -420,16 +422,14 @@ class SeachCollege extends React.Component{
                             </div>
                             <div className="filters-radio">
                                 <div className="custom-control custom-radio">
-                                    <input type="radio" id="strict" name="customRadio"
-                                           className="custom-control-input"/>
-                                    <label className="custom-control-label" htmlFor="Strict">strict</label>
+                                  <input type="radio" id="strict" name="customRadio" className="custom-control-input" />
+                                  <label className="custom-control-label" htmlFor="strict">Strict</label>
                                 </div>
                                 <div className="custom-control custom-radio">
-                                    <input type="radio" id="lax" name="customRadio"
-                                           className="custom-control-input"/>
-                                    <label className="custom-control-label" htmlFor="Lax">lax</label>
+                                  <input type="radio" id="lax" name="customRadio" className="custom-control-input" />
+                                  <label className="custom-control-label" htmlFor="lax">Lax</label>
                                 </div>
-                            </div>
+      </div>
                         </div>
                     </div>
                     <div className="wrap-result">
