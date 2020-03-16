@@ -1,5 +1,5 @@
-const SERVER_URL = "http://localhost:9000/api";
-const STATUS_OK = 200; // shouldve created this sooner
-const DEBUGGING = true;
+const SERVER_URL = "http://35.224.171.20/api";
+const STATUS_OK = 200;
+const DEBUGGING = false;
 
 export {SERVER_URL, STATUS_OK, DEBUGGING};
