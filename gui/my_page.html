@@ -44,11 +44,13 @@
                             <button type="button" id="save-btn" class="btn btn-primary shadow-none">Save</button>
                         </div>
                         <div>
+                            <!-- put student's data as a value of input tags on the first rendering -->
                             <table style="width: 100%;">
                                 <tbody>
                                     <tr>
                                         <td rowspan="2" class="wrap-student-icon"><img class="student-icon" src="img/student.png"></td>
-                                        <td class="profile-username"><h5><b>usernameavusernameavusernameavus</b></h5></td>
+                                        <!-- put student's username inside b tag below -->
+                                        <td class="profile-username"><h5><b></b></h5></td>
                                     </tr>
                                     <tr>
                                         <td class="flex"> <b>Class of</b><input type="number" placeholder="< 2024" class="form-control shadow-none profile-number-input" id="profile-college-class" min="1900" max="2024"></td>
@@ -61,7 +63,7 @@
                                         <td><b>Residence state</b></td>
                                         <td>
                                             <select id="profile-residence-state">
-                                                <!-- - means no preference -->
+                                                <!-- - means no choice -->
                                                 <option value="-">-</option>
                                                 <option value="AL">AL</option>
                                                 <option value="AK">AK</option>
@@ -118,13 +120,13 @@
                                     </tr>
                                     <tr>
                                         <td rowspan="3" style="vertical-align: baseline;"><b>High school</b></td>
-                                        <td><input type="text" class="form-control shadow-none" id="profile-high-scool-name" placeholder="name" minlength="11"></td>
+                                        <td><input type="text" class="form-control shadow-none" id="profile-high-scool-name" placeholder="Name" minlength="11"></td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <input type="text" class="form-control shadow-none" id="profile-high-scool-city" placeholder="city" minlength="5">
+                                            <input type="text" class="form-control shadow-none" id="profile-high-scool-city" placeholder="City" minlength="5">
                                             <select id="profile-residence-state">
-                                                <!-- - means no preference -->
+                                                <!-- - means no choice -->
                                                 <option value="-">-</option>
                                                 <option value="AL">AL</option>
                                                 <option value="AK">AK</option>
@@ -188,7 +190,7 @@
                                         <td><b>Major 1</b></td>
                                         <td>
                                             <select id="profile-major1">
-                                                <!-- - means no preference -->
+                                                <!-- - means no choice -->
                                                 <option value="-">-</option>
                                                 <!-- Frontend should add option tags with the major names from here -->
                                             </select>
@@ -198,7 +200,7 @@
                                         <td><b>Major 2</b></td>
                                         <td>
                                             <select id="profile-major1">
-                                                <!-- - means no preference -->
+                                                <!-- - means no choice -->
                                                 <option value="-">-</option>
                                                 <!-- Frontend should add option tags with the major names from here -->
                                             </select>
@@ -318,9 +320,9 @@
                                         <td><b>College</b></td>
                                         <td>
                                             <select id="college" required>
-                                                <!-- - means no preference -->
-                                                <option value="">-</option>
-                                                <option value="Yale University">Yale University</option>
+                                                <!-- - means no choice -->
+                                                <option value="-">-</option>
+                                                <!-- Frontend should add option tags with the major names from here -->
                                             </select>
                                         </td>
                                         <td rowspan="2"><button type="button" id="register-btn" class="btn btn-primary shadow-none">Submit</button></td>
@@ -329,8 +331,8 @@
                                         <td><b>Status</b></td>
                                         <td>
                                             <select id="status" required>
-                                                <!-- - means no preference -->
-                                                <option value="">-</option>
+                                                <!-- - means no choice -->
+                                                <option value="-">-</option>
                                                 <option value="Accepted">Accepted</option>
                                                 <option value="Denied">Denied</option>
                                                 <option value="Deferred">Deferred</option>
