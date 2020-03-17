@@ -50,7 +50,7 @@
                                     <tr>
                                         <td rowspan="2" class="wrap-student-icon"><img class="student-icon" src="img/student.png"></td>
                                         <!-- put student's username inside b tag below -->
-                                        <td class="profile-username"><h5><b></b></h5></td>
+                                        <td class="profile-username"><h5><b>DRAX</b></h5></td>
                                     </tr>
                                     <tr>
                                         <td class="flex"> <b>Class of</b><input type="number" placeholder="< 2027" class="form-control shadow-none profile-number-input" id="profile-college-class" max="2027"></td>
@@ -125,7 +125,7 @@
                                     <tr>
                                         <td>
                                             <input type="text" class="form-control shadow-none" id="profile-high-scool-city" placeholder="City" minlength="5">
-                                            <select id="profile-residence-state">
+                                            <select id="profile-high-school-state">
                                                 <!-- - means no choice -->
                                                 <option value="-">-</option>
                                                 <option value="AL">AL</option>
@@ -183,7 +183,71 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <button type="button" id="find-similar-high-schools-btn" class="btn btn-danger shadow-none">Find similar high schools</button>
+                                            <button type="button" id="find-similar-high-schools-btn" class="btn btn-danger shadow-none"  data-toggle="modal" data-target="#find-similar-high-schools-modal">Find similar high schools</button>
+                                            <div class="modal fade" id="find-similar-high-schools-modal" tabindex="-1" role="dialog" aria-labelledby="find-similar-high-schools-modal-label" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h5 class="modal-title" id="find-similar-high-schools-modal-label">Similar high schools</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <!-- Initially, there should be no tags inside the tag below. -->
+                                                            <div class="similar-high-school-list">
+                                                                <!-- .similar-high-school-name tag and .similar-high-school-info tag are a pair -->
+                                                                <button class="list-group-item list-group-item-action similar-high-school-name">high school 1</button>
+                                                                <div class="similar-high-school-info item-info">
+                                                                    <ul>
+                                                                        <li>Location: Stony Brook, NY</li>
+                                                                        <li>Average graduation rate: 98%</li>
+                                                                        <li>Average SAT: 700</li>
+                                                                        <li>Average ACT: 30</li>
+                                                                        <li>AP enrollment: 90%</li>
+                                                                        <li>Percent proficient - Reading: 98%</li>
+                                                                        <li>Percent proficient - Math: 97%</li>
+                                                                    </ul>
+                                                                </div>
+                                                                <button class="list-group-item list-group-item-action similar-high-school-name">high school 2</button>
+                                                                <div class="similar-high-school-info item-info">
+                                                                    <ul>
+                                                                        <li>Location: Stony Brook, NY</li>
+                                                                        <li>Average graduation rate: 98%</li>
+                                                                        <li>Average SAT: 700</li>
+                                                                        <li>Average ACT: 30</li>
+                                                                        <li>AP enrollment: 90%</li>
+                                                                        <li>Percent proficient - Reading: 98%</li>
+                                                                        <li>Percent proficient - Math: 97%</li>
+                                                                    </ul>
+                                                                </div>
+                                                                <button class="list-group-item list-group-item-action similar-high-school-name">high school 3</button>
+                                                                <div class="similar-high-school-info item-info">
+                                                                    <ul>
+                                                                        <li>Location: Stony Brook, NY</li>
+                                                                        <li>Average graduation rate: 98%</li>
+                                                                        <li>Average SAT: 700</li>
+                                                                        <li>Average ACT: 30</li>
+                                                                        <li>AP enrollment: 90%</li>
+                                                                        <li>Percent proficient - Reading: 98%</li>
+                                                                        <li>Percent proficient - Math: 97%</li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <nav>
+                                                            <!-- Initially, there should be no tags inside the tag below. -->
+                                                            <ul class="pagination" id="pagination">
+                                                                <!-- "active" class below means the current active page button  -->
+                                                                <!-- first page button must be active in default after completing search -->
+                                                                <li class="page-item"><button class="page-link shadow-none active">1</button></li>
+                                                                <li class="page-item"><button class="page-link shadow-none">2</button></li>
+                                                                <li class="page-item"><button class="page-link shadow-none">3</button></li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
