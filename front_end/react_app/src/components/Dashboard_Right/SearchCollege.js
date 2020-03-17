@@ -264,7 +264,7 @@ class SeachCollege extends React.Component{
                                 <button className="btn btn-secondary shadow-none" type="button" id="filters-dropdown-btn" onClick={this.filter_drop_down_clicked}>
                                     Filters
                                 </button>
-                                <div style={(this.state.show_filter) ? SeachCollege.show : SeachCollege.hide} ref={this.filter_dropdown_content}  id="filters-dropdown-content">
+                                <div style={(this.state.show_filter) ? SeachCollege.show : SeachCollege.hide} ref={this.filter_dropdown_content}  id="search-filters-dropdown-content">
                                     <table>
                                         <tbody>
                                         <tr>

@@ -1,5 +1,31 @@
 /* filters */
-#filters-dropdown-content td{width: 33%;}
+
+/***************************************************************** react fixes ******************************************************/
+#search-filters-dropdown-content td{
+    width: 33%;
+}
+
+
+#search-filters-dropdown-content{
+    padding: 20px 30px 20px 30px;
+    max-width: 90%;
+}
+
+#search-filters-dropdown-content{
+    border-style: groove;
+    position: absolute;
+    z-index: 2;
+    display:flex;
+    flex-direction:column;
+    width: 100%;
+    margin: 0;
+    background-color: white;
+    border-radius: 0px 0px 10px 10px;
+    display: none;
+}
+
+/***************************************************************** react fixes ********************************************************/
+
 .range{display: flex;}
 #admission-rate-min, #sat-ebrw-min, #sat-math-min, #act-composite-min{margin-right: 5px;}
 #admission-rate-max, #sat-ebrw-max, #sat-math-max, #act-composite-max{margin-left: 5px;}
