@@ -68,3 +68,28 @@ table{border-spacing:0 15px; border-collapse: separate;}
 .status{width: 100px;float: right;text-align: end;}
 /* list */
 /* application */
+
+/* plot*/
+#find-similar-high-schools-modal > div{
+    left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    width: 500px;height: 615px;
+    position: fixed;
+}
+#find-similar-high-schools-modal > div > div{
+    height: 100%;
+}
+.similar-high-school-list{
+    height: 450px;
+    border-radius: 5px;
+    border: rgb(190, 190, 190) 1px solid;
+    overflow: auto;
+}
+.similar-high-school-list > div{
+    border-bottom: rgb(190, 190, 190) 1px solid;
+    width: 100%;
+    height: fit-content;
+}
+.similar-high-school-name{text-align: center;}
+.similar-high-school-info > ul{margin: 0;}
+/* plot*/
