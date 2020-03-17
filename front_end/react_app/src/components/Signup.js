@@ -29,6 +29,10 @@ class Signup extends React.Component{
     async register(event){
         event.preventDefault();
         try{
+            let re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g;
+            if(!this.state.password.match(re)) {
+                throw new Error('Password not meet the requirement');
+            }
             let response = await fetch(SERVER_URL + SIGNUP_ENDPOINT,
                 {
                     method: 'POST',
@@ -45,6 +49,7 @@ class Signup extends React.Component{
             if(response_json.status !== 200){
                 throw new Error(response_json.result);
             }else{
+                alert("success! redirecting")
                 this.props.history.push({
                     pathname: '/login',
                     state: { username: this.state.username }
