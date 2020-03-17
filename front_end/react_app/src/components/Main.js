@@ -6,6 +6,7 @@ import MyPage from '../gui/img/mypage.png';
 import Logout from '../gui/img/logout.png';
 import SeachCollege from "./Dashboard_Right/SearchCollege";
 import Authenticator from "../common/Authenticator";
+import Track from "./Dashboard_Right/Track";
 import {BrowserRouter, Route, Switch, Redirect, Link} from "react-router-dom";
 import style from '../gui/css/center.module.css';
 import {Not_Found} from "./Not_Found";
@@ -73,8 +74,8 @@ class Main extends React.Component{
                 </div>
                 <Switch>
                     <Route path='/main/search' component={SeachCollege} />
-                    <Route path='/main/track/' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
-                    <Route path='/main/track/:college_id' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
+                    <Route path='/main/track/' render={props => <Track {...props} /> } />
+                    <Route path='/main/track/:college_id' render={props => <Track {...props} />} />
                     <Route path='/main/my_page/' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
                     <Route  component={Not_Found}/>
                 </Switch>
