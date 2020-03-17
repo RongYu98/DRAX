@@ -32,7 +32,6 @@ class Root extends React.Component{
                     {/*redirects to /main/search if landed on / */}
                     <Switch>
                         <Route exact path='/'  component={(props) =>{
-                            console.log("redirected");
                             return(<Redirect {...props} to={
                                 {
                                     pathname: "/main/search",
@@ -44,7 +43,6 @@ class Root extends React.Component{
                         }}
                         />
                         <Route exact path='/main'  component={(props) =>{
-                            console.log("redirected");
                             return(<Redirect {...props} to={
                                 {
                                     pathname: "/main/search",

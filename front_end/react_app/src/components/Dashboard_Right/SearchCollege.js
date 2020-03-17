@@ -23,6 +23,8 @@ class SeachCollege extends React.Component{
         RECOMMENDATION: "recommendation"
     }
 
+
+
     constructor(props) {
         super(props);
         this.state = {
@@ -32,14 +34,15 @@ class SeachCollege extends React.Component{
             filter_data: {
                 name: "",
                 admission_rate: {min: "", max: ""},
-                location: '',
+                location: 'Midwest',
                 sat_ebrw: {min: '', max: ''},
                 max_ranking: '-',
-                size: '',
+                size: '-',
                 sat_math: {min: '', max: ''},
-                major: {left: '', right: ''},
+                major: {left: '-', right: '-'},
                 max_tuition: '',
-                act: {min: '', max: ''}
+                act: {min: '', max: ''},
+                policy: "strict"
             }
         }
         this.button_list = [];
@@ -272,15 +275,15 @@ class SeachCollege extends React.Component{
                                                         let admissionRate = this.state.filter_data.admission_rate;
                                                         this.setState({filter_data: {...this.state.filter_data, admission_rate: {...admissionRate, min: new_min}}})
                                                     }}
-                                                           value={this.state.filter_data.sat_ebrw.min} type="number" className="form-control shadow-none" id="sat-ebrw-min" placeholder="0 - 100" min={200} max={800}
+                                                           value={this.state.filter_data.admission_rate.min} type="number" className="form-control shadow-none" id="sat-ebrw-min" placeholder="0 - 100" min={200} max={800}
                                                     />
                                                     &nbsp;-&nbsp;
                                                     <input onChange={(event)=>{
                                                         let new_max = event.target.value;
                                                         let admissionRate = this.state.filter_data.admission_rate;
-                                                        this.setState({filter_data: {...this.state.filter_data, sat_ebrw: {...admissionRate, max: new_max}}})
+                                                        this.setState({filter_data: {...this.state.filter_data, admission_rate: {...admissionRate, max: new_max}}})
                                                     }}
-                                                           value={this.state.filter_data.sat_ebrw.max} type="number" className="form-control shadow-none" id="sat-ebrw-max" placeholder="0 - 100" min={200} max={800}
+                                                           value={this.state.filter_data.admission_rate.max} type="number" className="form-control shadow-none" id="sat-ebrw-max" placeholder="0 - 100" min={200} max={800}
                                                     />
                                                 </div>
                                             </td>
@@ -295,13 +298,23 @@ class SeachCollege extends React.Component{
                                             </td>
                                             <td><b>Major</b>
                                                 <div className="wrap-filter">
-                                                    <select id="major1">
+                                                    <select id="major1" defaultValue={this.state.filter_data.major.left}
+                                                            onChange={(event)=>{
+                                                                    this.setState({filtered_data: {...this.state.filter_data, major: {left: this.state.filter_data.major.left, right: event.target.value}}});
+                                                                }
+                                                            }
+                                                    >
                                                         {/* - means no preference */}
-                                                        <option value="-">-</option>
+                                                        <option value="-">-</option>ssssss
                                                         {/* Frontend should add option tags with the major names from here */}
                                                     </select>
                                                     &amp;
-                                                    <select id="major2">
+                                                    <select id="major2" defaultValue={this.state.filter_data.major.right}
+                                                        onChange={(event)=>{
+                                                                    this.setState({filtered_data: {...this.state.filter_data, major: {right: this.state.filter_data.major.right, left: event.target.value}}});
+                                                                }
+                                                            }
+                                                    >
                                                         {/* - means no preference */}
                                                         <option value="-">-</option>
                                                         {/* Frontend should add option tags with the major names from here */}
@@ -313,7 +326,15 @@ class SeachCollege extends React.Component{
                                         <tr>
                                             <td><b>Location</b>
                                                 <div className="wrap-filter">
-                                                    <select id="location">
+                                                    <select id="location"
+                                                        defaultValue={this.state.filter_data.location}
+                                                        onChange={event => {
+                                                                this.setState({filter_data: {
+                                                                        ...this.state.filter_data, location: event.target.value
+                                                                    }})
+                                                            }
+                                                        }
+                                                    >
                                                         {/* - means no preference */}
                                                         <option value="Midwest">Midwest</option>
                                                         <option value="Northeast">Northeast</option>
@@ -324,8 +345,16 @@ class SeachCollege extends React.Component{
                                                 </div>
                                             </td>
                                             <td><b>Size</b>
-                                                <div className="wrap-filter">
-                                                    <select id="size">
+                                                <div className="wrap-filter" >
+                                                    <select id="size"
+                                                        defaultValue={this.state.filter_data.size}
+                                                        onChange={event => {
+                                                                this.setState({filter_data: {
+                                                                        ...this.state.filter_data, size: event.target.value
+                                                                    }})
+                                                            }
+                                                        }
+                                                    >
                                                         {/* - means no preference */}
                                                         <option value="-">-</option>
                                                         <option value="small">small (&lt; 2,000)</option>
@@ -338,7 +367,12 @@ class SeachCollege extends React.Component{
                                                 <div className="wrap-filter">
                                                     <input type="number" className="form-control shadow-none"
                                                            id="cost-of-attendance" placeholder="1 - 100" min="1"
-                                                           max="100" />
+                                                           max="100"
+                                                           onChange={(event) =>{
+                                                                    this.set_none_scores_filter_data({max_tuition: event.target.value})
+                                                                }
+                                                           }
+                                                    />
                                                 </div>
                                             </td>
                                             <td></td>
@@ -422,11 +456,19 @@ class SeachCollege extends React.Component{
                             </div>
                             <div className="filters-radio">
                                 <div className="custom-control custom-radio">
-                                  <input type="radio" id="strict" name="customRadio" className="custom-control-input" />
+                                  <input type="radio" id="strict" name="customRadio" className="custom-control-input" checked={this.state.filter_data.policy === 'strict'}
+                                    onChange={event => {
+                                        this.set_none_scores_filter_data({policy: "strict"});
+                                    }}
+                                  />
                                   <label className="custom-control-label" htmlFor="strict">Strict</label>
                                 </div>
                                 <div className="custom-control custom-radio">
-                                  <input type="radio" id="lax" name="customRadio" className="custom-control-input" />
+                                  <input type="radio" id="lax" name="customRadio" className="custom-control-input"
+                                    onChange={event => {
+                                        this.set_none_scores_filter_data({policy: "lax"});
+                                    }}
+                                  />
                                   <label className="custom-control-label" htmlFor="lax">Lax</label>
                                 </div>
       </div>
