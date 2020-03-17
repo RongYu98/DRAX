@@ -30,6 +30,9 @@ class Signup extends React.Component{
         event.preventDefault();
         try{
             let re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g;
+            if(this.state.username.length !== 4){
+                throw new Error('username is not long enough');
+            }
             if(!this.state.password.match(re)) {
                 throw new Error('Password not meet the requirement');
             }
