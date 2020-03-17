@@ -74,6 +74,7 @@ class Main extends React.Component{
                 <Switch>
                     <Route path='/main/search' component={SeachCollege} />
                     <Route path='/main/track/' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
+                    <Route path='/main/track/:college_id' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
                     <Route path='/main/my_page/' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
                     <Route  component={Not_Found}/>
                 </Switch>

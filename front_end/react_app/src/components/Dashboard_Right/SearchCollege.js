@@ -34,7 +34,7 @@ class SeachCollege extends React.Component{
             filter_data: {
                 name: "",
                 admission_rate: {min: "", max: ""},
-                location: 'Midwest',
+                location: '-',
                 sat_ebrw: {min: '', max: ''},
                 max_ranking: '-',
                 size: '-',
@@ -336,6 +336,7 @@ class SeachCollege extends React.Component{
                                                         }
                                                     >
                                                         {/* - means no preference */}
+                                                        <option value="-">-</option>
                                                         <option value="Midwest">Midwest</option>
                                                         <option value="Northeast">Northeast</option>
                                                         <option value="South">South</option>
