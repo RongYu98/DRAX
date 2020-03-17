@@ -31,7 +31,7 @@ class Track extends React.Component{
                                             id="filters-dropdown-btn">
                                         Filters
                                     </button>
-                                    <div id="filters-dropdown-content">
+                                    <div id="filters-dropdown-content" >
                                         <table>
                                             <tbody>
                                             <tr>
