@@ -22,7 +22,7 @@ class Main extends React.Component{
         super(props);
         this.logout_clicked = this.logout_clicked.bind(this);
         this.state = {
-            current_tab: Main.tab_enum.SEARCH // defaulting to search
+            current_tab: ""
         }
     }
 
@@ -42,6 +42,11 @@ class Main extends React.Component{
                 });
     }
 
+    componentDidMount() {
+        let paths = this.props.location.pathname.split('/');
+        let last_url = paths[paths.length - 1];
+        this.setState({current_tab: last_url});
+    }
 
     render() {
         return(
