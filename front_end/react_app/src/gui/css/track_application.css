@@ -1,3 +1,15 @@
+/****************************************************************************************** react css fixes *****************************************************************************/
+#plot-modal > div{
+    left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    width: 50%;height: 50%;
+    /*position: fixed;*/
+}
+
+/****************************************************************************************** react css fixes *****************************************************************************/
+
+
+
 /* filters */
 #filters-dropdown-content > table > tbody > tr:nth-child(1), #wrap-college-class > div{display: flex;}
 /* college class filter */
@@ -33,12 +45,7 @@
     position: absolute;
     right:0;
 }
-#plot-modal > div{
-    left:50%; top:50%;
-    transform:translate(-50%,-50%);
-    width: 50%;height: 50%;
-    position: fixed;
-}
+
 #plot-modal > div > div{
     height: 100%;
 }

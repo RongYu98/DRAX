@@ -1,15 +1,114 @@
 import React from "react";
 import '../../gui/css/track_application.css';
 
+const SUMMARY_ENDPOINT = "";
+const HIGHSCHOOL_ENDPOINT = "";
+
 class Track extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-
+            show_filtered: false,
+            summary: {
+                avg_gpa: "",
+                avg_sat_ebrw: "",
+                avg_sat_math: "",
+                avg_act_composite: ""
+            },
+            filter_data: {
+                college_class: {from: "" , to: ""},
+                checked_high_schools: [],
+                application_status: []
+            },
+            high_schools: []
         }
+
+        this.fetch_summary = this.fetch_summary.bind(this);
+        this.searchClicked = this.searchClicked.bind(this);
+        this.fetch_highschool = this.fetch_highschool.bind(this);
+        this.get_high_school = this.get_high_school.bind(this);
+        this.high_school_checked = this.high_school_checked.bind(this);
+    }
+
+    // dummy fetch
+    async fetch_summary(){
+        this.setState({summary:{
+                avg_gpa: "3.8",
+                avg_sat_ebrw: '700',
+                avg_sat_math: '740',
+                avg_act_composite: '34'
+            }});
+    }
+
+    // dummy fetch
+    async fetch_highschool() {
+        let result = [];
+        for(let i = 1; i <= 5; i++){
+            result.push(`High School ${i}`);
+        }
+        this.setState({high_schools: result});
+    }
+
+    high_school_checked(event){
+        let current_high_schools = this.state.filter_data.checked_high_schools;
+        let school = event.target.id;
+        if(current_high_schools.includes(school)){
+            let index = current_high_schools.indexOf(school);
+            current_high_schools.splice(index, 1);
+        }else{
+            current_high_schools.push(school);
+        }
+        this.setState({filter_data:{...this.state.filter_data, checked_high_schools: current_high_schools}})
+    }
+
+    get_high_school(){
+            let result = []
+            for(let i = 0; i < this.state.high_schools.length; i+=3){
+                result.push(this.state.high_schools.slice(i, i+3));
+            }
+
+            result = result.map((tr_array, index) => {
+                return(
+                    <tr key={`tr-key-${index}`}>
+                        {
+                            tr_array.map((element)=>{
+                                return(
+                                    <td key={element}>
+                                        <div className="custom-control custom-checkbox">
+                                            {/* IMPORTANT! "input" tag's "id" property value and "label" tag's "for" property value should be matched */}
+                                            <input type="checkbox"
+                                                   className="custom-control-input"
+                                                   id={element}
+                                                   checked={this.state.filter_data.checked_high_schools.includes(element)}
+                                                   onChange={this.high_school_checked}
+                                            />
+                                                   <label className="custom-control-label"
+                                                          htmlFor={element}>{element}
+                                                   </label>
+                                        </div>
+                                    </td>
+                                    )
+                                }
+                            )
+                        }
+                    </tr>
+                );
+            });
+        return result;
+    }
+
+
+    componentDidMount() {
+        this.fetch_summary();
+        this.fetch_highschool();
+    }
+
+    searchClicked(event){
+        console.log(this.state.filter_data);
     }
 
     render() {
+        let high_schools = this.get_high_school();
         return (
             <div className="right-content">
                     <div className="wrap-search-result">
@@ -19,19 +118,25 @@ class Track extends React.Component{
                                     <input type="text" className="form-control shadow-none" placeholder="College name"
                                            aria-label="College name" aria-describedby="search-btn"/>
                                     <div className="input-group-append">
-                                        <button className="btn btn-outline-secondary shadow-none" type="button"
-                                                id="search-btn">Search
+                                        <button onClick={this.searchClicked}
+                                            className="btn btn-outline-secondary shadow-none" type="button"
+                                            id="search-btn">
+                                            Search
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <div className="filters-box">
                                 <div className="filters-dropdown">
-                                    <button className="btn btn-secondary shadow-none" type="button"
-                                            id="filters-dropdown-btn">
+                                    <button onClick={()=>{
+                                        this.setState({show_filter: !this.state.show_filter});
+                                    }}
+                                        className="btn btn-secondary shadow-none" type="button"
+                                        id="filters-dropdown-btn"
+                                    >
                                         Filters
                                     </button>
-                                    <div id="filters-dropdown-content" >
+                                    <div style={{display: (this.state.show_filter) ? "flex" : "None"}} id="filters-dropdown-content" >
                                         <table>
                                             <tbody>
                                             <tr>
@@ -44,6 +149,7 @@ class Track extends React.Component{
                                                                  max={2027}/>
                                                     </div>
                                                 </td>
+
                                                 <td id="wrap-application-status"><b>Application status</b>
                                                     <div className="wrap-filter">
                                                         <table>
@@ -77,6 +183,7 @@ class Track extends React.Component{
                                                                     </div>
                                                                 </td>
                                                             </tr>
+
                                                             <tr>
                                                                 <td>
                                                                     <div className="custom-control custom-checkbox">
@@ -117,61 +224,7 @@ class Track extends React.Component{
                                                     <div className="wrap-filter">
                                                         <table>
                                                             <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    <div className="custom-control custom-checkbox">
-                                                                        {/* IMPORTANT! "input" tag's "id" property value and "label" tag's "for" property value should be matched */}
-                                                                        <input type="checkbox"
-                                                                               className="custom-control-input"
-                                                                               id="High School 1"/>
-                                                                        <label className="custom-control-label"
-                                                                               htmlFor="High School 1">High School
-                                                                            1</label>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div className="custom-control custom-checkbox">
-                                                                        <input type="checkbox"
-                                                                               className="custom-control-input"
-                                                                               id="High School 2"/>
-                                                                        <label className="custom-control-label"
-                                                                               htmlFor="High School 2">High School
-                                                                            2</label>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div className="custom-control custom-checkbox">
-                                                                        <input type="checkbox"
-                                                                               className="custom-control-input"
-                                                                               id="High School 3"/>
-                                                                        <label className="custom-control-label"
-                                                                               htmlFor="High School 3">High School
-                                                                            3</label>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    <div className="custom-control custom-checkbox">
-                                                                        <input type="checkbox"
-                                                                               className="custom-control-input"
-                                                                               id="High School 4"/>
-                                                                        <label className="custom-control-label"
-                                                                               htmlFor="High School 4">High School
-                                                                            4</label>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div className="custom-control custom-checkbox">
-                                                                        <input type="checkbox"
-                                                                               className="custom-control-input"
-                                                                               id="High School 5"/>
-                                                                        <label className="custom-control-label"
-                                                                               htmlFor="High School 5">High School
-                                                                            5</label>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
+                                                                {high_schools}
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -228,10 +281,10 @@ class Track extends React.Component{
                                     <tr>
                                         {/* Frontend ajax should put data inside the b tags below */}
                                         {/* If there's no application list, then put dash inside the b tags */}
-                                        <td><b>3.8</b><br/><label>Average GPA</label></td>
-                                        <td><b>700</b><br/><label>Average SAT EBRW</label></td>
-                                        <td><b>740</b><br/><label>Average SAT Math</label></td>
-                                        <td><b>34</b><br/><label>Average ACT Composite</label></td>
+                                        <td><b>{this.state.summary.avg_gpa}</b><br/><label>Average GPA</label></td>
+                                        <td><b>{this.state.summary.avg_sat_ebrw}</b><br/><label>Average SAT EBRW</label></td>
+                                        <td><b>{this.state.summary.avg_sat_math}</b><br/><label>Average SAT Math</label></td>
+                                        <td><b>{this.state.summary.avg_act_composite}</b><br/><label>Average ACT Composite</label></td>
                                         <td/>
                                     </tr>
                                     </tbody>

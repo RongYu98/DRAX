@@ -52,7 +52,7 @@ class Signup extends React.Component{
             if(response_json.status !== 200){
                 throw new Error(response_json.result);
             }else{
-                alert("success! redirecting")
+                alert("Successfully signed up. Redirecting to login page.")
                 this.props.history.push({
                     pathname: '/login',
                     state: { username: this.state.username }
