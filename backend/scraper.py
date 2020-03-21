@@ -45,7 +45,24 @@ def get_college_ranking():
         for tr in td.strings:
             row.append(tr)
         data.append(row)
-    print(data[0:10])
+    # print(data[0:10])
+
+    cleanedData = []
+    for line in data:
+        line[0] = line[0].strip(' ><=') # ranking, remove the =7, >600, etc
+        cleanedData.append(line)
+
+    rank_to_names = {}
+    name_to_rank = {} 
+    for line in cleanedData[1:]: # ignore the header
+        rank = line[0]
+        name = line[1]
+        if rank not in rank_to_names:
+            rank_to_names[rank] = []
+        rank_to_names[rank].append(name)
+        name_to_rank[name] = rank
+    
+    return {'rank to name':rank_to_names, 'name_to_rank':name_to_rank}
     
     #  print(d.next_element)
     # print(d.next_element.next_element)
@@ -64,6 +81,7 @@ def get_college_data_data(name):
     majors = []
     fresh_grades = []
     pop_stats = []
+    cost = []
     
     soup = get_pretty_html(url)
 
@@ -80,17 +98,26 @@ def get_college_data_data(name):
     grades = [grade.strip() for grade in data.strings if grade.strip()!='']
     fresh_grades = grades
 
+    # Cost of School
+    # based on the former seeker, because cost is right after grades
+    for x in range(0, 3):
+        data = data.next_sibling
+    for x in range(0, 3):
+        data = data.next_element
+    cost = [d.strip() for d in data.strings if d!=None and d.strip()!='']
+    
     # Student Population Statss:
     # <div class="statbar">
     data = soup.find("div", {"class":"statbar"})
     pop_stats = [stat.strip() for stat in data.strings if stat.strip()!='']
-
-    print(majors)
-    print(fresh_grades)
-    print(pop_stats)
-
-    # can scrape so much more data...
     
+    # print(majors)
+    # print(fresh_grades)
+    # print(pop_stats)
+    # print(cost)
+    # can scrape so much more data...
+    return {'majors':majors, 'freshman grades':fresh_grades, 'cost':cost}
+
 # tests:
-# print(get_college_ranking())
-print(get_college_data_data("Stony Brook University"))
+print(get_college_ranking())
+# print(get_college_data_data("Stony Brook University"))
