@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, BooleanField, FloatField, IntField, ReferenceField
+from mongoengine import Document, StringField, BooleanField, FloatField, IntField, ReferenceField, ListField
 
 class Account(Document):
     username = StringField(required=True, max_length=32, unique=True)
@@ -16,8 +16,28 @@ class StudentProfile(Document):
     college_class = IntField(min_value=2016, max_value=3000)
 
 class College(Document):
-    name = StringField(required=True, max_length=128, unique=True)
-    # TODO: to be filled in  
+    name = StringField(required=True, max_length=50, unique=True)
+    # Longest college name in colleges.txt is 50 characters:
+    # SUNY College of Environmental Science and Forestry
+    city = StringField(required=True, max_length=30)
+    state = StringField(required=True, max_length=2)
+    region = StringField(required=True, max_length=10)
+    institution = StringField(required=True, max_length=20)
+    admission_rate = FloatField()
+    size = StringField(required=True, max_length=6)
+    median_debt = StringField(required=True, max_length=6)
+    cost = StringField(max_length=6)
+    majors = ListField()
+    ranking = StringField(max_length=4)
+    avg_sat_math = IntField(max_length=3)
+    sat_math_25 = IntField(max_length=3)
+    sat_math_75 = IntField(max_length=3)
+    avg_sat_ebrw = IntField(max_length=3)
+    sat_ebrw_25 = IntField(max_length=3)
+    sat_ebrw_75 = IntField(max_length=3)
+    avg_act_composite = IntField(max_length=2)
+    act_composite_25 = IntField(max_length=2)
+    act_composite_75 = IntField(max_length=2)
     
 class Application(Document):
     # TODO: add cascade, so if student deleted, delete this too?
