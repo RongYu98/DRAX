@@ -3,9 +3,9 @@ from flask_cors import CORS
 
 from mongoengine import *
 
-from account import Account
+from classes import Account
 
-import hashUtils
+import hash_utils
 
 connect('account', host='localhost', port=27017)
 
@@ -25,11 +25,11 @@ def signup():
     password = str(info['password'])
 
     # make an account class with the hashed info
-    salt = hashUtils.generateSalt()
-    digest = hashUtils.hmacHash(password, salt)
+    salt = hash_utils.generate_salt()
+    digest = hash_utils.hmac_hash(password, salt)
     account = Account(username=username, 
-                      hashedPassword=digest,
-                      salt=salt)
+                      hashed_password=digest,
+                      salt=salt, type="Student")
     
     # try to save the data
     # if the username is not unique, pymongo will tell us :D
@@ -63,8 +63,8 @@ def login():
         return jsonify(status = 400, result = "Invalid Login")
     
     # check the password
-    digest = hashUtils.hmacHash(password, account.salt)
-    if digest == account.hashedPassword:
+    digest = hash_utils.hmac_hash(password, account.salt)
+    if digest == account.hashed_password:
         session['username'] = username
         return jsonify(status = 200, result = "OK")
     else:
