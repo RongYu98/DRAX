@@ -29,21 +29,24 @@ def import_student_data(filename):
         account = Account(username=username,
                           hashed_password=digest,
                           salt=salt, type="Student")
+        
         try:
             account.save()
         except Exception as e:
-            print(e)
+            # print(e)
             print("There was an error importing student data: "+username)
-            try: # if this account can't be saved, then try to load it
-                account = Account.objects.get(username=username)
-            except:
-                print("Account could not be loaded: "+username)
-                continue
+
+    for line in lines[1:]:
+        username = line[0]
+        try:
+            account = Account.objects.get(username=username, type="Student")
+        except:
+            print("Account could not be loaded: "+username)
+            continue
         # Make student profile class
         # TODO: Decide on what attributes are optional
         # TODO: Add checks for if this data is not pressent?
-
-        # need to add something unique to this...
+        
         p = StudentProfile(
             student = account,
             gpa = float(line[index.index('gpa')]),
@@ -54,7 +57,14 @@ def import_student_data(filename):
             data = line[x]
             if data!='': # the field isn't empty
                 p.grades[info] = data
-        p.save()        
+
+        try:
+            p.save()
+        except Exception as e:
+            print(e)
+            print("Profile couldn't be loaded: "+username)
+            continue
+        
         
 def import_application_data(filename):
     lines = []
@@ -64,14 +74,14 @@ def import_application_data(filename):
             lines.append(line)
     for line in lines[1:]:
         username = line[0]
-        college = line[1]
-        status = line[2]
+        college = line[1].strip()
+        status = line[2].capitalize()
         # find the student by username
         # find the college by name
 
         try:
-            # TODO: Change this to student?
-            account = Account.objects.get(username=username)
+            account = Account.objects.get(username=username, type="Student")
+            student = StudentProfile.objects.get(student=account)
         except DoesNotExist as e:
             print("Student Doesn't Exist: "+username)
             continue
@@ -80,19 +90,21 @@ def import_application_data(filename):
         except:#  DoesNotExist as e:
             print("College Doesn't Exist: "+college)
             continue
-        
-        app = Application(student=account,
+
+        ID = hash_utils.sha_hash(username+"+=+"+college)
+        app = Application(ID=ID, student=student,
                           college=university,
                           status=status)
         try:
             app.save()
-        except:
+        except Exception as e:
             print("There was a problem with this application")
+            print(e)
             print(line[0]+" "+line[1])
             continue
     
 def delete_student_data():
-    Account.objects().delete() # should delete all account fields, including admin?
+    Account.objects(type="Student").delete() # should delete all account fields, including admin?
     # StudentProfile.objects().delete()
     # Application.objects().delete() 
 
@@ -153,7 +165,17 @@ def import_college_scorecard(scorecard, colleges):
                 except:
                     print("Error importing college: " + name)
 
-#delete_student_data()
-#import_application_data()
-#print("don")
-#import_student_data("students-1.csv")
+
+'''
+college = College(name='Massachusetts Institute of Technology')
+college.save()
+college = College(name='Stony Brook University')
+college.save()
+
+college = College(name='Princeton')
+college.save()
+college = College(name='Cornell University')
+college.save()'''
+# delete_student_data()
+# import_student_data("students-1.csv") 
+# import_application_data('applications-1.csv')

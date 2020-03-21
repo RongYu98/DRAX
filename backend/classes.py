@@ -8,7 +8,8 @@ class Account(Document):
 
 class StudentProfile(Document):
     # TODO: replace primary key
-    student = ReferenceField(Account, required=True, primary=True) 
+    student = ReferenceField(Account, required=True, unique=True,
+                             reverse_delete_rule=CASCADE) 
     gpa = FloatField(min_value=0.0, max_value=5.0) # unweighted GPA goes up to 5.0?
     grades = DynamicField(default=dict)
     residence_state = StringField(required=True, max_length=2) # store state acronym. 
@@ -42,14 +43,15 @@ class Application(Document):
     # TODO: add cascade, so if student deleted, delete this too?
     # TODO: reference the correct student class?
     # id will be built from the hash of the student and college
-    _id = StringField(required=True, unique=True)
+    ID = StringField(required=True, unique=True)
     # reference the student this application belongs to
     # if the student is deleted, cascade and delete this application
     student = ReferenceField(StudentProfile, required=True,
-                             reverse_delete_rule=CASCADE) 
-    college = ReferenceField(College, required=True)#, unique_with=student) # reference the college?
+                             reverse_delete_rule=CASCADE)
+    # unique with cannot work with reference fields
+    college = ReferenceField(College, required=True)# , unique_with=student) # reference the college?
     status = StringField(choices=('Pending', 'Accepted', 'Rejected',
-                                  'Waitlisted'), required=True)
+                                  'Wait-listed'), required=True)
     application_id = StringField() # not sure if this is needed.
     is_verified = BooleanField() # make this required later?
 
