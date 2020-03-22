@@ -110,14 +110,19 @@ def get_college_data_data(name):
     # <div class="statbar">
     data = soup.find("div", {"class":"statbar"})
     pop_stats = [stat.strip() for stat in data.strings if stat.strip()!='']
-    
+
+    data = soup.find("h2", string="Undergraduate Retention and Graduation")
+    data = data.next_sibling.next_sibling.next_sibling.next_sibling
+    survival_stats = [d.strip() for d in data.strings if d.strip()!='']
+                     
     # print(majors)
     # print(fresh_grades)
     # print(pop_stats)
     # print(cost)
     # can scrape so much more data...
-    return {'majors':majors, 'freshman grades':fresh_grades, 'cost':cost}
+    return {'majors':majors, 'freshman grades':fresh_grades, 'cost':cost,
+            'survival_stats':survival_stats}
 
 # tests:
-print(get_college_ranking())
-# print(get_college_data_data("Stony Brook University"))
+# print(get_college_ranking())
+print(get_college_data_data("Stony Brook University"))
