@@ -8,6 +8,7 @@ from classes import Account
 import hash_utils
 
 connect('account', host='localhost', port=27017)
+connect('college', alias='college')
 
 app = Flask(__name__)
 app.secret_key = 'Kats Trilling is AWESOME!'
@@ -84,7 +85,84 @@ def alive():
     return jsonify(status=200, result="OK")
 
 
-
+@app.route('/api/get_college_list', methods=['POST'])
+def get_college_list():
+    if 'username' not in session or session['username'] == None:
+        return jsonify(status=400, result="Not Logged In")
+    info = request.json
+    if info == None:
+        info = request.form
+    query = Q()
+    if 'name' in info:
+        name = info["name"]
+        if name != "":
+            query = query & Q(name__icontains=name)
+    if 'admission_rate' in info: # min and max
+        admission_rate_min = info["admission_rate"]["min"]
+        if admission_rate_min != "":
+            query = query & Q(admission_rate__gte=admission_rate_min)
+        admission_rate_max = info["admission_rate"]["max"]
+        if admission_rate_max != "":
+            query = query & Q(admission_rate__lte=admission_rate_max)
+    if 'location' in info: # region
+        location = info["location"]
+        if location != "":
+            query = query & Q(region=location)
+    if 'size' in info: # small, medium, or large
+        size = info["size"]
+        if size != "":
+            query = query & Q(size=size)
+    if 'major' in info: # left and right
+        major_left = info["major"]["left"]
+        major_right = info["major"]["right"]
+    if 'max_ranking' in info:
+        max_ranking = info["max_ranking"]
+        if max_ranking != "":
+            query = query & Q(ranking__lte=max_ranking)
+    if 'max_tuition' in info:
+        max_tuition = info["max_tuition"]
+        if max_tuition != "":
+            query = query & Q(cost__lte=max_tuition)
+    if 'sat_ebrw' in info: # min and max
+        sat_ebrw_min = info["sat_ebrw"]["min"]
+        if sat_ebrw_min != "":
+            query = query & Q(avg_sat_ebrw__gte=sat_ebrw_min)
+        sat_ebrw_max = info["sat_ebrw"]["max"]
+        if sat_ebrw_max != "":
+            query = query & Q(avg_sat_ebrw__lte=sat_ebrw_max)
+    if 'sat_math' in info: # min and max
+        sat_math_min = info["sat_math"]["min"]
+        if sat_math_min != "":
+            query = query & Q(avg_sat_math__gte=sat_math_min)
+        sat_math_max = info["sat_math"]["max"]
+        if sat_math_max != "":
+            query = query & Q(avg_sat_math__lte=sat_math_max)
+    if 'act' in info: # min and max
+        act_min = info["act"]["min"]
+        if act_min != "":
+            query = query & Q(avg_act_composite__lte=act_min)
+        act_max = info["act"]["max"]
+        if act_max != "":
+            query = query & Q(avg_act_composite__lte=act_max)
+    if 'policy' in info: # strict or lax
+        policy = info["policy"]
+    query_result = College.objects(query)
+    college_list = []
+    for result in query_result:
+        college = {
+            'name': result.name,
+            'state': result.state,
+            'institution': result.institution,
+            'admission_rate': result.admission_rate,
+            'completion_rate': result.completion_rate,
+            'tuition': result.cost,
+            'debt': result.median_debt,
+            'ranking': result.ranking,
+            'size': result.size,
+            'college_id': str(result.id),
+            }
+        college_list.append(college)
+    return jsonify(status=200, result="OK", colleges = college_list)
 
                  
 if __name__ == "__main__":
