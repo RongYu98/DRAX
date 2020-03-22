@@ -95,58 +95,68 @@ def get_college_list():
     query = Q()
     if 'name' in info:
         name = info["name"]
-        if name != "":
+        if name not in {"", None}:
             query = query & Q(name__icontains=name)
     if 'admission_rate' in info: # min and max
         admission_rate_min = info["admission_rate"]["min"]
-        if admission_rate_min != "":
+        if admission_rate_min not in {"", None}:
             query = query & Q(admission_rate__gte=admission_rate_min)
         admission_rate_max = info["admission_rate"]["max"]
-        if admission_rate_max != "":
+        if admission_rate_min not in {"", None}:
             query = query & Q(admission_rate__lte=admission_rate_max)
     if 'location' in info: # region
         location = info["location"]
-        if location != "":
+        if location not in {"", None}:
             query = query & Q(region=location)
     if 'size' in info: # small, medium, or large
         size = info["size"]
-        if size != "":
+        if size not in {"", None}:
             query = query & Q(size=size)
     if 'major' in info: # left and right
         major_left = info["major"]["left"]
         major_right = info["major"]["right"]
     if 'max_ranking' in info:
         max_ranking = info["max_ranking"]
-        if max_ranking != "":
+        if max_ranking not in {"", None}:
             query = query & Q(ranking__lte=max_ranking)
     if 'max_tuition' in info:
         max_tuition = info["max_tuition"]
-        if max_tuition != "":
+        if max_tuition not in {"", None}:
             query = query & Q(cost__lte=max_tuition)
     if 'sat_ebrw' in info: # min and max
         sat_ebrw_min = info["sat_ebrw"]["min"]
-        if sat_ebrw_min != "":
+        if sat_ebrw_min not in {"", None}:
             query = query & Q(avg_sat_ebrw__gte=sat_ebrw_min)
         sat_ebrw_max = info["sat_ebrw"]["max"]
-        if sat_ebrw_max != "":
+        if sat_ebrw_max not in {"", None}:
             query = query & Q(avg_sat_ebrw__lte=sat_ebrw_max)
     if 'sat_math' in info: # min and max
         sat_math_min = info["sat_math"]["min"]
-        if sat_math_min != "":
+        if sat_math_min not in {"", None}:
             query = query & Q(avg_sat_math__gte=sat_math_min)
         sat_math_max = info["sat_math"]["max"]
-        if sat_math_max != "":
+        if sat_math_max not in {"", None}:
             query = query & Q(avg_sat_math__lte=sat_math_max)
     if 'act' in info: # min and max
         act_min = info["act"]["min"]
-        if act_min != "":
+        if act_min not in {"", None}:
             query = query & Q(avg_act_composite__lte=act_min)
         act_max = info["act"]["max"]
-        if act_max != "":
+        if act_max not in {"", None}:
             query = query & Q(avg_act_composite__lte=act_max)
     if 'policy' in info: # strict or lax
         policy = info["policy"]
-    query_result = College.objects(query)
+    sort = ""
+    if 'sort' in info: # name, admission, cost, ranking
+        sort = info["sort"]
+    if sort == "ranking":
+        query_result = College.objects(query).order_by('ranking')
+    elif sort == "cost":
+        query_result = College.objects(query).order_by('cost')
+    elif sort == "admission":
+        query_result = College.objects(query).order_by('admission_rate')
+    else:
+        query_result = College.objects(query).order_by('name')
     college_list = []
     for result in query_result:
         college = {
