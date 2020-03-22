@@ -131,6 +131,14 @@ def get_region(region, state):
     if region == "9":
         return "Other"
 
+def get_size(size):
+    if size <= 500:
+        return "Small"
+    elif size <= 10000:
+        return "Medium"
+    else:
+        return "Large"
+
 def import_college_scorecard(scorecard, colleges):
     f = open(colleges, "r")
     college_list = []
@@ -148,7 +156,7 @@ def import_college_scorecard(scorecard, colleges):
                 region = get_region(line[18], state)
                 institution = institution_type(line[16])
                 admission_rate = line[36]
-                size = line[290]
+                size = get_size(int(line[290]))
                 median_debt = line[1504]
                 if admission_rate != "NULL":
                     college = College(
