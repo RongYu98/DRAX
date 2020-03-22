@@ -1,5 +1,10 @@
 import urllib.request # for connecting and getting html content
 from bs4 import BeautifulSoup # for parsing html
+import fileParser as file_parser # we'll chane the names later...
+
+from mongoengine import *
+connect('account', host='localhost', port=27017)
+from classes import College
 
 # Scraping Algorithm:
 # 1. Get the HTML text, make it pretty.
@@ -63,15 +68,23 @@ def get_college_ranking():
         name_to_rank[name] = rank
     
     return {'rank to name':rank_to_names, 'name_to_rank':name_to_rank}
-    
-    #  print(d.next_element)
-    # print(d.next_element.next_element)
-    #for s in d.strings:
-    #    print(s)
-    # Rank, Name, Country/Region, Tuition and Fees, Room and Board, Salary after 10 years
-    #for t in ['Rank', 'Name', 'Country/Region', 'Tuitio
-    #print(type(d))
-    # print(d)
+def update_college_ranking():
+    data = get_college_ranking()['name_to_rank']
+    colleges = file_parser.get_collegetxt_list()
+    for name in colleges:
+        if name in data:
+            try:
+                c = College.objects.get(name=name)
+                c.ranking = int(data[name])
+            except Exception as e:
+                print(e)
+                try: # college not in db, so make a class for it
+                    c = College(name=name, ranking=int(data[name]))
+                    c.save()
+                except:
+                    print("Error updating rank for college: "+name)
+                    continue
+            
 
 def get_college_data_data(name):
     name = name.replace(' ', '-') # stony brook becomes stony-brook
@@ -97,7 +110,47 @@ def get_college_data_data(name):
     data = data.next_sibling.next_sibling
     grades = [grade.strip() for grade in data.strings if grade.strip()!='']
     fresh_grades = grades
+    avg_gpa_index = fresh_grades.index('Average GPA')+1
+    # the below are supposed to be average index, may not exist...
+    sat_math_index = fresh_grades.index('SAT Math')+1
+    sat_ebrw_index = fresh_grades.index('SAT EBRW')+1
+    act_comp_index = fresh_grades.index('ACT Composite')+1
+    avg_gpa = float(fresh_grades[avg_gpa_index])
 
+    # in case there are no values at the site
+    avg_sat_math, sat_math_25th, sat_math_75th = None, None, None
+    if ('average' in fresh_grades[sat_math_index]):
+        # then we know there's a provided average, use it
+        avg_sat_math = int(fresh_grades[sat_math_index].split()[0])
+        sat_math_index += 1 # move the pointer along, to the next info
+    if ('range of middle 50%' in fresh_grades[sat_math_index]):
+        # '590-680 range of middle 50%'
+        d = fresh_grades[sat_math_index].split()[0].split('-') 
+        sat_math_25th = int(d[0])
+        sat_math_75th = int(d[1])
+
+    avg_sat_ebrw, sat_ebrw_25th, sat_ebrw_75th = None, None, None
+    if ('average' in fresh_grades[sat_ebrw_index]):
+        avg_sat_ebrw = int(fresh_grades[sat_ebrw_index].split()[0])
+        sat_ebrw_index += 1 
+    if ('range of middle 50%' in fresh_grades[sat_ebrw_index]):
+        d = fresh_grades[sat_ebrw_index].split()[0].split('-')
+        sat_ebrw_25th = int(d[0])
+        sat_ebrw_75th =	int(d[1])
+        
+    avg_act_comp, act_comp_25th, act_comp_75th = None, None, None
+    if ('average' in fresh_grades[act_comp_index]):
+        avg_act_comp = int(fresh_grades[act_comp_index].split()[0])
+        act_comp_index += 1
+    if ('range of middle 50%' in fresh_grades[act_comp_index]):
+        d = fresh_grades[act_comp_index].split()[0].split('-')
+        act_comp_25th = int(d[0])
+        act_comp_75th = int(d[1])
+    #print(avg_gpa)
+    #print(avg_sat_math, sat_math_25th, sat_math_75th)
+    #print(avg_act_comp, act_comp_25th, act_comp_75th)
+    #print(avg_sat_ebrw, sat_ebrw_25th, sat_ebrw_75th)
+    
     # Cost of School
     # based on the former seeker, because cost is right after grades
     for x in range(0, 3):
@@ -105,23 +158,47 @@ def get_college_data_data(name):
     for x in range(0, 3):
         data = data.next_element
     cost = [d.strip() for d in data.strings if d!=None and d.strip()!='']
+    index = cost.index('Cost of Attendance')+1
+    in_state, out_state = None, None
+    if ('In-state:' in cost[index]):
+        # 'In-state: $26,091', 'Out-of-state: $43,761'
+        in_state = cost[index].split()[1].replace(',','')[1:]
+        index += 1
+    if ('Out-of-state:' in cost[index]):
+        out_state = cost[index].split()[1].replace(',','')[1:]
     
     # Student Population Statss:
     # <div class="statbar">
     data = soup.find("div", {"class":"statbar"})
     pop_stats = [stat.strip() for stat in data.strings if stat.strip()!='']
+    # pop_stats not used...
 
     data = soup.find("h2", string="Undergraduate Retention and Graduation")
     data = data.next_sibling.next_sibling.next_sibling.next_sibling
     survival_stats = [d.strip() for d in data.strings if d.strip()!='']
-                     
+    # we only want completeion rate within 4 years from this:
+    index = survival_stats.index('Students Graduating Within 4 Years')+1
+    completion_rate = float(survival_stats[index].strip().replace('%',''))
+
     # print(majors)
     # print(fresh_grades)
     # print(pop_stats)
     # print(cost)
-    # can scrape so much more data...
+    
+    return {'avg gpa':avg_gpa, 'avg sat math':avg_sat_math,
+            '25th sat math':sat_math_25th, '75th sat math':sat_math_75th,
+            'avg sat ebrw':avg_sat_ebrw, '25th sat ebrw':sat_ebrw_25th,
+            '75th sat ebrw':sat_ebrw_75th, 'avg act':avg_act_comp,
+            '25th act':act_comp_25th, '75th act': act_comp_75th,
+            'in cost':in_state, 'out cost':out_state,
+            'majors':majors, 'completion_rate':completion_rate}
     return {'majors':majors, 'freshman grades':fresh_grades, 'cost':cost,
-            'survival_stats':survival_stats}
+            'pop_stats':pop_stats}
+
+
+def update_college_scorecard(name):
+    data = get_college_data_data(name)
+    
 
 # tests:
 # print(get_college_ranking())
