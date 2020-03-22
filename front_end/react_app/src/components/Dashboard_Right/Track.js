@@ -28,6 +28,7 @@ class Track extends React.Component{
         this.fetch_highschool = this.fetch_highschool.bind(this);
         this.get_high_school = this.get_high_school.bind(this);
         this.high_school_checked = this.high_school_checked.bind(this);
+        this.application_checked = this.application_checked.bind(this);
     }
 
     // dummy fetch
@@ -97,6 +98,18 @@ class Track extends React.Component{
         return result;
     }
 
+    application_checked(event){
+        let current_application = this.state.filter_data.application_status;
+        let status = event.target.id;
+        if(current_application.includes(status)){
+            let index = current_application.indexOf(status);
+            current_application.splice(index, 1);
+        }else{
+            current_application.push(status);
+        }
+        this.setState({filter_data:{...this.state.filter_data, application_status: current_application}})
+    }
+
 
     componentDidMount() {
         this.fetch_summary();
@@ -143,10 +156,24 @@ class Track extends React.Component{
                                                 <td id="wrap-college-class"><b>College class</b>
                                                     <div className="wrap-filter">
                                                         <input type="number" className="form-control shadow-none"
-                                                               id="college-class-min" placeholder="< 2027" max={2027}/>
+                                                               id="college-class-min" placeholder="< 2027" max={2027}
+                                                               value={this.state.filter_data.college_class.from}
+                                                               onChange={(event)=> {
+                                                                   this.setState({filter_data: {...this.state.filter_data,
+                                                                           college_class: {...this.state.filter_data.college_class,
+                                                                               from:event.target.value}}});
+                                                               }}
+                                                        />
                                                         - <input type="number" className="form-control shadow-none"
                                                                  id="college-class-max" placeholder="< 2027"
-                                                                 max={2027}/>
+                                                                 max={2027}
+                                                                 value={this.state.filter_data.college_class.to}
+                                                                 onChange={(event)=> {
+                                                                   this.setState({filter_data: {...this.state.filter_data,
+                                                                           college_class: {...this.state.filter_data.college_class,
+                                                                               to:event.target.value}}});
+                                                               }}
+                                                    />
                                                     </div>
                                                 </td>
 
@@ -159,7 +186,10 @@ class Track extends React.Component{
                                                                     <div className="custom-control custom-checkbox">
                                                                         <input type="checkbox"
                                                                                className="custom-control-input"
-                                                                               id="accepted"/>
+                                                                               id="accepted"
+                                                                               checked={this.state.filter_data.application_status.includes("accepted")}
+                                                                               onChange={this.application_checked}
+                                                                        />
                                                                         <label className="custom-control-label"
                                                                                htmlFor="accepted">Accepted</label>
                                                                     </div>
@@ -168,7 +198,10 @@ class Track extends React.Component{
                                                                     <div className="custom-control custom-checkbox">
                                                                         <input type="checkbox"
                                                                                className="custom-control-input"
-                                                                               id="denied"/>
+                                                                               id="denied"
+                                                                               checked={this.state.filter_data.application_status.includes("denied")}
+                                                                               onChange={this.application_checked}
+                                                                        />
                                                                         <label className="custom-control-label"
                                                                                htmlFor="denied">Denied</label>
                                                                     </div>
@@ -177,7 +210,10 @@ class Track extends React.Component{
                                                                     <div className="custom-control custom-checkbox">
                                                                         <input type="checkbox"
                                                                                className="custom-control-input"
-                                                                               id="deferred"/>
+                                                                               id="deferred"
+                                                                               checked={this.state.filter_data.application_status.includes("deferred")}
+                                                                               onChange={this.application_checked}
+                                                                        />
                                                                         <label className="custom-control-label"
                                                                                htmlFor="deferred">Deferred</label>
                                                                     </div>
@@ -189,7 +225,10 @@ class Track extends React.Component{
                                                                     <div className="custom-control custom-checkbox">
                                                                         <input type="checkbox"
                                                                                className="custom-control-input"
-                                                                               id="wait-listed"/>
+                                                                               id="wait-listed"
+                                                                               checked={this.state.filter_data.application_status.includes("wait-listed")}
+                                                                               onChange={this.application_checked}
+                                                                        />
                                                                         <label className="custom-control-label"
                                                                                htmlFor="wait-listed">Wait-listed</label>
                                                                     </div>
@@ -198,7 +237,10 @@ class Track extends React.Component{
                                                                     <div className="custom-control custom-checkbox">
                                                                         <input type="checkbox"
                                                                                className="custom-control-input"
-                                                                               id="withdrawn"/>
+                                                                               id="withdrawn"
+                                                                               checked={this.state.filter_data.application_status.includes("withdrawn")}
+                                                                               onChange={this.application_checked}
+                                                                        />
                                                                         <label className="custom-control-label"
                                                                                htmlFor="withdrawn">Withdrawn</label>
                                                                     </div>
@@ -207,7 +249,10 @@ class Track extends React.Component{
                                                                     <div className="custom-control custom-checkbox">
                                                                         <input type="checkbox"
                                                                                className="custom-control-input"
-                                                                               id="pending"/>
+                                                                               id="pending"
+                                                                               checked={this.state.filter_data.application_status.includes("pending")}
+                                                                               onChange={this.application_checked}
+                                                                        />
                                                                         <label className="custom-control-label"
                                                                                htmlFor="pending">Pending</label>
                                                                     </div>
