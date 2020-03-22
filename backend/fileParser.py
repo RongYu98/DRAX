@@ -166,6 +166,27 @@ def import_college_scorecard(scorecard, colleges):
                     print("Error importing college: " + name)
 
 
+# global variable to store the file content of colleges.txt in list form
+college_list = None
+# function to read the file list should only happen once?
+def generate_collegetxt_list():
+    global college_list
+    with open('colleges.txt') as f:
+        data = f.read().split('\n')
+        cleaned_data = []
+        for college in data: # clean the names
+            # TODO: Figure out locations: , East Bay, Fresno, etc... California State University
+            name = college.replace('&', 'and')
+            cleaned_data.append(name)
+    college_list = cleaned_data
+    return cleaned_data
+
+def get_collegetxt_list(refresh=False):
+    global colleges_list
+    if (colleges_list == None or refresh == False):
+        return generate_collegetxt_list() # wait, will our global variable be refreshed?
+    return colleges_list
+
 '''
 college = College(name='Massachusetts Institute of Technology')
 college.save()
