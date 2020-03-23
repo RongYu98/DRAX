@@ -190,10 +190,10 @@ def generate_collegetxt_list():
     return cleaned_data
 
 def get_collegetxt_list(refresh=False):
-    global colleges_list
-    if (colleges_list == None or refresh == False):
+    global college_list
+    if (college_list == None or refresh == False):
         return generate_collegetxt_list() # wait, will our global variable be refreshed?
-    return colleges_list
+    return college_list
 
 '''
 college = College(name='Massachusetts Institute of Technology')
