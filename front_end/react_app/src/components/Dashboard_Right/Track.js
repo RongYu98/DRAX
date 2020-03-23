@@ -18,9 +18,11 @@ class Track extends React.Component{
             filter_data: {
                 college_class: {from: "" , to: ""},
                 checked_high_schools: [],
-                application_status: []
+                application_status: [],
+                name: ""
             },
-            high_schools: []
+            high_schools: [],
+
         }
 
         this.fetch_summary = this.fetch_summary.bind(this);
@@ -129,7 +131,12 @@ class Track extends React.Component{
                             <div className="search-box">
                                 <div className="input-group mb-3">
                                     <input type="text" className="form-control shadow-none" placeholder="College name"
-                                           aria-label="College name" aria-describedby="search-btn"/>
+                                           aria-label="College name" aria-describedby="search-btn"
+                                           value={this.state.filter_data.name}
+                                           onChange={(event)=>{
+                                                this.setState({filter_data:{...this.state.filter_data, name: event.target.value}});
+                                           }}
+                                    />
                                     <div className="input-group-append">
                                         <button onClick={this.searchClicked}
                                             className="btn btn-outline-secondary shadow-none" type="button"
