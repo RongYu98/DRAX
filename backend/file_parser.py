@@ -142,15 +142,23 @@ def get_size(size):
 def import_college_scorecard(scorecard, colleges):
     f = open(colleges, "r")
     college_list = []
+    mod_list = []
     for c in f:
-        college_list.append(c.rstrip())
+        n = c.rstrip()
+        college_list.append(n)
+        mod_list.append(n.replace("&", "and").replace(",", "").replace("The ", ""))
     f.close()
     with open(scorecard) as sc:
         sc_reader = csv.reader(sc)
         for line in sc_reader:
-            name = line[3]
-            if name in college_list:
-                print(name)
+            sc_name = line[3]
+            sc_mod_name = sc_name.replace("-", " ").replace("The ", "").replace("Saint", "St")
+            name = ""
+            if sc_name in college_list:
+                name = sc_name
+            elif sc_mod_name in mod_list:
+                name = college_list[mod_list.index(sc_mod_name)]
+            if name != "":
                 city = line[4]
                 state = line[5]
                 region = get_region(line[18], state)
@@ -173,7 +181,6 @@ def import_college_scorecard(scorecard, colleges):
                     college.save()
                 except:
                     print("Error importing college: " + name)
-
 
 # global variable to store the file content of colleges.txt in list form
 college_list = None
