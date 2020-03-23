@@ -158,15 +158,16 @@ def import_college_scorecard(scorecard, colleges):
                 admission_rate = line[36]
                 size = get_size(int(line[290]))
                 median_debt = line[1504]
+                salary = line[1664]
                 if admission_rate != "NULL":
                     college = College(
                         name=name, city=city, state=state, region=region, institution=institution,
-                        admission_rate=admission_rate, size=size, median_debt=median_debt,
+                        admission_rate=admission_rate, size=size, median_debt=median_debt, salary = salary,
                     )
                 else:
                     college = College(
                         name=name, city=city, state=state, region=region, institution=institution,
-                        size=size, median_debt=median_debt,
+                        size=size, median_debt=median_debt, salary = salary,
                     )
                 try:
                     college.save()
