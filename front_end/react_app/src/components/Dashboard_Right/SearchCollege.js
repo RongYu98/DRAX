@@ -18,9 +18,10 @@ class SeachCollege extends React.Component{
 
     static sort_enum = {
         NAME: "name",
-        COST: "cost",
-        RANKING: "rank",
-        RECOMMENDATION: "recommendation"
+        COST: "attendance",
+        RANKING: "ranking",
+        RECOMMENDATION: "recommendation",
+        ADMISSION: "admission"
     }
 
 
@@ -42,7 +43,8 @@ class SeachCollege extends React.Component{
                 major: {left: '-', right: '-'},
                 max_tuition: '',
                 act: {min: '', max: ''},
-                policy: "strict"
+                policy: "strict",
+                sort: SeachCollege.sort_enum.name
             }
         }
         this.button_list = [];
@@ -59,23 +61,28 @@ class SeachCollege extends React.Component{
         console.log(event);
         switch (event) {
             case SeachCollege.sort_enum.NAME:
-                // sort by name
+                this.setState({filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.NAME}});
                 break;
             case SeachCollege.sort_enum.COST:
-                // sort by attendance
+                this.setState({filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.COST}});
                 break;
             case SeachCollege.sort_enum.RANKING:
-                // sort by rank
+                this.setState({filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.RANKING}});
                 break;
             case SeachCollege.sort_enum.RECOMMENDATION:
-                // sort by recommendation
+                if(typeof this.old_recommendation !== 'undefined') {
+                    this.setState({college_list: this.old_recommendation, filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.RECOMMENDATION}});
+                    return;
+                }
+                this.setState({filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.RECOMMENDATION}});
                 break;
         }
+
+        this.fetch_new_college_list();
     }
 
 
     filter_drop_down_clicked(event){
-
         this.setState({show_filter: !this.state.show_filter});
     }
 
@@ -170,67 +177,71 @@ class SeachCollege extends React.Component{
 
     // dont know where to pull this data from, using a dummy list for testing
     async fetch_new_college_list(){
-        try{
-            let body = {...this.state.filter_data};
-            Object.keys(body).map(function(key, index) {
-                    let min = body[key].min;
-                    let max = body[key].max;
-                    let left = body[key].left;
-                    let right = body[key].right;
-                    if(typeof left !== 'undefined'){
-                        body[key].left = (left === '' || left === '-') ? null : left;
-                    }
-
-                    if(typeof right !== 'undefined'){
-                        body[key].right = (right === '' || right === '-') ? null : right;
-                    }
-
-                    if(typeof min !== 'undefined'){
-                        body[key].min = (min === '' || min === '-') ? null : min;
-                    }
-                    if(typeof max !== 'undefined') {
-                        body[key].max = (max === '' || max === '-') ? null : max;
-                    }
-
-                    body[key] = (body[key] === '' || body[key] === '-') ? null : body[key];
-
-            });
-            console.log(body);
-            let response = await fetch(
-                SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
-                {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                }
-            );
-
-            if(response.status !== STATUS_OK) throw new Error(response.statusText);
-            let response_json = await response.json();
-            console.log(response_json.data);
-            this.setState({college_list: response_json.data});
-        }catch (err) {
-            alert(`failed to fetch new college list, err msg: ${err.message}`);
-        }
-
-        // for(let i = 0; i < 830; i++){
-        //     list.push({
-        //         institution: `test ${i + 1}`,
-        //         tuition: `test ${i + 1}`,
-        //         admission_rate: `test ${i + 1}`,
-        //         debt: `test ${i + 1}`,
-        //         completion_rate: `test ${i + 1}`,
-        //         rank: `test ${i + 1}`,
-        //         region: `test ${i + 1}`,
-        //         name: `test ${i + 1}`,
-        //         college_id: `test_${i + 1}`,
-        //         size: `test_${i + 1}`
+        // try{
+        //     // deep copy
+        //     let body = JSON.parse(JSON.stringify(this.state.filter_data));
+        //     Object.keys(body).map(function(key, index) {
+        //             let min = body[key].min;
+        //             let max = body[key].max;
+        //             let left = body[key].left;
+        //             let right = body[key].right;
+        //             if(typeof left !== 'undefined'){
+        //                 body[key].left = (left === '' || left === '-') ? null : left;
+        //             }
+        //
+        //             if(typeof right !== 'undefined'){
+        //                 body[key].right = (right === '' || right === '-') ? null : right;
+        //             }
+        //
+        //             if(typeof min !== 'undefined'){
+        //                 body[key].min = (min === '' || min === '-') ? null : min;
+        //             }
+        //             if(typeof max !== 'undefined') {
+        //                 body[key].max = (max === '' || max === '-') ? null : max;
+        //             }
+        //
+        //             body[key] = (body[key] === '' || body[key] === '-') ? null : body[key];
+        //
         //     });
+        //     console.log(body);
+        //     let response = await fetch(
+        //         SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
+        //         {
+        //             method: 'POST',
+        //             credentials: 'include',
+        //             headers: {
+        //                 'Accept': 'application/json',
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify(body)
+        //         }
+        //     );
+        //
+        //     if(response.status !== STATUS_OK) throw new Error(response.statusText);
+        //     let response_json = await response.json();
+        //     console.log(response_json.list);
+        //     if(this.state.filter_data.sort === SeachCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
+        //     this.setState({college_list: response_json});
+        // }catch (err) {
+        //     console.log(err.stack);
+        //     alert(`failed to fetch new college list, err msg: ${err.message}`);
         // }
+        let list = [];
+        for(let i = 0; i < 830; i++){
+            list.push({
+                institution: `test ${i + 1}`,
+                tuition: `test ${i + 1}`,
+                admission_rate: `test ${i + 1}`,
+                debt: `test ${i + 1}`,
+                completion_rate: `test ${i + 1}`,
+                rank: `test ${i + 1}`,
+                region: `test ${i + 1}`,
+                name: `test ${i + 1}`,
+                college_id: `test_${i + 1}`,
+                size: `test_${i + 1}`
+            });
+        }
+        this.setState({college_list: list});
     }
 
 
@@ -270,8 +281,11 @@ class SeachCollege extends React.Component{
         this.fetch_new_college_list().then(()=>{}).catch();
     }
 
+
+
+
     render() {
-        let colleges = [];
+        let colleges = this.get_colleges();
         let page_lists = this.get_page_buttons();
         return (
             <div className="right-content">
@@ -515,10 +529,11 @@ class SeachCollege extends React.Component{
                             {
                                 (this.state.college_list.length > 1) ?
                                     <DropdownButton id="dropdown-basic-button" title="Sort By" onSelect={this.sort_clicked}>
-                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.NAME}>College name</Dropdown.Item>
-                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.COST}>Cost of Attendance</Dropdown.Item>
-                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.RANKING}>Ranking</Dropdown.Item>
-                                        <Dropdown.Item eventKey={SeachCollege.sort_enum.RECOMMENDATION}>Recommendation Score</Dropdown.Item>
+                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.NAME}>College name - Alphabetical Order</Dropdown.Item>
+                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.COST}>Cost of attendance - Low to High</Dropdown.Item>
+                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.RANKING}>Ranking - High to Low</Dropdown.Item>
+                                        <Dropdown.Item eventKey={SeachCollege.sort_enum.ADMISSION}>Admission rate - High to Low</Dropdown.Item>
+                                        <Dropdown.Item eventKey={SeachCollege.sort_enum.RECOMMENDATION}>Recommendation score - High to Low</Dropdown.Item>
                                     </DropdownButton>
                                     :
                                     null
