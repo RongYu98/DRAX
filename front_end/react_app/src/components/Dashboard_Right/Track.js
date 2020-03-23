@@ -1,5 +1,6 @@
 import React from "react";
 import '../../gui/css/track_application.css';
+import Application from "./Application";
 
 const SUMMARY_ENDPOINT = "";
 const HIGHSCHOOL_ENDPOINT = "";
@@ -346,111 +347,7 @@ class Track extends React.Component{
                             {/* "button" tag with class="list-group-item list-group-item-action" and "div" tag with class="carousel slide" are a pair */}
                             {/* Frontend ajax should add these pairs with data inside the tag below */}
                             <div className="list-group" id="application-list">
-                                <button className="list-group-item list-group-item-action">
-                                    {/* student's username should be included inside h5 tag */}
-                                    <h5 className="username">username1<br/>
-                                        {/* accpeted: badge-success | denied: badge-danger | rest: badge-warning */}
-                                        <span className="badge badge-success">Accepted</span>
-                                    </h5>
-                                    {/* high school name should be one the left side of br tag
-                                    high school city  should be combined with high school state by comma and this combination should be on the right side of br tag and inside h5 tag */}
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </button>
-                                {/* "div" tag's "id" property value should be the student's username*/}
-                                <div id="username1" className="carousel slide">
-                                    <ol className="carousel-indicators">
-                                        {/* every "li" tags' "data-target" property values should be the student's username*/}
-                                        <li data-target="#username1" data-slide-to={0} className="active"/>
-                                        <li data-target="#username1" data-slide-to={1}/>
-                                        <li data-target="#username1" data-slide-to={2}/>
-                                    </ol>
-                                    <div className="carousel-inner">
-                                        <div className="carousel-item personal active">
-                                            <table>
-                                                <tbody>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>NY</b><br/><label>Residence state</label></td>
-                                                    <td><b>800</b><br/><label>SAT Math</label></td>
-                                                    <td><b>5</b><br/><label>APs Passed</label></td>
-                                                    <td><b>Theology Religious Vocation</b><br/><label>Major 1</label>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>2023</b><br/><label>College class</label></td>
-                                                    <td><b>800</b><br/><label>SAT EBRW</label></td>
-                                                    <td><b>3.8</b><br/><label>GPA</label></td>
-                                                    <td><b>Public Administration Social Service</b><br/><label>Major
-                                                        2</label></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div className="carousel-item sat2">
-                                            <table>
-                                                <tbody>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>800</b><br/><label>SAT2 Chemistry</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Eco-Bio</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Literature</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Mol-Bio</label></td>
-                                                </tr>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>-</b><br/><label>SAT2 Math I</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Math II</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Physics</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 US History</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 World History</label></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div className="carousel-item act">
-                                            <table>
-                                                <tbody>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>-</b><br/><label>ACT English</label></td>
-                                                    <td><b>60</b><br/><label>ACT Math</label></td>
-                                                    <td><b>40</b><br/><label>ACT Reading</label></td>
-                                                    <td><b>40</b><br/><label>ACT Science</label></td>
-                                                    <td><b>36</b><br/><label>ACT Composite</label></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    {/* "a" tag's "href" property value should be "#" + student's username*/}
-                                    <a className="carousel-control-prev" href="#username1" role="button"
-                                       data-slide="prev">
-                                        <span className="carousel-control-prev-icon" aria-hidden="true"/>
-                                        <span className="sr-only">Previous</span>
-                                    </a>
-                                    {/* "a" tag's "href" property value should be "#" + student's username*/}
-                                    <a className="carousel-control-next" href="#username1" role="button"
-                                       data-slide="next">
-                                        <span className="carousel-control-next-icon" aria-hidden="true"/>
-                                        <span className="sr-only">Next</span>
-                                    </a>
-                                </div>
-                                <button className="list-group-item list-group-item-action">
-                                    <h5 className="username">username2<br/><span
-                                        className="badge badge-danger">Denied</span></h5>
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </button>
-                                <button className="list-group-item list-group-item-action">
-                                    <h5 className="username">username3<br/><span
-                                        className="badge badge-warning">Wait-listed</span></h5>
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </button>
+                                <Application/>
                             </div>
                             <nav>
                                 {/* Initially, there should be no tags inside the tag below. */}

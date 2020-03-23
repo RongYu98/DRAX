@@ -7,7 +7,7 @@ import Main from "./Main";
 import Signup from "./Signup";
 import {ProtectedRoute} from "../common/ProtectedRoute";
 import {IfAuthenticatedRoute} from "../common/IfAuthenticatedRoute";
-import {Not_Found} from "./Not_Found";
+import {NotFound} from "./NotFound";
 import Authenticator from "../common/Authenticator";
 
 class Root extends React.Component{
@@ -58,7 +58,7 @@ class Root extends React.Component{
                         <IfAuthenticatedRoute session={this.state.valid_initial_session} path="/signup" component={Signup}/>
                         {/*/main will redirect to login if not authenticated else serve the main content*/}
                         <ProtectedRoute session={this.state.valid_initial_session} path="/main" component={Main}/>
-                        <Route component={Not_Found}/>
+                        <Route component={NotFound}/>
                     </Switch>
                 </BrowserRouter>
         )
