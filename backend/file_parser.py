@@ -184,8 +184,7 @@ def generate_collegetxt_list():
         data = f.read().split('\n')
         cleaned_data = []
         for college in data: # clean the names
-            # TODO: Figure out locations: , East Bay, Fresno, etc... California State University
-            name = college.replace('&', 'and')
+            name = college # moved cleaning elsewhere
             cleaned_data.append(name)
     college_list = cleaned_data
     return cleaned_data

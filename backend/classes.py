@@ -16,7 +16,7 @@ class StudentProfile(Document):
     college_class = IntField(min_value=2016, max_value=3000)
 
 class College(Document):
-    name = StringField(required=True, max_length=50, unique=True)
+    name = StringField(required=True, max_length=100, unique=True)
     # Longest college name in colleges.txt is 50 characters:
     # SUNY College of Environmental Science and Forestry
     city = StringField(max_length=30) #, required=True)
