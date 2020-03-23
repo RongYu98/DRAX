@@ -4,6 +4,7 @@ from flask_cors import CORS
 from mongoengine import *
 
 from classes import Account
+from classes import College
 
 import hash_utils
 
@@ -114,7 +115,14 @@ def get_college_list():
             query = query & Q(size=size)
     if 'major' in info: # left and right
         major_left = info["major"]["left"]
+        majors = []
+        if major_left not in {"", None}:
+            majors.append(major_left)
         major_right = info["major"]["right"]
+        if major_left not in {"", None}:
+            majors.append(major_right)
+        if majors != []:
+            query = query & Q(majors__in=majors)
     if 'max_ranking' in info:
         max_ranking = info["max_ranking"]
         if max_ranking not in {"", None}:
@@ -154,7 +162,7 @@ def get_college_list():
     elif sort == "cost":
         query_result = College.objects(query).order_by('cost')
     elif sort == "admission":
-        query_result = College.objects(query).order_by('admission_rate')
+        query_result = College.objects(query).order_by('-admission_rate')
     else:
         query_result = College.objects(query).order_by('name')
     college_list = []

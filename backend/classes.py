@@ -27,6 +27,7 @@ class College(Document):
     completion_rate = FloatField()
     size = StringField()#required=True, max_length=6)
     median_debt = StringField()#required=True, max_length=6)
+    salary = StringField()
     in_cost = IntField()
     out_cost = IntField()
     avg_gpa = FloatField(min_value=0.0, max_value=5.0)
