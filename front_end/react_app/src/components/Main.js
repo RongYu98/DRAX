@@ -9,7 +9,7 @@ import Authenticator from "../common/Authenticator";
 import Track from "./Dashboard_Right/Track";
 import {BrowserRouter, Route, Switch, Redirect, Link} from "react-router-dom";
 import style from '../gui/css/center.module.css';
-import {Not_Found} from "./Not_Found";
+import {NotFound} from "./NotFound";
 
 class Main extends React.Component{
     static tab_enum =  {
@@ -82,7 +82,7 @@ class Main extends React.Component{
                     <Route path='/main/track/' render={props => <Track {...props} /> } />
                     <Route path='/main/track/:college_id' render={props => <Track {...props} />} />
                     <Route path='/main/my_page/' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
-                    <Route  component={Not_Found}/>
+                    <Route  component={NotFound}/>
                 </Switch>
 
             </div>
