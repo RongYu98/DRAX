@@ -53,9 +53,13 @@ $( document ).ready(function() {
         target.addClass("active");
     });
     
-    // target : sort by college recommendation button
-    // event handler which disables sort by college recommendation button once it is clicked
-    $("#sort-btn").on("click", function(){
-        $("#sort-btn").prop("disabled", true);
+    // target : scatterplot modal buttons
+    // event handler which add "blocked" attribute to clicked scatterplot modal button
+    $(".plot-modal-option-btn").on("click", function(){
+        var target = $(this);
+        $('.plot-modal-option-btn').each(function(index, value) {
+            $(this).removeAttr("disabled");
+        });
+        target.attr('disabled', 'disabled');
     });
 });
