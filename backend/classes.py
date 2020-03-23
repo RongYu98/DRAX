@@ -27,7 +27,9 @@ class College(Document):
     completion_rate = FloatField()
     size = StringField()#required=True, max_length=6)
     median_debt = StringField()#required=True, max_length=6)
-    cost = StringField(max_length=6)
+    in_cost = IntField()
+    out_cost = IntField()
+    avg_gpa = FloatField(min_value=0.0, max_value=5.0)
     majors = ListField()
     ranking = IntField(min_value=1, max_value=601) # StringField(max_length=4)
     avg_sat_math = IntField(max_length=3)
@@ -57,3 +59,13 @@ class Application(Document):
     is_verified = BooleanField() # make this required later?
 
 
+class HighSchool(Document):
+    name = StringField(reqired=True)
+    city = StringField(reqired=True)
+    state = StringField(reqired=True, unqiue_with=(name, city))
+    reading_prof = IntField(min_value=0, max_value=100)
+    math_prof = IntField(mind_value=0, max_value=100)
+    grad_rate = IntField(mind_value=0, max_value=100)
+    avg_sat = IntField() # SAT might change again
+    avg_act = IntField(min_value=0, max_value=36)
+    ap_enroll = IntField(min_value=0, max_value=100)
