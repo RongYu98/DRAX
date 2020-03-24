@@ -99,6 +99,7 @@ def get_college_list():
     if info == None:
         info = request.form
     query = Q()
+    
     # Check filters
     if 'name' in info:
         name = info["name"]
@@ -160,56 +161,81 @@ def get_college_list():
             query = query & Q(avg_act_composite__lte=act_max)
     if 'policy' in info: # strict or lax
         policy = info["policy"]#do stuff with this after clarification
+    
+    student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+    residence_state = student.residence_state
+    
     # Check sorting method
     sort = ""
     if 'sort' in info: # name, admission, cost, ranking
         sort = info["sort"]
     if sort == "recommendation":
-        student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
         query_result = College.objects(query)
+        # Return college list with recommendation scores
         college_list = []
         for result in query_result:
             score = algorithms.compute_recommendation_score(result, student)
+            #if score < 20: # Eliminate college if the recommendation score is below a certain threshold
+            if residence_state == result.state:
+                cost = result.in_cost
+            else:
+                cost = result.out_cost
             college = {
                 'name': result.name,
                 'state': result.state,
                 'institution': result.institution,
                 'admission_rate': result.admission_rate,
                 'completion_rate': result.completion_rate,
-                'tuition': result.in_cost,
+                'tuition': cost,
                 'debt': result.median_debt,
                 'ranking': result.ranking,
                 'size': result.size,
                 'college_id': str(result.id),
                 'recommendation': score
                 }
-            college_list.append(college) #need to sort results by score
+            college_list.append(college)
+        def get_recommendation(c):
+            return c["recommendation"]
+        college_list.sort(reverse=True, key=get_recommendation)
         return jsonify(status=200, result="OK", colleges = college_list)
     elif sort == "ranking":
         query_result = College.objects(query).order_by('ranking')
-    elif sort == "cost":
-        query_result = College.objects(query).order_by('in_cost') #need to use in/out of state cost depending on residence
     elif sort == "admission":
         query_result = College.objects(query).order_by('-admission_rate')
-    else:
+    elif sort == "name":
         query_result = College.objects(query).order_by('name')
+    else:
+        query_result = College.objects(query)
+    
+    # Return college list
     college_list = []
     for result in query_result:
+        if residence_state == result.state:
+            cost = result.in_cost
+        else:
+            cost = result.out_cost
         college = {
             'name': result.name,
             'state': result.state,
             'institution': result.institution,
             'admission_rate': result.admission_rate,
             'completion_rate': result.completion_rate,
-            'tuition': result.in_cost,
+            'tuition': cost,
             'debt': result.median_debt,
             'ranking': result.ranking,
             'size': result.size,
             'college_id': str(result.id),
             }
         college_list.append(college)
+    if sort == "cost":
+        def get_tuition(c):
+            cost = c["tuition"]
+            if cost != None:
+                return cost
+            else:
+                return 0
+        college_list.sort(key=get_tuition)
     return jsonify(status=200, result="OK", colleges = college_list)
-
                  
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9000, debug=True)
