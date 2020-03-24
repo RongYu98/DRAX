@@ -142,15 +142,23 @@ def get_size(size):
 def import_college_scorecard(scorecard, colleges):
     f = open(colleges, "r")
     college_list = []
+    mod_list = []
     for c in f:
-        college_list.append(c.rstrip())
+        n = c.rstrip()
+        college_list.append(n)
+        mod_list.append(n.replace("&", "and").replace(",", "").replace("The ", ""))
     f.close()
     with open(scorecard) as sc:
         sc_reader = csv.reader(sc)
         for line in sc_reader:
-            name = line[3]
-            if name in college_list:
-                print(name)
+            sc_name = line[3]
+            sc_mod_name = sc_name.replace("-", " ").replace("The ", "").replace("Saint", "St")
+            name = ""
+            if sc_name in college_list:
+                name = sc_name
+            elif sc_mod_name in mod_list:
+                name = college_list[mod_list.index(sc_mod_name)]
+            if name != "":
                 city = line[4]
                 state = line[5]
                 region = get_region(line[18], state)
@@ -158,21 +166,21 @@ def import_college_scorecard(scorecard, colleges):
                 admission_rate = line[36]
                 size = get_size(int(line[290]))
                 median_debt = line[1504]
+                salary = line[1664]
                 if admission_rate != "NULL":
                     college = College(
                         name=name, city=city, state=state, region=region, institution=institution,
-                        admission_rate=admission_rate, size=size, median_debt=median_debt,
+                        admission_rate=admission_rate, size=size, median_debt=median_debt, salary = salary,
                     )
                 else:
                     college = College(
                         name=name, city=city, state=state, region=region, institution=institution,
-                        size=size, median_debt=median_debt,
+                        size=size, median_debt=median_debt, salary = salary,
                     )
                 try:
                     college.save()
                 except:
                     print("Error importing college: " + name)
-
 
 # global variable to store the file content of colleges.txt in list form
 college_list = None
@@ -183,17 +191,16 @@ def generate_collegetxt_list():
         data = f.read().split('\n')
         cleaned_data = []
         for college in data: # clean the names
-            # TODO: Figure out locations: , East Bay, Fresno, etc... California State University
-            name = college.replace('&', 'and')
+            name = college # moved cleaning elsewhere
             cleaned_data.append(name)
     college_list = cleaned_data
     return cleaned_data
 
 def get_collegetxt_list(refresh=False):
-    global colleges_list
-    if (colleges_list == None or refresh == False):
+    global college_list
+    if (college_list == None or refresh == False):
         return generate_collegetxt_list() # wait, will our global variable be refreshed?
-    return colleges_list
+    return college_list
 
 '''
 college = College(name='Massachusetts Institute of Technology')

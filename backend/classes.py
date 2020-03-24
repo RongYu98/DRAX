@@ -16,7 +16,7 @@ class StudentProfile(Document):
     college_class = IntField(min_value=2016, max_value=3000)
 
 class College(Document):
-    name = StringField(required=True, max_length=50, unique=True)
+    name = StringField(required=True, max_length=100, unique=True)
     # Longest college name in colleges.txt is 50 characters:
     # SUNY College of Environmental Science and Forestry
     city = StringField(max_length=30) #, required=True)
@@ -27,7 +27,10 @@ class College(Document):
     completion_rate = FloatField()
     size = StringField()#required=True, max_length=6)
     median_debt = StringField()#required=True, max_length=6)
-    cost = StringField(max_length=6)
+    salary = StringField()
+    in_cost = IntField()
+    out_cost = IntField()
+    avg_gpa = FloatField(min_value=0.0, max_value=5.0)
     majors = ListField()
     ranking = IntField(min_value=1, max_value=601) # StringField(max_length=4)
     avg_sat_math = IntField(max_length=3)
@@ -57,3 +60,13 @@ class Application(Document):
     is_verified = BooleanField() # make this required later?
 
 
+class HighSchool(Document):
+    name = StringField(reqired=True)
+    city = StringField(reqired=True)
+    state = StringField(reqired=True, unqiue_with=(name, city))
+    reading_prof = IntField(min_value=0, max_value=100)
+    math_prof = IntField(mind_value=0, max_value=100)
+    grad_rate = IntField(mind_value=0, max_value=100)
+    avg_sat = IntField() # SAT might change again
+    avg_act = IntField(min_value=0, max_value=36)
+    ap_enroll = IntField(min_value=0, max_value=100)

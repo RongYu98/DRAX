@@ -1,10 +1,10 @@
 import urllib.request # for connecting and getting html content
 from bs4 import BeautifulSoup # for parsing html
-import fileParser as file_parser # we'll chane the names later...
+import file_parser
 
 from mongoengine import *
 connect('account', host='localhost', port=27017)
-from classes import College
+from classes import College, HighSchool
 
 # Scraping Algorithm:
 # 1. Get the HTML text, make it pretty.
@@ -87,10 +87,10 @@ def update_college_ranking():
             
 
 def get_college_data_data(name):
-    name = name.replace(' ', '-') # stony brook becomes stony-brook
+    url_name = college_name_conversion(name)
     url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/collegedata/'
-    url = url + name
-
+    url = url + url_name
+    print(url)
     majors = []
     fresh_grades = []
     pop_stats = []
@@ -115,8 +115,10 @@ def get_college_data_data(name):
     sat_math_index = fresh_grades.index('SAT Math')+1
     sat_ebrw_index = fresh_grades.index('SAT EBRW')+1
     act_comp_index = fresh_grades.index('ACT Composite')+1
-    avg_gpa = float(fresh_grades[avg_gpa_index])
-
+    avg_gpa = None
+    if (fresh_grades[avg_gpa_index]!='Not reported'):
+        avg_gpa = float(fresh_grades[avg_gpa_index])
+    
     # in case there are no values at the site
     avg_sat_math, sat_math_25th, sat_math_75th = None, None, None
     if ('average' in fresh_grades[sat_math_index]):
@@ -166,7 +168,13 @@ def get_college_data_data(name):
         index += 1
     if ('Out-of-state:' in cost[index]):
         out_state = cost[index].split()[1].replace(',','')[1:]
-    
+    if ('Out-of-state:' not in cost[index] and
+        'In-state:' not in cost[index] and
+        cost[index] != 'Not available' and 
+        in_state==None and out_state==None):
+        # then this means that this is a private university, one cost
+        in_state = cost[index].strip().replace(',','')[1:]
+        out_state = cost[index].strip().replace(',','')[1:]
     # Student Population Statss:
     # <div class="statbar">
     data = soup.find("div", {"class":"statbar"})
@@ -178,7 +186,9 @@ def get_college_data_data(name):
     survival_stats = [d.strip() for d in data.strings if d.strip()!='']
     # we only want completeion rate within 4 years from this:
     index = survival_stats.index('Students Graduating Within 4 Years')+1
-    completion_rate = float(survival_stats[index].strip().replace('%',''))
+    completion_rate = None
+    if (survival_stats[index]!='Not reported'):
+        completion_rate = float(survival_stats[index].strip().replace('%',''))
 
     # print(majors)
     # print(fresh_grades)
@@ -195,11 +205,111 @@ def get_college_data_data(name):
     return {'majors':majors, 'freshman grades':fresh_grades, 'cost':cost,
             'pop_stats':pop_stats}
 
-
-def update_college_scorecard(name):
+def update_college_data_data(name):
+    # clean for db class storage purposes
     data = get_college_data_data(name)
+    colleges = file_parser.get_collegetxt_list()
+    print(name)
     
+    try:
+        c = College.objects.get(name=name)    
+    except Exception as e:
+        print(e)
+        print("College Not in DB: "+name)
+        c = College(name=name)
+        c.save()
+
+    c.completion_rate = data['completion_rate']
+    c.majors = data['majors']
+    c.avg_gpa = data['avg gpa']
+    c.avg_sat_math = data['avg sat math']
+    c.sat_math_25 = data['25th sat math']
+    c.sat_math_75 = data['75th sat math']
+    c.avg_sat_ebrw = data['avg sat ebrw']
+    c.sat_ebrw_25 = data['25th sat ebrw']
+    c.sat_ebrw_75 = data['75th sat ebrw']
+    c.avg_act_composite = data['avg act']
+    c.act_composite_25 = data['25th act']
+    c.act_composite_75 = data['75th act']
+    c.in_cost = data['in cost']
+    c.out_cost = data['out cost']
+    c.save() # should be fine?
+
+def college_name_conversion(name):
+    # TAILORED FOR COLLEGEDATA.COM ONLY
+    
+    # Remove leading "The"
+    if (name[:4]=="The "):
+        name = name[4:]
+    # Replace commas from location:
+    # Example "University, East Bay" -> "University Easy Bay"
+    name = name.replace(',', '')
+    # Remove amperstamps
+    name = name.replace(' & ', ' ')
+    # Replace SUNY >:(
+    name = name.replace('SUNY', 'State University of New York')
+    # Replace spaces with dashes
+    name = name.replace(' ', '-')
+    return name
+def update_all_colleges():
+    colleges = file_parser.get_collegetxt_list()
+    for name in colleges:
+        if name=='':
+            continue
+        #name = clean_college_name(name)
+        #print(name)
+        update_college_data_data(name)
+        
+    
+
+def get_highschool_info(name, city, state):
+    name = name.replace(' ','-')+'-'+city.replace(' ','-')+'-'+state+'/'
+    name = name.lower()
+    url = 'https://www.niche.com/k12/'+name
+    # url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/'+name
+    # print(url)
+    url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/academic-magnet-high-school-north-charleston-sc/'
+    soup = get_pretty_html(url)
+
+    data = soup.find_all("div", {"class":"profile__bucket--1"})
+    data = data[5] # 5th one in the list with this class in div...
+    percent_reading = [x for x in data.strings][2]
+    data = data.next_sibling
+    percent_math = [x for x in data.strings][2]
+    data = data.next_sibling
+    data = [x for x in data.strings]
+    grad_rate = data[2]
+    avg_sat = data[5]
+    avg_act = data[11]
+    ap_enroll = data[16]
+    return {'reading':percent_reading, 'math':percent_math,
+            'grad rate':grad_rate, 'sat':avg_sat, 'act':avg_act,
+            'ap':ap_enroll}
+def update_highschool_data(name, city, state):
+    data = get_highschool_info(name, city, state)
+    try:
+        c = HighSchool.objects.get(name=name, city=city, state=state)
+    except Exception as e:
+        print(e)
+        print("High School Not in DB: "+name)
+        c = HighSchool(name=name, city=city, state=state)
+        c.save()
+
+    # [:-1] is to remove the % sign at the end
+    c.reading_prof = int(data["reading"][:-1])
+    c.math_prof = int(data["math"][:-1])
+    c.grad_rate = int(data["grad rate"][:-1])
+    c.avg_sat = int(data["sat"])
+    c.avg_act = int(data["act"])
+    c.ap_enroll = int(data["ap"][:-1])
+    c.save()
+
 
 # tests:
 # print(get_college_ranking())
-print(get_college_data_data("Stony Brook University"))
+# print(get_college_data_data("Stony Brook University"))
+# update_college_data_data("Stony Brook University")
+# update_college_ranking()
+# print(get_highschool_info("Stuyvesant High School", 'New York', "NY"))
+# print(update_highschool_data("Stuyvesant High School", 'New York', "NY"))
+update_all_colleges()
