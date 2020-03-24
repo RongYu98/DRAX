@@ -4,9 +4,11 @@ from flask_cors import CORS
 from mongoengine import *
 
 from classes import Account
+from classes import StudentProfile
 from classes import College
 
 import hash_utils
+import algorithms
 
 connect('account', host='localhost', port=27017)
 connect('college', alias='college')
@@ -36,7 +38,8 @@ def signup():
     # try to save the data
     # if the username is not unique, pymongo will tell us :D
     try:
-        account.save()
+        student = account.save()
+        #profile = StudentProfile(student=student).save()
         session['username'] = username
         return jsonify(status = 200, result = "OK")
     except ValidationError as e:
@@ -88,12 +91,14 @@ def alive():
 
 @app.route('/api/get_college_list', methods=['POST'])
 def get_college_list():
+    # Check if logged in
     if 'username' not in session or session['username'] == None:
         return jsonify(status=400, result="Not Logged In")
     info = request.json
     if info == None:
         info = request.form
     query = Q()
+    # Check filters
     if 'name' in info:
         name = info["name"]
         if name not in {"", None}:
@@ -153,14 +158,36 @@ def get_college_list():
         if act_max not in {"", None}:
             query = query & Q(avg_act_composite__lte=act_max)
     if 'policy' in info: # strict or lax
-        policy = info["policy"]
+        policy = info["policy"]#do stuff with this after clarification
+    # Check sorting method
     sort = ""
     if 'sort' in info: # name, admission, cost, ranking
         sort = info["sort"]
-    if sort == "ranking":
+    if sort == "recommendation":
+        student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+        query_result = College.objects(query)
+        college_list = []
+        for result in query_result:
+            score = algorithms.compute_recommendation_score(result, student)
+            college = {
+                'name': result.name,
+                'state': result.state,
+                'institution': result.institution,
+                'admission_rate': result.admission_rate,
+                'completion_rate': result.completion_rate,
+                'tuition': result.in_cost,
+                'debt': result.median_debt,
+                'ranking': result.ranking,
+                'size': result.size,
+                'college_id': str(result.id),
+                'recommendation': score
+                }
+            college_list.append(college) #need to sort results by score
+        return jsonify(status=200, result="OK", colleges = college_list)
+    elif sort == "ranking":
         query_result = College.objects(query).order_by('ranking')
     elif sort == "cost":
-        query_result = College.objects(query).order_by('cost')
+        query_result = College.objects(query).order_by('in_cost') #need to use in/out of state cost depending on residence
     elif sort == "admission":
         query_result = College.objects(query).order_by('-admission_rate')
     else:
@@ -173,7 +200,7 @@ def get_college_list():
             'institution': result.institution,
             'admission_rate': result.admission_rate,
             'completion_rate': result.completion_rate,
-            'tuition': result.cost,
+            'tuition': result.in_cost,
             'debt': result.median_debt,
             'ranking': result.ranking,
             'size': result.size,
