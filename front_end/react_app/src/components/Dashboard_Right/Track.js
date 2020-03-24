@@ -1,6 +1,7 @@
 import React from "react";
 import '../../gui/css/track_application.css';
 import Application from "./Application";
+let badge_enum = Application.badge_enum;
 
 const SUMMARY_ENDPOINT = "";
 const HIGHSCHOOL_ENDPOINT = "";
@@ -23,15 +24,18 @@ class Track extends React.Component{
                 name: ""
             },
             high_schools: [],
-
+            applications: [],
+            current_page_num: 1
         }
-
+        this.button_list = [];
         this.fetch_summary = this.fetch_summary.bind(this);
         this.searchClicked = this.searchClicked.bind(this);
         this.fetch_highschool = this.fetch_highschool.bind(this);
         this.get_high_school = this.get_high_school.bind(this);
         this.high_school_checked = this.high_school_checked.bind(this);
         this.application_checked = this.application_checked.bind(this);
+        this.fetch_applications = this.fetch_applications.bind(this);
+        this.get_applications = this.get_applications.bind(this);
     }
 
     // dummy fetch
@@ -51,6 +55,137 @@ class Track extends React.Component{
             result.push(`High School ${i}`);
         }
         this.setState({high_schools: result});
+    }
+
+    // dummy fetch
+    async fetch_applications(){
+        let application_list = [1,2,3];
+        this.setState({applications: application_list});
+    }
+
+    // dummy get
+    get_applications(){
+        let applications = [];
+        applications.push(
+            <Application
+                btn_info={{
+                    style: badge_enum.SUCCESS,
+                    username: "test1",
+                    acceptance: "Accepted",
+                    high_school: "test1",
+                    high_school_location: "test1"
+                }}
+                personal={{
+                    state: "test1",
+                    math: "test1",
+                    ap: "test1",
+                    majors1: "test1",
+                    class: "test1",
+                    ebrw: "test1",
+                    gpa: "test1",
+                    majors2: "test1"
+                }}
+                sat2={{
+                    chemistry: "test1",
+                    eco_bio: "test1",
+                    literature: "test1",
+                    mol_bio: "test1",
+                    math_I: "test1",
+                    math_II: "test1",
+                    physics: "test1",
+                    us_history: "test1",
+                    world_history: "test1"
+                }}
+                act={{
+                    english: "test1",
+                    math: "test1",
+                    reading: "test1",
+                    science: "test1",
+                    composite: "test1"
+                }}
+            />
+        );
+
+        applications.push(
+            <Application
+                btn_info={{
+                    style: badge_enum.WARNING,
+                    username: "test1",
+                    acceptance: "wait-listed",
+                    high_school: "test1",
+                    high_school_location: "test1"
+                }}
+                personal={{
+                    state: "test1",
+                    math: "test1",
+                    ap: "test1",
+                    majors1: "test1",
+                    class: "test1",
+                    ebrw: "test1",
+                    gpa: "test1",
+                    majors2: "test1"
+                }}
+                sat2={{
+                    chemistry: "test1",
+                    eco_bio: "test1",
+                    literature: "test1",
+                    mol_bio: "test1",
+                    math_I: "test1",
+                    math_II: "test1",
+                    physics: "test1",
+                    us_history: "test1",
+                    world_history: "test1"
+                }}
+                act={{
+                    english: "test1",
+                    math: "test1",
+                    reading: "test1",
+                    science: "test1",
+                    composite: "test1"
+                }}
+            />
+        );
+
+        applications.push(
+            <Application
+                btn_info={{
+                    style: badge_enum.DANGER,
+                    username: "test1",
+                    acceptance: "denied",
+                    high_school: "test1",
+                    high_school_location: "test1"
+                }}
+                personal={{
+                    state: "test1",
+                    math: "test1",
+                    ap: "test1",
+                    majors1: "test1",
+                    class: "test1",
+                    ebrw: "test1",
+                    gpa: "test1",
+                    majors2: "test1"
+                }}
+                sat2={{
+                    chemistry: "test1",
+                    eco_bio: "test1",
+                    literature: "test1",
+                    mol_bio: "test1",
+                    math_I: "test1",
+                    math_II: "test1",
+                    physics: "test1",
+                    us_history: "test1",
+                    world_history: "test1"
+                }}
+                act={{
+                    english: "test1",
+                    math: "test1",
+                    reading: "test1",
+                    science: "test1",
+                    composite: "test1"
+                }}
+            />
+        );
+        return applications;
     }
 
     high_school_checked(event){
@@ -101,6 +236,77 @@ class Track extends React.Component{
         return result;
     }
 
+    is_whole_number(n) {
+        let result = (n - Math.floor(n)) !== 0;
+
+        if (result)
+            return false;
+        else
+            return true;
+    }
+
+    // this will depend on the colleges
+    get_page_buttons(){
+        let page_list = [];
+        let new_button_list = [];
+        let max_pages = this.state.applications.length / 10;
+        if(!this.is_whole_number(max_pages)) {
+            max_pages = Math.floor(max_pages) + 1;
+        }
+        let next_ten_pages = this.state.current_page_num + 9;
+        let old_beginning = this.button_list[0];
+        let old_end = this.button_list[this.button_list.length - 1];
+        if(this.state.applications.length <= 10) {
+            max_pages = 1;
+        }
+
+        if(this.state.current_page_num === 1){
+            for(let i = 1 ; i <= max_pages && i <= next_ten_pages; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if(this.state.current_page_num === old_end && !(this.button_list.length < 10) && (this.state.current_page_num !== max_pages)){
+            for(let i = old_end; i <= max_pages && i <= next_ten_pages; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if(this.state.current_page_num === old_beginning){
+            let previous_ten = this.state.current_page_num - 9;
+            if(previous_ten < 1) previous_ten = 1;
+            for(let i = previous_ten ; i <= max_pages && i <= old_beginning; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if((this.button_list.includes(this.state.current_page_num)) || (this.button_list.length < 10)){
+            for(let i = old_beginning ; i <= old_end; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }
+        if(this.state.applications.length === 0){
+            this.button_list = [];
+            return [];
+        }
+        this.button_list = new_button_list;
+        return page_list;
+    }
+
     application_checked(event){
         let current_application = this.state.filter_data.application_status;
         let status = event.target.id;
@@ -125,6 +331,8 @@ class Track extends React.Component{
 
     render() {
         let high_schools = this.get_high_school();
+        let page_buttons = this.get_page_buttons();
+        let applications = this.get_applications();
         return (
             <div className="right-content">
                     <div className="wrap-search-result">
@@ -347,22 +555,12 @@ class Track extends React.Component{
                             {/* "button" tag with class="list-group-item list-group-item-action" and "div" tag with class="carousel slide" are a pair */}
                             {/* Frontend ajax should add these pairs with data inside the tag below */}
                             <div className="list-group" id="application-list">
-                                <Application/>
+                                {applications}
                             </div>
                             <nav>
                                 {/* Initially, there should be no tags inside the tag below. */}
                                 <ul className="pagination" id="pagination">
-                                    {/* "active" class below means the current active page button  */}
-                                    {/* first page button must be active in default after completing search */}
-                                    <li className="page-item">
-                                        <button className="page-link shadow-none active">1</button>
-                                    </li>
-                                    <li className="page-item">
-                                        <button className="page-link shadow-none">2</button>
-                                    </li>
-                                    <li className="page-item">
-                                        <button className="page-link shadow-none">3</button>
-                                    </li>
+                                    {page_buttons}
                                 </ul>
                             </nav>
                         </div>
