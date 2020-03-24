@@ -89,14 +89,12 @@ def alive():
         return jsonify(status=400, result="Not Logged In")
     return jsonify(status=200, result="OK")
 
+
 @app.route('/api/get_profile', methods=['POST'])
 def get_profile():
     # Check if logged in
     if 'username' not in session or session['username'] == None:
         return jsonify(status=400, result="Not Logged In")
-    info = request.json
-    if info == None:
-        info = request.form
     # Get student profile
     student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
     profile = {
@@ -106,9 +104,44 @@ def get_profile():
         'high_school_state': student.high_school_state,
         'gpa': student.gpa,
         'college_class': student.college_class,
-        'grades': student.grades, # dictionary with majors, SAT exams, ACT exams, and # of APs passed
         }
+    grades = student.grades
+    for field in grades:
+        profile[field] = grades[field]
     return jsonify(status=200, result="OK", profile = profile)
+
+@app.route('/api/save_profile', methods=['POST'])
+def save_profile():
+    # Check if logged in
+    if 'username' not in session or session['username'] == None:
+        return jsonify(status=400, result="Not Logged In")
+    # Get student account
+    account = Account.objects.get(username=session['username'])
+    # Get student profile
+    student = StudentProfile.objects.get(student=account)
+    info = request.json
+    if info == None:
+        info = request.form
+    grades = {}
+    for field in info:
+        if field == 'password':
+            digest = hash_utils.hmac_hash(info["password"], account.salt)
+            account.update(set__hashed_password=digest)
+        elif field == 'residence_state':
+            student.update(set__residence_state=info["residence_state"])
+        elif field == 'high_school_name':
+            student.update(set__high_school_name=info["high_school_name"])
+        elif field == 'high_school_city':
+            student.update(set__high_school_city=info["high_school_city"])
+        elif field == 'high_school_state':
+            student.update(set__high_school_state=info["high_school_state"])
+        elif field == 'gpa':
+            student.update(set__gpa=info["gpa"])
+        else:
+            grades[field] = info[field]
+    student.update(set__grades=grades)
+    return jsonify(status = 200, result = "OK")
+
 
 @app.route('/api/get_college_list', methods=['POST'])
 def get_college_list():
