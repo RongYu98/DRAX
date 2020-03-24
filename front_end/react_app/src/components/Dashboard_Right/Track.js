@@ -323,6 +323,7 @@ class Track extends React.Component{
     componentDidMount() {
         this.fetch_summary();
         this.fetch_highschool();
+        this.fetch_applications();
     }
 
     searchClicked(event){
