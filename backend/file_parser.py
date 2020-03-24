@@ -18,7 +18,7 @@ def import_student_data(filename):
              'high_school_state', 'gpa', 'college_class', 'major_1',
              'major_2', 'sat_math', 'sat_ebrw', 'act_english', 'act_math',
              'act_reading', 'act_science', 'act_composite', 'sat_lit',
-             'sat_us', 'sat_world', 'sat_math_1', 'sat_math 2', 'sat_eco_bio',
+             'sat_us', 'sat_world', 'sat_math_1', 'sat_math_2', 'sat_eco_bio',
              'sat_mol_bio', 'sat_chem', 'sat_physics', 'ap_passed']
     
     for line in lines[1:]:
@@ -153,8 +153,9 @@ def import_college_scorecard(scorecard, colleges):
     f.close()
     with open(scorecard) as sc:
         sc_reader = csv.reader(sc)
+        header = next(sc_reader)
         for line in sc_reader:
-            sc_name = line[3]
+            sc_name = line[header.index("INSTNM")]
             sc_mod_name = sc_name.replace("-", " ").replace("The ", "").replace("Saint", "St")
             name = ""
             if sc_name in college_list:
@@ -162,14 +163,14 @@ def import_college_scorecard(scorecard, colleges):
             elif sc_mod_name in mod_list:
                 name = college_list[mod_list.index(sc_mod_name)]
             if name != "":
-                city = line[4]
-                state = line[5]
-                region = get_region(line[18], state)
-                institution = institution_type(line[16])
-                admission_rate = line[36]
-                size = get_size(int(line[290]))
-                median_debt = line[1504]
-                salary = line[1664]
+                city = line[header.index("CITY")]
+                state = line[header.index("STABBR")]
+                region = get_region(line[header.index("REGION")], state)
+                institution = institution_type(line[header.index("CONTROL")])
+                admission_rate = line[header.index("ADM_RATE")]
+                size = get_size(int(line[header.index("UGDS")]))
+                median_debt = line[header.index("GRAD_DEBT_MDN")]
+                salary = line[header.index("MN_EARN_WNE_P6")]
                 if admission_rate != "NULL":
                     college = College(
                         name=name, city=city, state=state, region=region, institution=institution,
