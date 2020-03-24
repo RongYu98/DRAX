@@ -2,6 +2,12 @@ import React from "react";
 
 class Application extends React.Component{
 
+    static badge_enum = {
+        WARNING: "badge badge-warning",
+        DANGER: "badge badge-danger",
+        SUCCESS: "badge badge-success"
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -39,17 +45,18 @@ class Application extends React.Component{
 
 
     render() {
+        let {btn_info,  personal, sat2, act} = this.props;
         return (
             <React.Fragment>
                 <button className="list-group-item list-group-item-action" onClick={this.toggle_carousel}>
                     {/* student's username should be included inside h5 tag */}
-                    <h5 className="username">username1<br/>
+                    <h5 className="username">{btn_info.username}<br/>
                         {/* accpeted: badge-success | denied: badge-danger | rest: badge-warning */}
-                        <span className="badge badge-success">Accepted</span>
+                        <span className={btn_info.style}>{btn_info.acceptance}</span>
                     </h5>
                     {/* high school name should be one the left side of br tag
                     high school city  should be combined with high school state by comma and this combination should be on the right side of br tag and inside h5 tag */}
-                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
+                    <h5 className="high-school">{btn_info.high_school}<br/>{btn_info.high_school_location}</h5>
                 </button>
                 {/* "div" tag's "id" property value should be the student's username*/}
                 <div id="username1" style={this.state.carousel_display} className="carousel slide">
@@ -75,19 +82,19 @@ class Application extends React.Component{
                                 <tr>
                                     {/* add data in b tags */}
                                     {/* if there is no data, add dash in b tags */}
-                                    <td><b>NY</b><br/><label>Residence state</label></td>
-                                    <td><b>800</b><br/><label>SAT Math</label></td>
-                                    <td><b>5</b><br/><label>APs Passed</label></td>
-                                    <td><b>Theology Religious Vocation</b><br/><label>Major 1</label>
+                                    <td><b>{personal.state}</b><br/><label>Residence state</label></td>
+                                    <td><b>{personal.math}</b><br/><label>SAT Math</label></td>
+                                    <td><b>{personal.ap}</b><br/><label>APs Passed</label></td>
+                                    <td><b>{personal.majors1}</b><br/><label>Major 1</label>
                                     </td>
                                 </tr>
                                 <tr>
                                     {/* add data in b tags */}
                                     {/* if there is no data, add dash in b tags */}
-                                    <td><b>2023</b><br/><label>College class</label></td>
-                                    <td><b>800</b><br/><label>SAT EBRW</label></td>
-                                    <td><b>3.8</b><br/><label>GPA</label></td>
-                                    <td><b>Public Administration Social Service</b><br/><label>Major
+                                    <td><b>{personal.class}</b><br/><label>College class</label></td>
+                                    <td><b>{personal.ebrw}</b><br/><label>SAT EBRW</label></td>
+                                    <td><b>{personal.gpa}</b><br/><label>GPA</label></td>
+                                    <td><b>{personal.majors2}</b><br/><label>Major
                                         2</label></td>
                                 </tr>
                                 </tbody>
@@ -99,19 +106,19 @@ class Application extends React.Component{
                                 <tr>
                                     {/* add data in b tags */}
                                     {/* if there is no data, add dash in b tags */}
-                                    <td><b>800</b><br/><label>SAT2 Chemistry</label></td>
-                                    <td><b>800</b><br/><label>SAT2 Eco-Bio</label></td>
-                                    <td><b>800</b><br/><label>SAT2 Literature</label></td>
-                                    <td><b>800</b><br/><label>SAT2 Mol-Bio</label></td>
+                                    <td><b>{sat2.chemistry}</b><br/><label>SAT2 Chemistry</label></td>
+                                    <td><b>{sat2.eco_bio}</b><br/><label>SAT2 Eco-Bio</label></td>
+                                    <td><b>{sat2.literature}</b><br/><label>SAT2 Literature</label></td>
+                                    <td><b>{sat2.mol_bio}</b><br/><label>SAT2 Mol-Bio</label></td>
                                 </tr>
                                 <tr>
                                     {/* add data in b tags */}
                                     {/* if there is no data, add dash in b tags */}
-                                    <td><b>-</b><br/><label>SAT2 Math I</label></td>
-                                    <td><b>800</b><br/><label>SAT2 Math II</label></td>
-                                    <td><b>800</b><br/><label>SAT2 Physics</label></td>
-                                    <td><b>800</b><br/><label>SAT2 US History</label></td>
-                                    <td><b>800</b><br/><label>SAT2 World History</label></td>
+                                    <td><b>{sat2.math_I}</b><br/><label>SAT2 Math I</label></td>
+                                    <td><b>{sat2.math_II}</b><br/><label>SAT2 Math II</label></td>
+                                    <td><b>{sat2.physics}</b><br/><label>SAT2 Physics</label></td>
+                                    <td><b>{sat2.us_history}</b><br/><label>SAT2 US History</label></td>
+                                    <td><b>{sat2.world_history}</b><br/><label>SAT2 World History</label></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -122,11 +129,11 @@ class Application extends React.Component{
                                 <tr>
                                     {/* add data in b tags */}
                                     {/* if there is no data, add dash in b tags */}
-                                    <td><b>-</b><br/><label>ACT English</label></td>
-                                    <td><b>60</b><br/><label>ACT Math</label></td>
-                                    <td><b>40</b><br/><label>ACT Reading</label></td>
-                                    <td><b>40</b><br/><label>ACT Science</label></td>
-                                    <td><b>36</b><br/><label>ACT Composite</label></td>
+                                    <td><b>{act.english}</b><br/><label>ACT English</label></td>
+                                    <td><b>{act.math}</b><br/><label>ACT Math</label></td>
+                                    <td><b>{act.reading}</b><br/><label>ACT Reading</label></td>
+                                    <td><b>{act.science}</b><br/><label>ACT Science</label></td>
+                                    <td><b>{act.composite}</b><br/><label>ACT Composite</label></td>
                                 </tr>
                                 </tbody>
                             </table>

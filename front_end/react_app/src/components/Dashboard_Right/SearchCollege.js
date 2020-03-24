@@ -5,6 +5,7 @@ import {DropdownButton, Dropdown} from "react-bootstrap";
 import {SERVER_URL, STATUS_OK} from "../../common/Constants";
 
 const RECOMMENDED_COLLEGE_ENDPOINT = "/get_college_list";
+const MAJOR_ENDPOINT = "";
 
 class SeachCollege extends React.Component{
 
@@ -45,7 +46,8 @@ class SeachCollege extends React.Component{
                 act: {min: '', max: ''},
                 policy: "strict",
                 sort: SeachCollege.sort_enum.name
-            }
+            },
+            majors: {left: [], right: []}
         }
         this.button_list = [];
         this.filter_drop_down_clicked = this.filter_drop_down_clicked.bind(this);
@@ -55,6 +57,8 @@ class SeachCollege extends React.Component{
         this.fetch_new_college_list = this.fetch_new_college_list.bind(this);
         this.search_clicked = this.search_clicked.bind(this);
         this.sort_clicked = this.sort_clicked.bind(this);
+        this.fetch_majors = this.fetch_majors.bind(this);
+        this.get_majors = this.get_majors.bind(this);
     }
 
     sort_clicked(event){
@@ -175,7 +179,12 @@ class SeachCollege extends React.Component{
         return page_list;
     }
 
-    // dont know where to pull this data from, using a dummy list for testing
+    // dummy fetch
+    async fetch_majors(){
+
+    }
+
+    // dummy fetch
     async fetch_new_college_list(){
         // try{
         //     // deep copy
@@ -244,7 +253,7 @@ class SeachCollege extends React.Component{
         this.setState({college_list: list});
     }
 
-
+    // dummy get
     get_colleges(){
         let list = [];
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
@@ -270,6 +279,11 @@ class SeachCollege extends React.Component{
             )
         }
         return list;
+    }
+
+    // dummy get
+    get_majors(){
+
     }
 
 
