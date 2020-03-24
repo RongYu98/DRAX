@@ -89,6 +89,26 @@ def alive():
         return jsonify(status=400, result="Not Logged In")
     return jsonify(status=200, result="OK")
 
+@app.route('/api/get_profile', methods=['POST'])
+def get_profile():
+    # Check if logged in
+    if 'username' not in session or session['username'] == None:
+        return jsonify(status=400, result="Not Logged In")
+    info = request.json
+    if info == None:
+        info = request.form
+    # Get student profile
+    student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+    profile = {
+        'residence_state': student.residence_state,
+        'high_school_name': student.high_school_name,
+        'high_school_city': student.high_school_city,
+        'high_school_state': student.high_school_state,
+        'gpa': student.gpa,
+        'college_class': student.college_class,
+        'grades': student.grades, # dictionary with majors, SAT exams, ACT exams, and # of APs passed
+        }
+    return jsonify(status=200, result="OK", profile = profile)
 
 @app.route('/api/get_college_list', methods=['POST'])
 def get_college_list():

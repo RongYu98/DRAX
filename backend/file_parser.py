@@ -14,12 +14,12 @@ def import_student_data(filename):
 
     header = lines[0]
 
-    index = ['username', 'password', 'state', 'high school', 'high school city',
-             'high school state', 'gpa', 'college class', 'major 1',
-             'major 2', 'sat math', 'sat ebrw', 'act english', 'act math',
-             'act reading', 'act science', 'act composition', 'sat lit',
-             'sat us', 'sat world', 'sat math 1', 'sat math 2', 'sat eco bio',
-             'sat mol bui', 'sat chem', 'sat physics', 'ap passed']
+    index = ['username', 'password', 'state', 'high_school_name', 'high_school_city',
+             'high_school_state', 'gpa', 'college_class', 'major_1',
+             'major_2', 'sat_math', 'sat_ebrw', 'act_english', 'act_math',
+             'act_reading', 'act_science', 'act_composite', 'sat_lit',
+             'sat_us', 'sat_world', 'sat_math_1', 'sat_math 2', 'sat_eco_bio',
+             'sat_mol_bio', 'sat_chem', 'sat_physics', 'ap_passed']
     
     for line in lines[1:]:
         username = line[0]
@@ -51,8 +51,11 @@ def import_student_data(filename):
             student = account,
             gpa = float(line[index.index('gpa')]),
             residence_state=line[index.index('state')],
-            college_class=line[index.index('college class')])
-        for x in range(index.index('major 1'), len(index)):
+            high_school_name=line[index.index('high_school_name')],
+            high_school_city=line[index.index('high_school_city')],
+            high_school_state=line[index.index('high_school_state')],
+            college_class=line[index.index('college_class')])
+        for x in range(index.index('major_1'), len(index)):
             info = index[x]
             data = line[x]
             if data!='': # the field isn't empty

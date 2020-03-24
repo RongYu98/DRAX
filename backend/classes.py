@@ -12,7 +12,10 @@ class StudentProfile(Document):
                              reverse_delete_rule=CASCADE) 
     gpa = FloatField(min_value=0.0, max_value=5.0) # unweighted GPA goes up to 5.0?
     grades = DynamicField(default=dict)
-    residence_state = StringField(required=True, max_length=2) # store state acronym. 
+    residence_state = StringField(required=True, max_length=2) # store state acronym.
+    high_school_name = StringField()
+    high_school_city = StringField()
+    high_school_state = StringField(max_length=2)
     college_class = IntField(min_value=2016, max_value=3000)
 
 class College(Document):
