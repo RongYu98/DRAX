@@ -39,7 +39,8 @@ def signup():
     # if the username is not unique, pymongo will tell us :D
     try:
         student = account.save()
-        #profile = StudentProfile(student=student).save()
+        # Create a student profile
+        profile = StudentProfile(student=student).save()
         session['username'] = username
         return jsonify(status = 200, result = "OK")
     except ValidationError as e:
