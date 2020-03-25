@@ -203,6 +203,53 @@ def submit_admission_decision():
     return jsonify(status = 400, result = "Missing Fields")
 
 
+@app.route('/api/track_applications_list', methods=['POST'])
+def track_applications_list():
+    # Check if logged in
+    if 'username' not in session or session['username'] == None:
+        return jsonify(status=400, result="Not Logged In")
+    info = request.json
+    if info == None:
+        info = request.form
+    if 'college_name' in info:
+        college_name = info['college_name']
+        try:
+            college = College.objects.get(name=college_name)
+            applications = Application.objects(college=college)
+            profiles = []
+            for application in applications:
+                if 'statuses' in info:
+                    if application.status not in info['statuses']:
+                        continue
+                student = application.student
+                if 'high_schools' in info:
+                    if student.high_school_name not in info['high_schools']:
+                        continue
+                if 'college_class_min' in info:
+                    if student.college_class < info['college_class_min']:
+                        continue
+                if 'college_class_max' in info:
+                    if student.college_class > info['college_class_max']:
+                        continue
+                profile = {
+                    'username': student.student.username,
+                    'residence_state': student.residence_state,
+                    'high_school_name': student.high_school_name,
+                    'high_school_city': student.high_school_city,
+                    'high_school_state': student.high_school_state,
+                    'gpa': student.gpa,
+                    'college_class': student.college_class,
+                    }
+                grades = student.grades
+                for field in grades:
+                    profile[field] = grades[field]
+                profiles.append(profile)
+            return jsonify(status = 200, result = "OK", profiles = profiles)
+        except:
+            return jsonify(status = 400, result = "College Not Found")
+    return jsonify(status = 400, result = "Missing Fields")
+
+
 @app.route('/api/get_college_list', methods=['POST'])
 def get_college_list():
     # Check if logged in
