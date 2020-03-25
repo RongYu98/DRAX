@@ -96,19 +96,22 @@ def get_profile():
     if 'username' not in session or session['username'] == None:
         return jsonify(status=400, result="Not Logged In")
     # Get student profile
-    student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
-    profile = {
-        'residence_state': student.residence_state,
-        'high_school_name': student.high_school_name,
-        'high_school_city': student.high_school_city,
-        'high_school_state': student.high_school_state,
-        'gpa': student.gpa,
-        'college_class': student.college_class,
-        }
-    grades = student.grades
-    for field in grades:
-        profile[field] = grades[field]
-    return jsonify(status=200, result="OK", profile = profile)
+    try:
+        student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+        profile = {
+            'residence_state': student.residence_state,
+            'high_school_name': student.high_school_name,
+            'high_school_city': student.high_school_city,
+            'high_school_state': student.high_school_state,
+            'gpa': student.gpa,
+            'college_class': student.college_class,
+            }
+        grades = student.grades
+        for field in grades:
+            profile[field] = grades[field]
+        return jsonify(status=200, result="OK", profile = profile)
+    except:
+        return jsonify(status=400, result="Get Profile Failed")
 
 @app.route('/api/save_profile', methods=['POST'])
 def save_profile():
@@ -116,31 +119,87 @@ def save_profile():
     if 'username' not in session or session['username'] == None:
         return jsonify(status=400, result="Not Logged In")
     # Get student account
-    account = Account.objects.get(username=session['username'])
+    try:
+        account = Account.objects.get(username=session['username'])
+        # Get student profile
+        student = StudentProfile.objects.get(student=account)
+        info = request.json
+        if info == None:
+            info = request.form
+        grades = {}
+        for field in info:
+            if field == 'password':
+                digest = hash_utils.hmac_hash(info["password"], account.salt)
+                account.update(set__hashed_password=digest)
+            elif field == 'residence_state':
+                student.update(set__residence_state=info["residence_state"])
+            elif field == 'high_school_name':
+                student.update(set__high_school_name=info["high_school_name"])
+            elif field == 'high_school_city':
+                student.update(set__high_school_city=info["high_school_city"])
+            elif field == 'high_school_state':
+                student.update(set__high_school_state=info["high_school_state"])
+            elif field == 'gpa':
+                student.update(set__gpa=info["gpa"])
+            else:
+                grades[field] = info[field]
+        student.update(set__grades=grades)
+        return jsonify(status = 200, result = "OK")
+    except:
+        return jsonify(status = 400, result = "Save Failed")
+
+
+@app.route('/api/get_admission_decision', methods=['POST'])
+def get_admission_decision():
+    # Check if logged in
+    if 'username' not in session or session['username'] == None:
+        return jsonify(status=400, result="Not Logged In")
     # Get student profile
-    student = StudentProfile.objects.get(student=account)
+    try:
+        student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+        applications = Application.objects(student = student)
+        admission_decisions = []
+        for application in applications:
+            admission = {
+                'college': result.college.name,
+                'status': result.status,
+                'is_verified': is_verified,
+                }
+            admission_decisions.append(admission)
+        return jsonify(status=200, result="OK", admission_decisions = admission_decisions)
+    except:
+        return jsonify(status=400, result="Get Admission Decisions Failed")
+
+@app.route('/api/submit_admission_decision', methods=['POST'])
+def submit_admission_decision():
+    # Check if logged in
+    if 'username' not in session or session['username'] == None:
+        return jsonify(status=400, result="Not Logged In")
+    # Get student profile
+    student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
     info = request.json
     if info == None:
         info = request.form
-    grades = {}
-    for field in info:
-        if field == 'password':
-            digest = hash_utils.hmac_hash(info["password"], account.salt)
-            account.update(set__hashed_password=digest)
-        elif field == 'residence_state':
-            student.update(set__residence_state=info["residence_state"])
-        elif field == 'high_school_name':
-            student.update(set__high_school_name=info["high_school_name"])
-        elif field == 'high_school_city':
-            student.update(set__high_school_city=info["high_school_city"])
-        elif field == 'high_school_state':
-            student.update(set__high_school_state=info["high_school_state"])
-        elif field == 'gpa':
-            student.update(set__gpa=info["gpa"])
-        else:
-            grades[field] = info[field]
-    student.update(set__grades=grades)
-    return jsonify(status = 200, result = "OK")
+    if 'college_name' in info and 'status' in info:
+        try:
+            username = session['username']
+            college_name = info['college_name']
+            status = info['status']
+            try:
+                college = College.objects.get(name=college_name)
+            except:
+                return jsonify(status = 400, result = "College Not Found")
+            try:
+                application = Application.objects.get(Q(student=student) & Q(college=college))
+                application.update(set__status=status)
+                return jsonify(status = 200, result = "OK")
+            except:
+                ID = hash_utils.sha_hash(username+"+=+"+college_name)
+                Application(ID=ID, student=student, college=college, status=status).save()
+                return jsonify(status = 200, result = "OK")
+        except:
+            return jsonify(status = 400, result = "Submission Failed")
+    return jsonify(status = 400, result = "Missing Fields")
 
 
 @app.route('/api/get_college_list', methods=['POST'])
