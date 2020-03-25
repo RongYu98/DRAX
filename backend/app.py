@@ -5,6 +5,7 @@ from mongoengine import *
 
 from classes import Account
 from classes import StudentProfile
+from classes import Application
 from classes import College
 
 import hash_utils
