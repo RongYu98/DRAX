@@ -1,0 +1,24 @@
+.wrap-admin{
+    margin:auto;
+    width: 1020px;
+    min-width: 1020px;
+    padding-top:50px;    
+}
+#student-list, #admission-decision-list{
+    width: 500px;
+    height: 650px;
+    max-height: 650px;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+}
+.flex{display: flex;}
+
+/* student-list */
+#student-list{float: left;overflow: auto;}
+#student-list > *{width: 100%;}
+/* student-list */
+
+/* admission-list */
+#admission-decision-list{float: right;}
+/* admission-list */
