@@ -130,6 +130,9 @@ def save_profile():
         if info == None:
             info = request.form
         grades = {}
+        name = None
+        city = None
+        state = None
         for field in info:
             if field == 'password':
                 digest = hash_utils.hmac_hash(info["password"], account.salt)
@@ -137,16 +140,23 @@ def save_profile():
             elif field == 'residence_state':
                 student.update(set__residence_state=info["residence_state"])
             elif field == 'high_school_name':
-                student.update(set__high_school_name=info["high_school_name"])
+                name = info["high_school_name"]
             elif field == 'high_school_city':
-                student.update(set__high_school_city=info["high_school_city"])
+                city = info["high_school_city"]
             elif field == 'high_school_state':
-                student.update(set__high_school_state=info["high_school_state"])
+                state = info["high_school_state"]
             elif field == 'gpa':
                 student.update(set__gpa=info["gpa"])
             else:
                 grades[field] = info[field]
         student.update(set__grades=grades)
+        if (name not in {None, ""} and
+            city not in {None, ""} and
+            state not in {None, ""} and
+            update_highschool_data(name, city, state)):
+            student.update(set__high_school_name=name)
+            student.update(set__high_school_city=city)
+            student.update(set__high_school_state=state)
         return jsonify(status = 200, result = "OK")
     except:
         return jsonify(status = 400, result = "Save Failed")
@@ -219,6 +229,14 @@ def track_applications_list():
             college = College.objects.get(name=college_name)
             applications = Application.objects(college=college)
             profiles = []
+            sum_gpa = 0
+            count_gpa = 0
+            sum_sat_ebrw = 0
+            count_sat_ebrw = 0
+            sum_sat_math = 0
+            count_sat_math = 0
+            sum_act = 0
+            count_act = 0
             for application in applications:
                 if 'statuses' in info:
                     if application.status not in info['statuses']:
@@ -246,7 +264,34 @@ def track_applications_list():
                 for field in grades:
                     profile[field] = grades[field]
                 profiles.append(profile)
-            return jsonify(status = 200, result = "OK", profiles = profiles)
+                if student.gpa not in {None, ""}:
+                    sum_gpa += student.gpa
+                    count_gpa += 1
+                if 'sat_ebrw' in grades and grades['sat_ebrw'] not in {None, ""}:
+                    sum_sat_ebrw += grades['sat_ebrw']
+                    count_sat_ebrw += 1
+                if 'sat_math' in grades and grades['sat_math'] not in {None, ""}:
+                    sum_sat_math += grades['sat_math']
+                    count_sat_math += 1
+                if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
+                    sum_act += grades['act_composite']
+                    count_act += 1
+                summary = {
+                    'avg_gpa': None,
+                    'avg_sat_ebrw': None,
+                    'avg_sat_math': None,
+                    'avg_act': None,
+                    }
+                avg_gpa = None
+                if count_gpa:
+                    summary['avg_gpa'] = sum_gpa/count_gpa
+                if count_sat_ebrw:
+                    summary['avg_sat_ebrw'] = sum_sat_ebrw/count_sat_ebrw
+                if count_sat_math:
+                    summary['avg_sat_math'] = sum_sat_math/count_sat_math
+                if count_act:
+                    summary['avg_act'] = sum_act/count_act
+            return jsonify(status = 200, result = "OK", profiles = profiles, summary = summary)
         except:
             return jsonify(status = 400, result = "College Not Found")
     return jsonify(status = 400, result = "Missing Fields")
