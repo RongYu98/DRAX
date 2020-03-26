@@ -5,7 +5,7 @@ import {DropdownButton, Dropdown} from "react-bootstrap";
 import {SERVER_URL, STATUS_OK} from "../../common/Constants";
 
 const RECOMMENDED_COLLEGE_ENDPOINT = "/get_college_list";
-const MAJOR_ENDPOINT = "";
+const MAJOR_ENDPOINT = "/all_majors";
 
 class SeachCollege extends React.Component{
 
@@ -33,6 +33,7 @@ class SeachCollege extends React.Component{
             show_filter: false,
             current_page_num: 1,
             college_list: [],
+            majors_list: [],
             filter_data: {
                 name: "",
                 admission_rate: {min: "", max: ""},
@@ -179,81 +180,71 @@ class SeachCollege extends React.Component{
         return page_list;
     }
 
-    // dummy fetch
+
     async fetch_majors(){
-
-    }
-
-    // dummy fetch
-    async fetch_new_college_list(){
-        // try{
-        //     // deep copy
-        //     let body = JSON.parse(JSON.stringify(this.state.filter_data));
-        //     Object.keys(body).map(function(key, index) {
-        //             let min = body[key].min;
-        //             let max = body[key].max;
-        //             let left = body[key].left;
-        //             let right = body[key].right;
-        //             if(typeof left !== 'undefined'){
-        //                 body[key].left = (left === '' || left === '-') ? null : left;
-        //             }
-        //
-        //             if(typeof right !== 'undefined'){
-        //                 body[key].right = (right === '' || right === '-') ? null : right;
-        //             }
-        //
-        //             if(typeof min !== 'undefined'){
-        //                 body[key].min = (min === '' || min === '-') ? null : min;
-        //             }
-        //             if(typeof max !== 'undefined') {
-        //                 body[key].max = (max === '' || max === '-') ? null : max;
-        //             }
-        //
-        //             body[key] = (body[key] === '' || body[key] === '-') ? null : body[key];
-        //
-        //     });
-        //     console.log(body);
-        //     let response = await fetch(
-        //         SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
-        //         {
-        //             method: 'POST',
-        //             credentials: 'include',
-        //             headers: {
-        //                 'Accept': 'application/json',
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify(body)
-        //         }
-        //     );
-        //
-        //     if(response.status !== STATUS_OK) throw new Error(response.statusText);
-        //     let response_json = await response.json();
-        //     console.log(response_json.list);
-        //     if(this.state.filter_data.sort === SeachCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
-        //     this.setState({college_list: response_json});
-        // }catch (err) {
-        //     console.log(err.stack);
-        //     alert(`failed to fetch new college list, err msg: ${err.message}`);
-        // }
-        let list = [];
-        for(let i = 0; i < 830; i++){
-            list.push({
-                institution: `test ${i + 1}`,
-                tuition: `test ${i + 1}`,
-                admission_rate: `test ${i + 1}`,
-                debt: `test ${i + 1}`,
-                completion_rate: `test ${i + 1}`,
-                rank: `test ${i + 1}`,
-                region: `test ${i + 1}`,
-                name: `test ${i + 1}`,
-                college_id: `test_${i + 1}`,
-                size: `test_${i + 1}`
-            });
+        try{
+            let response = await fetch(SERVER_URL + MAJOR_ENDPOINT);
+            if(!response.ok) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.result !== "OK") throw new Error(response_json.result);
+            this.setState({majors_list: response_json.majors});
+        } catch (err) {
+            return err.message;
         }
-        this.setState({college_list: list});
     }
 
-    // dummy get
+
+    async fetch_new_college_list(){
+        try{
+            // deep copy
+            let body = JSON.parse(JSON.stringify(this.state.filter_data));
+            Object.keys(body).map(function(key, index) {
+                    let min = body[key].min;
+                    let max = body[key].max;
+                    let left = body[key].left;
+                    let right = body[key].right;
+                    if(typeof left !== 'undefined'){
+                        body[key].left = (left === '' || left === '-') ? null : left;
+                    }
+
+                    if(typeof right !== 'undefined'){
+                        body[key].right = (right === '' || right === '-') ? null : right;
+                    }
+
+                    if(typeof min !== 'undefined'){
+                        body[key].min = (min === '' || min === '-') ? null : min;
+                    }
+                    if(typeof max !== 'undefined') {
+                        body[key].max = (max === '' || max === '-') ? null : max;
+                    }
+
+                    body[key] = (body[key] === '' || body[key] === '-') ? null : body[key];
+
+            });
+            let response = await fetch(
+                SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                }
+            );
+
+            if(response.status !== STATUS_OK) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(this.state.filter_data.sort === SeachCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
+            this.setState({college_list: response_json.colleges});
+        }catch (err) {
+            console.log(err.stack);
+            alert(`failed to fetch new college list, err msg: ${err.message}`);
+        }
+    }
+
+
     get_colleges(){
         let list = [];
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
@@ -264,16 +255,16 @@ class SeachCollege extends React.Component{
             list.push(
                <CollegeItem key={`college_key-${i}`} data= {
                    {
-                       name: college.name,
-                       state: college.region,
-                       institution: college.institution,
-                       admission_rate: college.admission_rate,
-                       tuition: college.tuition,
-                       debt: college.debt,
-                       completion: college.completion_rate,
-                       ranking: college.rank,
-                       size: college.size,
-                       college_id: college.college_id
+                       name: (college.name == null) ? "null" : college.name,
+                       state: (college.region == null) ? "null" : college.region,
+                       institution: (college.institution == null) ? "null" : college.institution,
+                       admission_rate: (college.admission_rate == null) ? "null" : college.admission_rate,
+                       tuition: (college.tuition == null) ? "null" : college.tuition,
+                       debt: (college.debt == null) ? "null" : college.debt,
+                       completion: (college.completion_rate == null) ? "null" : college.completion_rate,
+                       ranking: (college.rank == null) ? "null": college.rank,
+                       size: (college.size == null) ? "null" : college.size,
+                       college_id: (college.college_id == null) ? "null" : college.college_id
                     }
                }/>
             )
@@ -281,9 +272,15 @@ class SeachCollege extends React.Component{
         return list;
     }
 
-    // dummy get
-    get_majors(){
 
+    get_majors(){
+        let list = [];
+        this.state.majors_list.forEach(element=>{
+            list.push(
+                <option value={element}>{element}</option>
+            );
+        });
+        return list;
     }
 
 
@@ -295,12 +292,15 @@ class SeachCollege extends React.Component{
         this.fetch_new_college_list().then(()=>{}).catch();
     }
 
-
+    async componentDidMount() {
+        await this.fetch_majors();
+    }
 
 
     render() {
         let colleges = this.get_colleges();
         let page_lists = this.get_page_buttons();
+        let majors = this.get_majors();
         return (
             <div className="right-content">
                 <div className="wrap-search-result">
@@ -366,7 +366,8 @@ class SeachCollege extends React.Component{
                                                             }
                                                     >
                                                         {/* - means no preference */}
-                                                        <option value="-">-</option>ssssss
+                                                        <option value="-">-</option>
+                                                        {majors}
                                                         {/* Frontend should add option tags with the major names from here */}
                                                     </select>
                                                     &amp;
@@ -378,6 +379,7 @@ class SeachCollege extends React.Component{
                                                     >
                                                         {/* - means no preference */}
                                                         <option value="-">-</option>
+                                                        {majors}
                                                         {/* Frontend should add option tags with the major names from here */}
                                                     </select>
                                                 </div>
@@ -538,7 +540,7 @@ class SeachCollege extends React.Component{
                     </div>
                     <div className="wrap-result">
                         <div className="search-result-top">
-                            <span className="result-text">Results</span>
+                            <span className="result-text" style={{display: (this.state.college_list.length === 0) ? "None" : ''}}>Results</span>
 
                             {
                                 (this.state.college_list.length > 1) ?
