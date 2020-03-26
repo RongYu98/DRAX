@@ -286,7 +286,10 @@ def get_highschool_info(name, city, state):
             'grad rate':grad_rate, 'sat':avg_sat, 'act':avg_act,
             'ap':ap_enroll}
 def update_highschool_data(name, city, state):
-    data = get_highschool_info(name, city, state)
+    try:
+        data = get_highschool_info(name, city, state)
+    except:
+        return False # can't get college info
     try:
         c = HighSchool.objects.get(name=name, city=city, state=state)
     except Exception as e:
@@ -303,6 +306,7 @@ def update_highschool_data(name, city, state):
     c.avg_act = int(data["act"])
     c.ap_enroll = int(data["ap"][:-1])
     c.save()
+    return True
 
 
 # tests:
@@ -312,4 +316,4 @@ def update_highschool_data(name, city, state):
 # update_college_ranking()
 # print(get_highschool_info("Stuyvesant High School", 'New York', "NY"))
 # print(update_highschool_data("Stuyvesant High School", 'New York', "NY"))
-update_all_colleges()
+#update_all_colleges()

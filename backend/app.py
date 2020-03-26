@@ -7,6 +7,9 @@ from classes import Account
 from classes import StudentProfile
 from classes import Application
 from classes import College
+from classes import HighSchool
+
+from scraper import update_highschool_data
 
 import hash_utils
 import algorithms
@@ -15,13 +18,12 @@ connect('account', host='localhost', port=27017)
 connect('college', alias='college')
 
 app = Flask(__name__)
-app.secret_key = 'Kats Trilling is AWESOME!'
+app.secret_key = 'Draconian Rich Awesome Xenomorphs'
 CORS(app, supports_credentials=True) # may wish to disable cross origin in the cloud server for security
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
     info = request.json
-    print(request.form.get('username'))
     # check there is a username and password
     if info==None or 'username' not in info or 'password' not in info:
         return jsonify(status = 400, result = "Missing Fields")
@@ -404,6 +406,13 @@ def get_majors():
     data = jsonify(status=200, result="OK", majors=d)
     return data
 
+@app.route('/api/get_all_highschools')
+def get_highschool():
+    highschools = []
+    for h in HighSchool.objects:
+        highschools.append(h.name)
+    return jsonify(status=200, result="OK", highschools=highschools)
+    
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9000, debug=True)
     
