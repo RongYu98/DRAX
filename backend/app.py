@@ -396,7 +396,14 @@ def get_college_list():
                 return 0
         college_list.sort(key=get_tuition)
     return jsonify(status=200, result="OK", colleges = college_list)
-                 
+
+@app.route('/api/all_majors')
+def get_majors():
+    import script # we will hardcode the list, so this will change...
+    d = script.get_clean_majors()
+    data = jsonify(status=200, result="OK", majors=d)
+    return data
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9000, debug=True)
     
