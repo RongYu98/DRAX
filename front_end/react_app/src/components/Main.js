@@ -24,6 +24,7 @@ class Main extends React.Component{
         this.state = {
             current_tab: ""
         }
+        this.update_active_tab = this.update_active_tab.bind(this);
     }
 
     async logout_clicked(){
@@ -45,6 +46,10 @@ class Main extends React.Component{
     componentDidMount() {
         let paths = this.props.location.pathname.split('/');
         let last_url = paths[paths.length - 1];
+        this.setState({current_tab: last_url});
+    }
+
+    update_active_tab(last_url){
         this.setState({current_tab: last_url});
     }
 
@@ -78,9 +83,8 @@ class Main extends React.Component{
                     </div>
                 </div>
                 <Switch>
-                    <Route path='/main/search' component={SearchCollege} />
-                    <Route path='/main/track/' render={props => <Track {...props} /> } />
-                    <Route path='/main/track/:college_id' render={props => <Track {...props} />} />
+                    <Route path='/main/search'  component={SearchCollege} />
+                    <Route path='/main/track/'  render={props => <Track {...props} update_active_tab={this.update_active_tab}/> } />
                     <Route path='/main/my_page/' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
                     <Route  component={NotFound}/>
                 </Switch>

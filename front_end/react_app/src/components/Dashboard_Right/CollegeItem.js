@@ -23,7 +23,7 @@ class CollegeItem extends React.Component{
             <React.Fragment>
                 <button className="list-group-item list-group-item-action" onClick={this.show_college_details}>
                     <h5 className="college-name">{name}</h5>
-                    <Link to={{ pathname: `/main/track/${name}`,
+                    <Link to={{ pathname: `/main/track/`,
                                 state: {
                                 college_name: name
                               }
