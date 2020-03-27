@@ -41,8 +41,10 @@ class Track extends React.Component{
         this.fetch_applications = this.fetch_applications.bind(this);
         this.get_applications = this.get_applications.bind(this);
         this.fetch_scatter_plot = this.fetch_scatter_plot.bind(this);
-
+        this.get_input_json = this.get_input_json.bind(this);
     }
+
+    trackEnum
 
     async fetch_scatter_plot(){
 
@@ -64,18 +66,21 @@ class Track extends React.Component{
 
     }
 
+    get_input_json (){
+        let body = {
+            college_name: (this.state.filter_data.name === "") ? null : this.state.filter_data.name,
+            college_class_min: (this.state.filter_data.college_class.from === "") ? null : parseInt(this.state.filter_data.college_class.from),
+            college_class_max: (this.state.filter_data.college_class.to === "") ? null : parseInt(this.state.filter_data.college_class.to),
+            statuses: (this.state.filter_data.application_status.length === 0) ? null : this.state.filter_data.application_status,
+            high_schools: (this.state.filter_data.checked_high_schools.length === 0) ? null : this.state.filter_data.checked_high_schools
+        }
+        return body;
+    }
 
     async fetch_applications(){
         try{
             // deep copy
-            let body = {
-                college_name: (this.state.filter_data.name === "") ? null : this.state.filter_data.name,
-                college_class_min: (this.state.filter_data.college_class.from === "") ? null : parseInt(this.state.filter_data.college_class.from),
-                college_class_max: (this.state.filter_data.college_class.to === "") ? null : parseInt(this.state.filter_data.college_class.to),
-                statuses: (this.state.filter_data.application_status.length === 0) ? null : this.state.filter_data.application_status,
-                high_schools: (this.state.filter_data.checked_high_schools.length === 0) ? null : this.state.filter_data.checked_high_schools
-            }
-
+            let body = this.get_input_json();
             console.log(body);
             let response = await fetch(
                 SERVER_URL + APPLICATION_ENDPOINT,
@@ -118,7 +123,6 @@ class Track extends React.Component{
             applications.push(
                 <Application
                     btn_info={{
-                        style: badge_enum.SUCCESS,
                         username: username,
                         acceptance: application_status,
                         high_school: high_school_name,
@@ -500,7 +504,7 @@ class Track extends React.Component{
                                 >
                                     View scatterplot
                                 </button>
-                                <ScatterPlotModal show={this.state.show_modal} on_hide={(event) => this.setState({show_modal: !this.state.show_modal})}/>
+                                <ScatterPlotModal input_json={this.get_input_json()} show={this.state.show_modal} on_hide={(event) => this.setState({show_modal: !this.state.show_modal})}/>
                             </div>
                             {/* Initially, there should be no tags inside the "#summary" tag below. */}
                             <div style={{display: (this.state.summary.avg_gpa === "") ? "None" : ""}} className="list-group" id="summary">
