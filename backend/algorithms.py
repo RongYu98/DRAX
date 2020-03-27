@@ -9,16 +9,28 @@ def estimate_exam_percentile(minimum, first_quartile, third_quartile, maximum, s
         step = (maximum-third_quartile)/25
         return int(75+(score-third_quartile)/step)
 
+def estimate_gpa_percentile(minimum, mean, gpa):
+    if gpa < minimum:
+        return 0
+    elif gpa < mean:
+        step = (mean-minimum)/50
+        return int((gpa-minimum)/step)
+    else:
+        step = (4.0-mean)/50
+        return int(50+(gpa-mean)/step)
+
 def detect_questionable_acceptance(college, student):
     SAT_MIN = 200
     SAT_MAX = 800
     ACT_MIN = 2
     ACT_MAX = 36
     
+    grades = student.grades
+    
     # Estimate percentile for SAT Math
     sat_math_percentile = None
-    student_sat_math = student.grades["sat_math"]
-    if student_sat_math != None:
+    if 'sat_math' in grades and grades["sat_math"] not in {None, ""}:
+        student_sat_math = grades["sat_math"]
         sat_math_25 = college.sat_math_25
         sat_math_75 = college.sat_math_75
         if sat_math_25 and sat_math_75:
@@ -28,8 +40,8 @@ def detect_questionable_acceptance(college, student):
     
     # Estimate percentile for SAT EBRW
     sat_ebrw_percentile = None
-    student_sat_ebrw = student.grades["sat_ebrw"]
-    if student_sat_ebrw != None:
+    if 'sat_ebrw' in grades and grades["sat_ebrw"] not in {None, ""}:
+        student_sat_ebrw = grades["sat_ebrw"]
         sat_ebrw_25 = college.sat_ebrw_25
         sat_ebrw_75 = college.sat_ebrw_75
         if sat_ebrw_25 and sat_ebrw_75:
@@ -39,8 +51,8 @@ def detect_questionable_acceptance(college, student):
     
     # Estimate percentile for ACT Composite
     act_percentile = None
-    student_act = student.grades["act"]
-    if student_act != None:
+    if 'act_composite' in grades and grades["act_composite"] not in {None, ""}:
+        student_act = grades["act_composite"]
         act_composite_25 = college.act_composite_25
         act_composite_75 = college.act_composite_75
         if act_composite_25 and act_composite_75:
@@ -49,19 +61,31 @@ def detect_questionable_acceptance(college, student):
                 return 0
     
     # Estimate percentile for GPA
+    gpa_percentile = None
     student_gpa = student.gpa
     if student_gpa != None:
         avg_gpa = college.avg_gpa
-        if avg_gpa and student_gpa < avg_gpa*0.8:
-            return 0
+        if avg_gpa != None:
+            gpa_percentile = estimate_gpa_percentile(avg_gpa*0.8, avg_gpa, student_gpa)
     
     # Calculate final score
-    if sat_math_percentile and sat_ebrw_percentile and sat_ebrw_percentile:
-        score = sat_math_percentile*0.2 + sat_ebrw_percentile*0.2 + act_percentile*0.4 #+ gpa_percentile*0.2
-    else:
-        score = 0
-    #print(score)
-    return score
+    score = 0
+    denominator = 0
+    if sat_math_percentile:
+        score += sat_math_percentile*0.2
+        denominator += 0.2
+    if sat_ebrw_percentile:
+        score += sat_ebrw_percentile*0.2
+        denominator += 0.2
+    if act_percentile:
+        score += act_percentile*0.4
+        denominator += 0.4
+    if gpa_percentile:
+        score += gpa_percentile*0.2
+        denominator += 0.2
+    if denominator != 0:
+        return score/denominator
+    return -1
 
 def compute_recommendation_score(college, student):
     # Calculate acceptance likelihood aspect
@@ -92,13 +116,22 @@ def compute_recommendation_score(college, student):
         non_academic_suitability = max(1, sum(non_academic_factors)/len(non_academic_factors))*100
     
     # Calculate final score
+    score = 0
+    denominator = 0
+    if acceptance_likelihood >= 0:
+        score += acceptance_likelihood*0.4
+        denominator += 0.4
+    if academic_similarity >= 0:
+        score += academic_similarity*0.4
+        denominator += 0.4
     if non_academic_suitability > 0:
-        score = acceptance_likelihood*0.4 + academic_similarity*0.4 + non_academic_suitability*0.2
-    else:
-        score = acceptance_likelihood*0.5 + academic_similarity*0.5
-    return score
-
-def compare_highschool(h1, h2):
+        score += non_academic_suitability*0.2
+    if denominator != 0:
+        return score/denominator
+    return 0
+        
+def compare_highschool_grades(h1, h2):
+    # function compares the students according for high school similarity algo 
     diff = (h1.reading_prof - h2.reading_prof)**2
     diff += (h1.math_prof - h2.math_prof)**2
     diff += (h1.grad_rate - h2.grad_rate)**2
@@ -106,3 +139,93 @@ def compare_highschool(h1, h2):
     diff += ((h1.avg_sat - h2.avg_sat)*100/1600.)**2
     diff += ((h1.avg_act - h2.avg_act)*100/36)**2
     return diff
+def compare_students(s1, s2):
+    # function compares the students according for high school similarity algo
+    # s1 and s2 are both lists students
+    s1_gpa = [s.gpa for s in s1 if s.gpa!=None]
+    s2_gpa = [s.gpa for s in s2 if s.gpa!=None]
+    s1_avg_gpa, s2_avg_gpa, gpa_num = None, None, None
+    if s1_gpa!=[] and s2_gpa!=[]:
+        s1_avg_gpa = sum(s1_gpa) / 1.0 / len(s1_gpa) if len(s1_gpa)!=0 else None
+        s2_avg_gpa = sum(s2_gpa) / 1.0 / len(s2_gpa) if len(s2_gpa)!=0 else None
+        gpa_num = min(len(s1_gpa), len(s2_gpa))
+        
+
+    s1_sat = []
+    for s in s1:
+        if s.grades!=None:
+            grade, numbers = 0, 0
+            if 'sat math' in s.grades:
+                grade += int(s.grades['sat math'])
+                numbers += 1
+            if 'sat ebrw' in s.grades:
+                grade += int(s.grades['sat ebrw'])
+                numbers += 1
+            grade = grade*2 if numbers==1 else grade
+            s1_sat.append(grade)
+    s2_sat = []
+    for	s in s2:
+        if s.grades!=None:
+            grade, numbers = 0,	0
+            if 'sat math' in s.grades:
+                grade += int(s.grades['sat math'])
+                numbers += 1
+            if 'sat ebrw' in s.grades:
+                grade += int(s.grades['sat ebrw'])
+                numbers += 1
+            grade = grade*2 if numbers==1 else grade
+            s2_sat.append(grade)
+
+    #s1_sat = [int(s.sat) for s in s1 if s.grades!=None and 'sat' in s.grades]
+    #s2_sat = [s.sat for s in s2 if s.grades!=None and 'sat' in s.grades]
+    s1_avg_sat, s2_avg_sat, sat_num = None, None, None
+    if s1_sat!=[] and s2_sat!=[]:
+        s1_avg_sat = sum(s1_sat) / 1.0 / len(s1_sat)
+        s2_avg_sat = sum(s2_sat) / 1.0 / len(s2_sat)
+        sat_num = min(len(s1_sat), len(s2_sat))
+
+    s1_act = []
+    s2_act = []
+    for s in s1:
+        if s.grades!=None and 'act composition' in s.grades:
+            s1_act.append(int(s.grades["act composition"]))
+    for s in s2:
+        if s.grades!=None and 'act composition' in s.grades:
+            s2_act.append(int(s.grades["act composition"]))
+    #s1_act = [int(s.grades["act composition"]) for s in s1 if s.grades!=None and 'act composition' in s.grades]
+    #s2_act = [int(s.grades["act composition"]) for s in s2 if s.grades!=None and 'act composition' in s.grades]
+    s1_avg_act, s2_avg_act, act_num = None, None, None
+    if s1_act!=[] and s2_act!=[]:
+        s1_avg_act = sum(s1_act) / 1.0 / len(s1_act)
+        s2_avg_act = sum(s2_act) / 1.0 / len(s2_act)
+        act_num = min(len(s1_act), len(s2_act))
+
+    gpa_weight, sat_weight, act_weight = None, None, None
+    if gpa_num!=None:
+        gpa_weight = ((s1_avg_gpa - s2_avg_gpa) * 100/4.0 * gpa_num / 10)**2
+    if sat_num != None:
+        sat_weight = ((s1_avg_sat - s2_avg_sat) * 100/1600. * sat_num / 10)**2
+    if act_num != None:
+        act_weight = ((s1_avg_act - s2_avg_act) * 100/36. * act_num / 10)**2
+    
+    print(gpa_weight, sat_weight, act_weight)
+    total = [gpa_weight, sat_weight, act_weight]
+    total = [x for x in total if x!=None]
+    dissimilarity = sum(total) if total!=[] else None
+
+    number = [x for x in [gpa_num, sat_num, act_num] if x!=None]
+    number = max(number) if number!=[] else None
+    return dissimilarity, number
+def compare_highschool(h1, h2, s1, s2):
+    hs_dissimilarity = compare_highschool_grades(h1, h2)
+    student_dissimilarity = compare_students(s1, s2)
+    number_student_data = student_dissimilarity[1] # number of data points
+    student_dissimilarity = student_dissimilarity[0] # actual score
+    if student_dissimilarity == None:
+        student_dissimilarity = 0
+        number_student_data = 0 # don't use the data
+    
+    hs_data_rate = 1 - min(0.35, number_student_data/100.0)
+    score = (hs_dissimilarity*hs_data_rate +
+             (1-hs_data_rate)*student_dissimilarity)
+    return score
