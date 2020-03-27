@@ -44,7 +44,6 @@ class Track extends React.Component{
         this.get_input_json = this.get_input_json.bind(this);
     }
 
-    trackEnum
 
     async fetch_scatter_plot(){
 
@@ -105,14 +104,15 @@ class Track extends React.Component{
                 avg_sat_math: (response_json.summary.avg_sat_math == null) ? "null" : response_json.summary.avg_sat_math,
                 avg_act_composite: (response_json.summary.avg_act == null) ? "null" : response_json.summary.avg_act
             }
-            this.setState({applications: response_json.profile, summary: summary});
+            this.setState({applications: response_json.profiles, summary: summary});
         }catch (err) {
             console.log(err.stack);
-            alert(`failed to fetch new college list, err msg: ${err.message}`);
+            alert(`failed to fetch new application list, err msg: ${err.message}`);
         }
     }
 
     get_applications(){
+        console.log(this.state);
         let applications = [];
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
         let end_index = beginning + 10;
@@ -496,10 +496,10 @@ class Track extends React.Component{
                         </div>
                         <div className="wrap-result">
                             <div className="result-top">
-                                <span style={{display: (this.state.applications.length === 0) ? "None" : ""}} className="result-text">Results</span>
+                                <span style={{display: (this.state.summary.avg_gpa === '') ? "None" : ""}} className="result-text">Results</span>
                                 <button type="button" id="plot-btn" className="btn btn-primary shadow-none"
                                         data-toggle="modal" data-target="#plot-modal"
-                                        style={{display: (this.state.summary.avg_gpa === '') ? "" : ""}}
+                                        style={{display: (this.state.summary.avg_gpa === '') ? "" : "", marginBottom: "5%"}}
                                         onClick={(event) => this.setState({show_modal: !this.state.show_modal})}
                                 >
                                     View scatterplot
