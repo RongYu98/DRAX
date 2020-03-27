@@ -41,8 +41,9 @@ class Track extends React.Component{
         this.fetch_applications = this.fetch_applications.bind(this);
         this.get_applications = this.get_applications.bind(this);
         this.fetch_scatter_plot = this.fetch_scatter_plot.bind(this);
-
+        this.get_input_json = this.get_input_json.bind(this);
     }
+
 
     async fetch_scatter_plot(){
 
@@ -64,18 +65,21 @@ class Track extends React.Component{
 
     }
 
+    get_input_json (){
+        let body = {
+            college_name: (this.state.filter_data.name === "") ? null : this.state.filter_data.name,
+            college_class_min: (this.state.filter_data.college_class.from === "") ? null : parseInt(this.state.filter_data.college_class.from),
+            college_class_max: (this.state.filter_data.college_class.to === "") ? null : parseInt(this.state.filter_data.college_class.to),
+            statuses: (this.state.filter_data.application_status.length === 0) ? null : this.state.filter_data.application_status,
+            high_schools: (this.state.filter_data.checked_high_schools.length === 0) ? null : this.state.filter_data.checked_high_schools
+        }
+        return body;
+    }
 
     async fetch_applications(){
         try{
             // deep copy
-            let body = {
-                college_name: (this.state.filter_data.name === "") ? null : this.state.filter_data.name,
-                college_class_min: (this.state.filter_data.college_class.from === "") ? null : parseInt(this.state.filter_data.college_class.from),
-                college_class_max: (this.state.filter_data.college_class.to === "") ? null : parseInt(this.state.filter_data.college_class.to),
-                statuses: (this.state.filter_data.application_status.length === 0) ? null : this.state.filter_data.application_status,
-                high_schools: (this.state.filter_data.checked_high_schools.length === 0) ? null : this.state.filter_data.checked_high_schools
-            }
-
+            let body = this.get_input_json();
             console.log(body);
             let response = await fetch(
                 SERVER_URL + APPLICATION_ENDPOINT,
@@ -100,14 +104,15 @@ class Track extends React.Component{
                 avg_sat_math: (response_json.summary.avg_sat_math == null) ? "null" : response_json.summary.avg_sat_math,
                 avg_act_composite: (response_json.summary.avg_act == null) ? "null" : response_json.summary.avg_act
             }
-            this.setState({applications: response_json.profile, summary: summary});
+            this.setState({applications: response_json.profiles, summary: summary});
         }catch (err) {
             console.log(err.stack);
-            alert(`failed to fetch new college list, err msg: ${err.message}`);
+            alert(`failed to fetch new application list, err msg: ${err.message}`);
         }
     }
 
     get_applications(){
+        console.log(this.state);
         let applications = [];
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
         let end_index = beginning + 10;
@@ -118,7 +123,6 @@ class Track extends React.Component{
             applications.push(
                 <Application
                     btn_info={{
-                        style: badge_enum.SUCCESS,
                         username: username,
                         acceptance: application_status,
                         high_school: high_school_name,
@@ -492,15 +496,15 @@ class Track extends React.Component{
                         </div>
                         <div className="wrap-result">
                             <div className="result-top">
-                                <span style={{display: (this.state.applications.length === 0) ? "None" : ""}} className="result-text">Results</span>
+                                <span style={{display: (this.state.summary.avg_gpa === '') ? "None" : ""}} className="result-text">Results</span>
                                 <button type="button" id="plot-btn" className="btn btn-primary shadow-none"
                                         data-toggle="modal" data-target="#plot-modal"
-                                        style={{display: (this.state.summary.avg_gpa === '') ? "" : ""}}
+                                        style={{display: (this.state.summary.avg_gpa === '') ? "" : "", marginBottom: "5%"}}
                                         onClick={(event) => this.setState({show_modal: !this.state.show_modal})}
                                 >
                                     View scatterplot
                                 </button>
-                                <ScatterPlotModal show={this.state.show_modal} on_hide={(event) => this.setState({show_modal: !this.state.show_modal})}/>
+                                <ScatterPlotModal input_json={this.get_input_json()} show={this.state.show_modal} on_hide={(event) => this.setState({show_modal: !this.state.show_modal})}/>
                             </div>
                             {/* Initially, there should be no tags inside the "#summary" tag below. */}
                             <div style={{display: (this.state.summary.avg_gpa === "") ? "None" : ""}} className="list-group" id="summary">
