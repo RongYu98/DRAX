@@ -37,10 +37,13 @@ class Track extends React.Component{
         this.application_checked = this.application_checked.bind(this);
         this.fetch_applications = this.fetch_applications.bind(this);
         this.get_applications = this.get_applications.bind(this);
-
+        this.fetch_scatter_plot = this.fetch_scatter_plot.bind(this);
 
     }
 
+    async fetch_scatter_plot(){
+
+    }
 
     async fetch_highschool() {
         try{
@@ -94,135 +97,61 @@ class Track extends React.Component{
                 avg_sat_math: (response_json.summary.avg_sat_math == null) ? "null" : response_json.summary.avg_sat_math,
                 avg_act_composite: (response_json.summary.avg_act == null) ? "null" : response_json.summary.avg_act
             }
-            this.setState({summary: summary});
+            this.setState({applications: response_json.profile, summary: summary});
         }catch (err) {
             console.log(err.stack);
             alert(`failed to fetch new college list, err msg: ${err.message}`);
         }
     }
 
-    // dummy get
     get_applications(){
         let applications = [];
-        // applications.push(
-        //     <Application
-        //         btn_info={{
-        //             style: badge_enum.SUCCESS,
-        //             username: "test1",
-        //             acceptance: "Accepted",
-        //             high_school: "test1",
-        //             high_school_location: "test1"
-        //         }}
-        //         personal={{
-        //             state: "test1",
-        //             math: "test1",
-        //             ap: "test1",
-        //             majors1: "test1",
-        //             class: "test1",
-        //             ebrw: "test1",
-        //             gpa: "test1",
-        //             majors2: "test1"
-        //         }}
-        //         sat2={{
-        //             chemistry: "test1",
-        //             eco_bio: "test1",
-        //             literature: "test1",
-        //             mol_bio: "test1",
-        //             math_I: "test1",
-        //             math_II: "test1",
-        //             physics: "test1",
-        //             us_history: "test1",
-        //             world_history: "test1"
-        //         }}
-        //         act={{
-        //             english: "test1",
-        //             math: "test1",
-        //             reading: "test1",
-        //             science: "test1",
-        //             composite: "test1"
-        //         }}
-        //     />
-        // );
-        //
-        // applications.push(
-        //     <Application
-        //         btn_info={{
-        //             style: badge_enum.WARNING,
-        //             username: "test1",
-        //             acceptance: "wait-listed",
-        //             high_school: "test1",
-        //             high_school_location: "test1"
-        //         }}
-        //         personal={{
-        //             state: "test1",
-        //             math: "test1",
-        //             ap: "test1",
-        //             majors1: "test1",
-        //             class: "test1",
-        //             ebrw: "test1",
-        //             gpa: "test1",
-        //             majors2: "test1"
-        //         }}
-        //         sat2={{
-        //             chemistry: "test1",
-        //             eco_bio: "test1",
-        //             literature: "test1",
-        //             mol_bio: "test1",
-        //             math_I: "test1",
-        //             math_II: "test1",
-        //             physics: "test1",
-        //             us_history: "test1",
-        //             world_history: "test1"
-        //         }}
-        //         act={{
-        //             english: "test1",
-        //             math: "test1",
-        //             reading: "test1",
-        //             science: "test1",
-        //             composite: "test1"
-        //         }}
-        //     />
-        // );
-        //
-        // applications.push(
-        //     <Application
-        //         btn_info={{
-        //             style: badge_enum.DANGER,
-        //             username: "test1",
-        //             acceptance: "denied",
-        //             high_school: "test1",
-        //             high_school_location: "test1"
-        //         }}
-        //         personal={{
-        //             state: "test1",
-        //             math: "test1",
-        //             ap: "test1",
-        //             majors1: "test1",
-        //             class: "test1",
-        //             ebrw: "test1",
-        //             gpa: "test1",
-        //             majors2: "test1"
-        //         }}
-        //         sat2={{
-        //             chemistry: "test1",
-        //             eco_bio: "test1",
-        //             literature: "test1",
-        //             mol_bio: "test1",
-        //             math_I: "test1",
-        //             math_II: "test1",
-        //             physics: "test1",
-        //             us_history: "test1",
-        //             world_history: "test1"
-        //         }}
-        //         act={{
-        //             english: "test1",
-        //             math: "test1",
-        //             reading: "test1",
-        //             science: "test1",
-        //             composite: "test1"
-        //         }}
-        //     />
-        // );
+        let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
+        let end_index = beginning + 10;
+        let displayItems = this.state.applications.slice(beginning, end_index);
+        displayItems.forEach((element)=>{
+            let {application_status, username, residence_state, high_school_name, high_school_city, high_school_state, gpa, college_class } = element;
+            let {major_1, major_2, sat_math, sat_ebrw, act_english, act_math, act_reading, act_science, act_composite, sat_lit, sat_us, sat_world, sat_math_1, sat_math_2, sat_eco_bio, sat_mol_bio, sat_chem, sat_physics, ap_passed} = element;
+            applications.push(
+                <Application
+                    btn_info={{
+                        style: badge_enum.SUCCESS,
+                        username: username,
+                        acceptance: application_status,
+                        high_school: high_school_name,
+                        high_school_location: `${high_school_city}, ${high_school_state}`
+                    }}
+                    personal={{
+                        state: residence_state,
+                        math: sat_math,
+                        ap: ap_passed,
+                        majors1: major_1,
+                        class: college_class,
+                        ebrw: sat_ebrw,
+                        gpa: gpa,
+                        majors2: major_2
+                    }}
+                    sat2={{
+                        chemistry: sat_chem,
+                        eco_bio: sat_eco_bio,
+                        literature: sat_lit,
+                        mol_bio: sat_mol_bio,
+                        math_I: sat_math_1,
+                        math_II: sat_math_2,
+                        physics: sat_physics,
+                        us_history: sat_us,
+                        world_history: sat_world
+                    }}
+                    act={{
+                        english: act_english,
+                        math: act_math,
+                        reading: act_reading,
+                        science: act_science,
+                        composite: act_composite
+                    }}
+                />
+            );
+        });
         return applications;
     }
 
@@ -563,7 +492,7 @@ class Track extends React.Component{
                                 <span style={{display: (this.state.applications.length === 0) ? "None" : ""}} className="result-text">Results</span>
                                 <button type="button" id="plot-btn" className="btn btn-primary shadow-none"
                                         data-toggle="modal" data-target="#plot-modal"
-                                        style={{display: (this.state.applications.length === 0) ? "None" : ""}}
+                                        style={{display: (this.state.summary.avg_gpa === '') ? "None" : ""}}
                                 >
                                     View scatterplot
                                 </button>
