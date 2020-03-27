@@ -5,7 +5,7 @@ import {SERVER_URL, STATUS_OK} from "../../common/Constants";
 let badge_enum = Application.badge_enum;
 
 
-const SUMMARY_ENDPOINT = "";
+const APPLICATION_ENDPOINT = "/track_applications_list";
 const HIGHSCHOOL_ENDPOINT = "/get_all_highschools";
 
 class Track extends React.Component{
@@ -58,162 +58,171 @@ class Track extends React.Component{
 
     }
 
-    // dummy fetch
+
     async fetch_applications(){
-        // try{
-        //     // deep copy
-        //     let body = {
-        //         college_name: this.state.filter_data.college_name,
-        //         college_class_min: (this.state.filter_data.college_class.from === "") ? null : parseInt(this.state.filter_data.college_class.from),
-        //         // college_class_max:
-        //     }
-        //
-        //     console.log(body);
-        //     let response = await fetch(
-        //         SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
-        //         {
-        //             method: 'POST',
-        //             credentials: 'include',
-        //             headers: {
-        //                 'Accept': 'application/json',
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify(body)
-        //         }
-        //     );
-        //
-        //     if(response.status !== STATUS_OK) throw new Error(response.statusText);
-        //     let response_json = await response.json();
-        //     if(this.state.filter_data.sort === SearchCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
-        //     this.setState({current_page_num: 1, college_list: response_json.colleges});
-        // }catch (err) {
-        //     console.log(err.stack);
-        //     alert(`failed to fetch new college list, err msg: ${err.message}`);
-        // }
+        try{
+            // deep copy
+            let body = {
+                college_name: (this.state.filter_data.name === "") ? null : this.state.filter_data.name,
+                college_class_min: (this.state.filter_data.college_class.from === "") ? null : parseInt(this.state.filter_data.college_class.from),
+                college_class_max: (this.state.filter_data.college_class.to === "") ? null : parseInt(this.state.filter_data.college_class.to),
+                statuses: (this.state.filter_data.application_status.length === 0) ? null : this.state.filter_data.application_status,
+                high_schools: (this.state.filter_data.checked_high_schools.length === 0) ? null : this.state.filter_data.checked_high_schools
+            }
+
+            console.log(body);
+            let response = await fetch(
+                SERVER_URL + APPLICATION_ENDPOINT,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                }
+            );
+
+            if(response.status !== STATUS_OK) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== STATUS_OK) throw new Error(response_json.result);
+            console.log(response_json);
+            let summary = {
+                avg_gpa: response_json.summary.avg_gpa,
+                avg_sat_ebrw: response_json.summary.avg_sat_ebrw,
+                avg_sat_math: response_json.summary.avg_sat_math,
+                avg_act_composite: response_json.summary.avg_act
+            }
+            this.setState({summary: summary});
+        }catch (err) {
+            console.log(err.stack);
+            alert(`failed to fetch new college list, err msg: ${err.message}`);
+        }
     }
 
     // dummy get
     get_applications(){
         let applications = [];
-        applications.push(
-            <Application
-                btn_info={{
-                    style: badge_enum.SUCCESS,
-                    username: "test1",
-                    acceptance: "Accepted",
-                    high_school: "test1",
-                    high_school_location: "test1"
-                }}
-                personal={{
-                    state: "test1",
-                    math: "test1",
-                    ap: "test1",
-                    majors1: "test1",
-                    class: "test1",
-                    ebrw: "test1",
-                    gpa: "test1",
-                    majors2: "test1"
-                }}
-                sat2={{
-                    chemistry: "test1",
-                    eco_bio: "test1",
-                    literature: "test1",
-                    mol_bio: "test1",
-                    math_I: "test1",
-                    math_II: "test1",
-                    physics: "test1",
-                    us_history: "test1",
-                    world_history: "test1"
-                }}
-                act={{
-                    english: "test1",
-                    math: "test1",
-                    reading: "test1",
-                    science: "test1",
-                    composite: "test1"
-                }}
-            />
-        );
-
-        applications.push(
-            <Application
-                btn_info={{
-                    style: badge_enum.WARNING,
-                    username: "test1",
-                    acceptance: "wait-listed",
-                    high_school: "test1",
-                    high_school_location: "test1"
-                }}
-                personal={{
-                    state: "test1",
-                    math: "test1",
-                    ap: "test1",
-                    majors1: "test1",
-                    class: "test1",
-                    ebrw: "test1",
-                    gpa: "test1",
-                    majors2: "test1"
-                }}
-                sat2={{
-                    chemistry: "test1",
-                    eco_bio: "test1",
-                    literature: "test1",
-                    mol_bio: "test1",
-                    math_I: "test1",
-                    math_II: "test1",
-                    physics: "test1",
-                    us_history: "test1",
-                    world_history: "test1"
-                }}
-                act={{
-                    english: "test1",
-                    math: "test1",
-                    reading: "test1",
-                    science: "test1",
-                    composite: "test1"
-                }}
-            />
-        );
-
-        applications.push(
-            <Application
-                btn_info={{
-                    style: badge_enum.DANGER,
-                    username: "test1",
-                    acceptance: "denied",
-                    high_school: "test1",
-                    high_school_location: "test1"
-                }}
-                personal={{
-                    state: "test1",
-                    math: "test1",
-                    ap: "test1",
-                    majors1: "test1",
-                    class: "test1",
-                    ebrw: "test1",
-                    gpa: "test1",
-                    majors2: "test1"
-                }}
-                sat2={{
-                    chemistry: "test1",
-                    eco_bio: "test1",
-                    literature: "test1",
-                    mol_bio: "test1",
-                    math_I: "test1",
-                    math_II: "test1",
-                    physics: "test1",
-                    us_history: "test1",
-                    world_history: "test1"
-                }}
-                act={{
-                    english: "test1",
-                    math: "test1",
-                    reading: "test1",
-                    science: "test1",
-                    composite: "test1"
-                }}
-            />
-        );
+        // applications.push(
+        //     <Application
+        //         btn_info={{
+        //             style: badge_enum.SUCCESS,
+        //             username: "test1",
+        //             acceptance: "Accepted",
+        //             high_school: "test1",
+        //             high_school_location: "test1"
+        //         }}
+        //         personal={{
+        //             state: "test1",
+        //             math: "test1",
+        //             ap: "test1",
+        //             majors1: "test1",
+        //             class: "test1",
+        //             ebrw: "test1",
+        //             gpa: "test1",
+        //             majors2: "test1"
+        //         }}
+        //         sat2={{
+        //             chemistry: "test1",
+        //             eco_bio: "test1",
+        //             literature: "test1",
+        //             mol_bio: "test1",
+        //             math_I: "test1",
+        //             math_II: "test1",
+        //             physics: "test1",
+        //             us_history: "test1",
+        //             world_history: "test1"
+        //         }}
+        //         act={{
+        //             english: "test1",
+        //             math: "test1",
+        //             reading: "test1",
+        //             science: "test1",
+        //             composite: "test1"
+        //         }}
+        //     />
+        // );
+        //
+        // applications.push(
+        //     <Application
+        //         btn_info={{
+        //             style: badge_enum.WARNING,
+        //             username: "test1",
+        //             acceptance: "wait-listed",
+        //             high_school: "test1",
+        //             high_school_location: "test1"
+        //         }}
+        //         personal={{
+        //             state: "test1",
+        //             math: "test1",
+        //             ap: "test1",
+        //             majors1: "test1",
+        //             class: "test1",
+        //             ebrw: "test1",
+        //             gpa: "test1",
+        //             majors2: "test1"
+        //         }}
+        //         sat2={{
+        //             chemistry: "test1",
+        //             eco_bio: "test1",
+        //             literature: "test1",
+        //             mol_bio: "test1",
+        //             math_I: "test1",
+        //             math_II: "test1",
+        //             physics: "test1",
+        //             us_history: "test1",
+        //             world_history: "test1"
+        //         }}
+        //         act={{
+        //             english: "test1",
+        //             math: "test1",
+        //             reading: "test1",
+        //             science: "test1",
+        //             composite: "test1"
+        //         }}
+        //     />
+        // );
+        //
+        // applications.push(
+        //     <Application
+        //         btn_info={{
+        //             style: badge_enum.DANGER,
+        //             username: "test1",
+        //             acceptance: "denied",
+        //             high_school: "test1",
+        //             high_school_location: "test1"
+        //         }}
+        //         personal={{
+        //             state: "test1",
+        //             math: "test1",
+        //             ap: "test1",
+        //             majors1: "test1",
+        //             class: "test1",
+        //             ebrw: "test1",
+        //             gpa: "test1",
+        //             majors2: "test1"
+        //         }}
+        //         sat2={{
+        //             chemistry: "test1",
+        //             eco_bio: "test1",
+        //             literature: "test1",
+        //             mol_bio: "test1",
+        //             math_I: "test1",
+        //             math_II: "test1",
+        //             physics: "test1",
+        //             us_history: "test1",
+        //             world_history: "test1"
+        //         }}
+        //         act={{
+        //             english: "test1",
+        //             math: "test1",
+        //             reading: "test1",
+        //             science: "test1",
+        //             composite: "test1"
+        //         }}
+        //     />
+        // );
         return applications;
     }
 
@@ -352,19 +361,24 @@ class Track extends React.Component{
 
 
     componentDidMount() {
+        let college_name = this.props.location.state.college_name;
+        if(typeof college_name !== 'undefined') {
+            this.state.filter_data.name = college_name;
+             this.fetch_applications();
+        }
         this.fetch_highschool();
     }
 
+
     searchClicked(event){
-        console.log(this.state.filter_data);
+        this.fetch_applications();
+
     }
 
     render() {
         let high_schools = this.get_high_school();
         let page_buttons = this.get_page_buttons();
         let applications = this.get_applications();
-        let id = this.props.match.params.id;
-        if(typeof id === 'undefined') id = '';
         return (
             <div className="right-content">
                     <div className="wrap-search-result">
@@ -545,7 +559,10 @@ class Track extends React.Component{
                             <div className="result-top">
                                 <span style={{display: (this.state.applications.length === 0) ? "None" : ""}} className="result-text">Results</span>
                                 <button type="button" id="plot-btn" className="btn btn-primary shadow-none"
-                                        data-toggle="modal" data-target="#plot-modal">View scatterplot
+                                        data-toggle="modal" data-target="#plot-modal"
+                                        style={{display: (this.state.applications.length === 0) ? "None" : ""}}
+                                >
+                                    View scatterplot
                                 </button>
                                 <div className="modal fade" id="plot-modal" tabIndex={-1} role="dialog"
                                      aria-labelledby="plot-modal-label" aria-hidden="true">
@@ -566,7 +583,7 @@ class Track extends React.Component{
                                 </div>
                             </div>
                             {/* Initially, there should be no tags inside the "#summary" tag below. */}
-                            <div className="list-group" id="summary">
+                            <div style={{display: (this.state.summary.avg_gpa === "") ? "None" : ""}} className="list-group" id="summary">
                                 <h4><b>Summary</b></h4>
                                 {/* The table tag below must be shown whenever the user gets the result in the track application menu */}
                                 <table>
