@@ -2,7 +2,9 @@ import React from "react";
 import '../../gui/css/track_application.css';
 import Application from "./Application";
 import {SERVER_URL, STATUS_OK} from "../../common/Constants";
+import ScatterPlotModal from "./ScatterPlotModal";
 let badge_enum = Application.badge_enum;
+
 
 
 const APPLICATION_ENDPOINT = "/track_applications_list";
@@ -27,7 +29,8 @@ class Track extends React.Component{
             },
             high_schools: [],
             applications: [],
-            current_page_num: 1
+            current_page_num: 1,
+            show_modal: false
         }
         this.button_list = [];
         this.searchClicked = this.searchClicked.bind(this);
@@ -492,27 +495,12 @@ class Track extends React.Component{
                                 <span style={{display: (this.state.applications.length === 0) ? "None" : ""}} className="result-text">Results</span>
                                 <button type="button" id="plot-btn" className="btn btn-primary shadow-none"
                                         data-toggle="modal" data-target="#plot-modal"
-                                        style={{display: (this.state.summary.avg_gpa === '') ? "None" : ""}}
+                                        style={{display: (this.state.summary.avg_gpa === '') ? "" : ""}}
+                                        onClick={(event) => this.setState({show_modal: !this.state.show_modal})}
                                 >
                                     View scatterplot
                                 </button>
-                                <div className="modal fade" id="plot-modal" tabIndex={-1} role="dialog"
-                                     aria-labelledby="plot-modal-label" aria-hidden="true">
-                                    <div className="modal-dialog" role="document">
-                                        <div className="modal-content">
-                                            <div className="modal-header">
-                                                <h5 className="modal-title" id="plot-modal-label">Scatterplot</h5>
-                                                <button type="button" className="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                    <span aria-hidden="true">×</span>
-                                                </button>
-                                            </div>
-                                            <div className="modal-body">
-                                                {/* put graph here */}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <ScatterPlotModal show={this.state.show_modal} on_hide={(event) => this.setState({show_modal: !this.state.show_modal})}/>
                             </div>
                             {/* Initially, there should be no tags inside the "#summary" tag below. */}
                             <div style={{display: (this.state.summary.avg_gpa === "") ? "None" : ""}} className="list-group" id="summary">
