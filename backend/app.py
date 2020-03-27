@@ -276,22 +276,22 @@ def track_applications_list():
                 if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
                     sum_act += grades['act_composite']
                     count_act += 1
-                summary = {
-                    'avg_gpa': None,
-                    'avg_sat_ebrw': None,
-                    'avg_sat_math': None,
-                    'avg_act': None,
-                    }
-                avg_gpa = None
-                if count_gpa:
-                    summary['avg_gpa'] = sum_gpa/count_gpa
-                if count_sat_ebrw:
-                    summary['avg_sat_ebrw'] = sum_sat_ebrw/count_sat_ebrw
-                if count_sat_math:
-                    summary['avg_sat_math'] = sum_sat_math/count_sat_math
-                if count_act:
-                    summary['avg_act'] = sum_act/count_act
-            return jsonify(status = 200, result = "OK", profiles = profiles, summary = summary)
+            summary = {
+                'avg_gpa': None,
+                'avg_sat_ebrw': None,
+                'avg_sat_math': None,
+                'avg_act': None,
+                }
+            avg_gpa = None
+            if count_gpa:
+                summary['avg_gpa'] = sum_gpa/count_gpa
+            if count_sat_ebrw:
+                summary['avg_sat_ebrw'] = sum_sat_ebrw/count_sat_ebrw
+            if count_sat_math:
+                summary['avg_sat_math'] = sum_sat_math/count_sat_math
+            if count_act:
+                summary['avg_act'] = sum_act/count_act
+        return jsonify(status = 200, result = "OK", profiles = profiles, summary = summary)
         except:
             return jsonify(status = 400, result = "College Not Found")
     return jsonify(status = 400, result = "Missing Fields")
