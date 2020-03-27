@@ -88,7 +88,8 @@ def update_college_ranking():
 
 def get_college_data_data(name):
     url_name = college_name_conversion(name)
-    url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/collegedata/'
+    # url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/collegedata/'
+    url = 'https://www.niche.com/k12/'
     url = url + url_name
     print(url)
     majors = []
@@ -265,10 +266,10 @@ def update_all_colleges():
 def get_highschool_info(name, city, state):
     name = name.replace(' ','-')+'-'+city.replace(' ','-')+'-'+state+'/'
     name = name.lower()
-    url = 'https://www.niche.com/k12/'+name
-    # url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/'+name
+    # url = 'https://www.niche.com/k12/'+name
+    url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/'+name
     # print(url)
-    url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/academic-magnet-high-school-north-charleston-sc/'
+    #url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/academic-magnet-high-school-north-charleston-sc/'
     soup = get_pretty_html(url)
 
     data = soup.find_all("div", {"class":"profile__bucket--1"})
@@ -298,7 +299,7 @@ def update_highschool_data(name, city, state):
         c = HighSchool(name=name, city=city, state=state)
         c.save()
 
-    # [:-1] is to remove the % sign at the end
+    # [:-1] is to remove percent sign in string
     c.reading_prof = int(data["reading"][:-1])
     c.math_prof = int(data["math"][:-1])
     c.grad_rate = int(data["grad rate"][:-1])
@@ -315,5 +316,5 @@ def update_highschool_data(name, city, state):
 # update_college_data_data("Stony Brook University")
 # update_college_ranking()
 # print(get_highschool_info("Stuyvesant High School", 'New York', "NY"))
-# print(update_highschool_data("Stuyvesant High School", 'New York', "NY"))
+print(update_highschool_data("Stuyvesant High School", 'New York', "NY"))
 #update_all_colleges()
