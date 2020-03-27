@@ -238,8 +238,9 @@ def track_applications_list():
             sum_act = 0
             count_act = 0
             for application in applications:
+                application_status = application.status
                 if 'statuses' in info:
-                    if application.status not in info['statuses']:
+                    if application_status not in info['statuses']:
                         continue
                 student = application.student
                 if 'high_schools' in info:
@@ -259,6 +260,7 @@ def track_applications_list():
                     'high_school_state': student.high_school_state,
                     'gpa': student.gpa,
                     'college_class': student.college_class,
+                    'application_status': application_status,
                     }
                 grades = student.grades
                 for field in grades:
