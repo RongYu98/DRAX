@@ -1,14 +1,7 @@
 from mongoengine import *
-
 from classes import College
 
-import hash_utils
-
-
 connect('account', host='localhost', port=27017)
-
-
-
 majors = []
 
 def get_clean_majors():
@@ -39,3 +32,4 @@ def get_clean_majors():
         prev = m
         majors.append(m)
     return majors
+
