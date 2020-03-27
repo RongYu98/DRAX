@@ -97,3 +97,12 @@ def compute_recommendation_score(college, student):
     else:
         score = acceptance_likelihood*0.5 + academic_similarity*0.5
     return score
+
+def compare_highschool(h1, h2):
+    diff = (h1.reading_prof - h2.reading_prof)**2
+    diff += (h1.math_prof - h2.math_prof)**2
+    diff += (h1.grad_rate - h2.grad_rate)**2
+    diff += (h1.ap_enroll - h2.ap_enroll)**2
+    diff += ((h1.avg_sat - h2.avg_sat)*100/1600.)**2
+    diff += ((h1.avg_act - h2.avg_act)*100/36)**2
+    return diff
