@@ -457,7 +457,27 @@ def get_highschool():
     for h in HighSchool.objects:
         highschools.append(h.name)
     return jsonify(status=200, result="OK", highschools=highschools)
-    
+@app.route('/api/update_rankings')
+def update_rankings():
+    if 'username' not in session or session['username']!="admin":
+        return jsonify(status=400, result="Invalid User")
+    scraper.update_college_ranking()
+    return jsonify(status=200, result="OK")
+
+@app.route('/api/update_all_college_data')
+def update_all_college_data():
+    if 'username' not in session or session['username']!="admin":
+        return jsonify(status=400, result="Invalid User")
+    scraper.update_all_colleges()
+    return jsonify(status=200, result="OK")
+
+@app.route('/delete_all_students')
+def delete_all_students():
+    if 'username' not in session or session['username']!="admin":
+        return jsonify(status=400, result="Invalid User")
+    scraper.delete_student_data()
+    return jsonify(status=200, result="OK")
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9000, debug=True)
     
