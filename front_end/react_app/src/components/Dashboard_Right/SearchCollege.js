@@ -7,7 +7,7 @@ import {SERVER_URL, STATUS_OK} from "../../common/Constants";
 const RECOMMENDED_COLLEGE_ENDPOINT = "/get_college_list";
 const MAJOR_ENDPOINT = "/all_majors";
 
-class SeachCollege extends React.Component{
+class SearchCollege extends React.Component{
 
     static show = {
         display : "flex"
@@ -46,7 +46,7 @@ class SeachCollege extends React.Component{
                 max_tuition: '',
                 act: {min: '', max: ''},
                 policy: "strict",
-                sort: SeachCollege.sort_enum.name
+                sort: SearchCollege.sort_enum.NAME
             },
             majors: {left: [], right: []}
         }
@@ -63,26 +63,14 @@ class SeachCollege extends React.Component{
     }
 
     sort_clicked(event){
-        console.log(event);
-        switch (event) {
-            case SeachCollege.sort_enum.NAME:
-                this.setState({filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.NAME}});
-                break;
-            case SeachCollege.sort_enum.COST:
-                this.setState({filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.COST}});
-                break;
-            case SeachCollege.sort_enum.RANKING:
-                this.setState({filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.RANKING}});
-                break;
-            case SeachCollege.sort_enum.RECOMMENDATION:
-                if(typeof this.old_recommendation !== 'undefined') {
-                    this.setState({college_list: this.old_recommendation, filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.RECOMMENDATION}});
+        if(event === SearchCollege.sort_enum.RECOMMENDATION){
+            if(typeof this.old_recommendation !== 'undefined') {
+                    this.setState({current_page_num: 1, college_list: this.old_recommendation, filter_data: {...this.state.filter_data, sort: SearchCollege.sort_enum.RECOMMENDATION}});
                     return;
                 }
-                this.setState({filter_data: {...this.state.filter_data, sort: SeachCollege.sort_enum.RECOMMENDATION}});
-                break;
         }
 
+        this.state.filter_data.sort = event;
         this.fetch_new_college_list();
     }
 
@@ -221,6 +209,7 @@ class SeachCollege extends React.Component{
                     body[key] = (body[key] === '' || body[key] === '-') ? null : body[key];
 
             });
+            console.log(body);
             let response = await fetch(
                 SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
                 {
@@ -236,8 +225,8 @@ class SeachCollege extends React.Component{
 
             if(response.status !== STATUS_OK) throw new Error(response.statusText);
             let response_json = await response.json();
-            if(this.state.filter_data.sort === SeachCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
-            this.setState({college_list: response_json.colleges});
+            if(this.state.filter_data.sort === SearchCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
+            this.setState({current_page_num: 1, college_list: response_json.colleges});
         }catch (err) {
             console.log(err.stack);
             alert(`failed to fetch new college list, err msg: ${err.message}`);
@@ -277,7 +266,7 @@ class SeachCollege extends React.Component{
         let list = [];
         this.state.majors_list.forEach(element=>{
             list.push(
-                <option value={element}>{element}</option>
+                <option key={element} value={element}>{element}</option>
             );
         });
         return list;
@@ -325,7 +314,7 @@ class SeachCollege extends React.Component{
                                 <button className="btn btn-secondary shadow-none" type="button" id="filters-dropdown-btn" onClick={this.filter_drop_down_clicked}>
                                     Filters
                                 </button>
-                                <div style={(this.state.show_filter) ? SeachCollege.show : SeachCollege.hide} id="search-filters-dropdown-content">
+                                <div style={(this.state.show_filter) ? SearchCollege.show : SearchCollege.hide} id="search-filters-dropdown-content">
                                     <table>
                                         <tbody>
                                         <tr>
@@ -545,11 +534,11 @@ class SeachCollege extends React.Component{
                             {
                                 (this.state.college_list.length > 1) ?
                                     <DropdownButton id="dropdown-basic-button" title="Sort By" onSelect={this.sort_clicked}>
-                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.NAME}>College name - Alphabetical Order</Dropdown.Item>
-                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.COST}>Cost of attendance - Low to High</Dropdown.Item>
-                                      <Dropdown.Item eventKey={SeachCollege.sort_enum.RANKING}>Ranking - High to Low</Dropdown.Item>
-                                        <Dropdown.Item eventKey={SeachCollege.sort_enum.ADMISSION}>Admission rate - High to Low</Dropdown.Item>
-                                        <Dropdown.Item eventKey={SeachCollege.sort_enum.RECOMMENDATION}>Recommendation score - High to Low</Dropdown.Item>
+                                      <Dropdown.Item eventKey={SearchCollege.sort_enum.NAME}>College name - Alphabetical Order</Dropdown.Item>
+                                      <Dropdown.Item eventKey={SearchCollege.sort_enum.COST}>Cost of attendance - Low to High</Dropdown.Item>
+                                      <Dropdown.Item eventKey={SearchCollege.sort_enum.RANKING}>Ranking - High to Low</Dropdown.Item>
+                                        <Dropdown.Item eventKey={SearchCollege.sort_enum.ADMISSION}>Admission rate - High to Low</Dropdown.Item>
+                                        <Dropdown.Item eventKey={SearchCollege.sort_enum.RECOMMENDATION}>Recommendation score - High to Low</Dropdown.Item>
                                     </DropdownButton>
                                     :
                                     null
@@ -580,4 +569,4 @@ class SeachCollege extends React.Component{
     }
 }
 
-export default SeachCollege;
+export default SearchCollege;
