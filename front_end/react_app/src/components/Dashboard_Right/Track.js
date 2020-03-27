@@ -361,8 +361,8 @@ class Track extends React.Component{
 
 
     componentDidMount() {
-        let college_name = this.props.location.state.college_name;
-        if(typeof college_name !== 'undefined') {
+        if(typeof this.props.location.state !== 'undefined') {
+            let college_name = this.props.location.state.college_name;
             this.state.filter_data.name = college_name;
              this.fetch_applications();
         }
