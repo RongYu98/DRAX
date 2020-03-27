@@ -89,10 +89,10 @@ class Track extends React.Component{
             if(response_json.status !== STATUS_OK) throw new Error(response_json.result);
             console.log(response_json);
             let summary = {
-                avg_gpa: response_json.summary.avg_gpa,
-                avg_sat_ebrw: response_json.summary.avg_sat_ebrw,
-                avg_sat_math: response_json.summary.avg_sat_math,
-                avg_act_composite: response_json.summary.avg_act
+                avg_gpa: (response_json.summary.avg_gpa == null) ? "null" : response_json.summary.avg_gpa,
+                avg_sat_ebrw: (response_json.summary.avg_sat_ebrw == null) ? "null" : response_json.summary.avg_sat_ebrw,
+                avg_sat_math: (response_json.summary.avg_sat_math == null) ? "null" : response_json.summary.avg_sat_math,
+                avg_act_composite: (response_json.summary.avg_act == null) ? "null" : response_json.summary.avg_act
             }
             this.setState({summary: summary});
         }catch (err) {
