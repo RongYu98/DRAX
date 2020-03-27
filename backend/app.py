@@ -293,7 +293,7 @@ def track_applications_list():
                 summary['avg_sat_math'] = sum_sat_math/count_sat_math
             if count_act:
                 summary['avg_act'] = sum_act/count_act
-        return jsonify(status = 200, result = "OK", profiles = profiles, summary = summary)
+            return jsonify(status = 200, result = "OK", profiles = profiles, summary = summary)
         except:
             return jsonify(status = 400, result = "College Not Found")
     return jsonify(status = 400, result = "Missing Fields")
