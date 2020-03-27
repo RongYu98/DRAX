@@ -1,10 +1,12 @@
 import React from "react";
 import '../../gui/css/track_application.css';
 import Application from "./Application";
+import {SERVER_URL, STATUS_OK} from "../../common/Constants";
 let badge_enum = Application.badge_enum;
 
+
 const SUMMARY_ENDPOINT = "";
-const HIGHSCHOOL_ENDPOINT = "";
+const HIGHSCHOOL_ENDPOINT = "/get_all_highschools";
 
 class Track extends React.Component{
     constructor(props) {
@@ -28,7 +30,6 @@ class Track extends React.Component{
             current_page_num: 1
         }
         this.button_list = [];
-        this.fetch_summary = this.fetch_summary.bind(this);
         this.searchClicked = this.searchClicked.bind(this);
         this.fetch_highschool = this.fetch_highschool.bind(this);
         this.get_high_school = this.get_high_school.bind(this);
@@ -36,31 +37,59 @@ class Track extends React.Component{
         this.application_checked = this.application_checked.bind(this);
         this.fetch_applications = this.fetch_applications.bind(this);
         this.get_applications = this.get_applications.bind(this);
+
+
     }
 
-    // dummy fetch
-    async fetch_summary(){
-        this.setState({summary:{
-                avg_gpa: "3.8",
-                avg_sat_ebrw: '700',
-                avg_sat_math: '740',
-                avg_act_composite: '34'
-            }});
-    }
 
-    // dummy fetch
     async fetch_highschool() {
-        let result = [];
-        for(let i = 1; i <= 5; i++){
-            result.push(`High School ${i}`);
+        try{
+            let response = await fetch(
+                SERVER_URL + HIGHSCHOOL_ENDPOINT
+            );
+
+            if(response.status !== STATUS_OK) throw new Error(response.statusText);
+            let response_json = await response.json();
+            this.setState({high_schools: response_json.highschools});
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
         }
-        this.setState({high_schools: result});
+
     }
 
     // dummy fetch
     async fetch_applications(){
-        let application_list = [1,2,3];
-        this.setState({applications: application_list});
+        // try{
+        //     // deep copy
+        //     let body = {
+        //         college_name: this.state.filter_data.college_name,
+        //         college_class_min: (this.state.filter_data.college_class.from === "") ? null : parseInt(this.state.filter_data.college_class.from),
+        //         // college_class_max:
+        //     }
+        //
+        //     console.log(body);
+        //     let response = await fetch(
+        //         SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
+        //         {
+        //             method: 'POST',
+        //             credentials: 'include',
+        //             headers: {
+        //                 'Accept': 'application/json',
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify(body)
+        //         }
+        //     );
+        //
+        //     if(response.status !== STATUS_OK) throw new Error(response.statusText);
+        //     let response_json = await response.json();
+        //     if(this.state.filter_data.sort === SearchCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
+        //     this.setState({current_page_num: 1, college_list: response_json.colleges});
+        // }catch (err) {
+        //     console.log(err.stack);
+        //     alert(`failed to fetch new college list, err msg: ${err.message}`);
+        // }
     }
 
     // dummy get
@@ -188,6 +217,8 @@ class Track extends React.Component{
         return applications;
     }
 
+
+
     high_school_checked(event){
         let current_high_schools = this.state.filter_data.checked_high_schools;
         let school = event.target.id;
@@ -245,7 +276,7 @@ class Track extends React.Component{
             return true;
     }
 
-    // this will depend on the colleges
+
     get_page_buttons(){
         let page_list = [];
         let new_button_list = [];
@@ -321,9 +352,7 @@ class Track extends React.Component{
 
 
     componentDidMount() {
-        this.fetch_summary();
         this.fetch_highschool();
-        this.fetch_applications();
     }
 
     searchClicked(event){
@@ -334,6 +363,8 @@ class Track extends React.Component{
         let high_schools = this.get_high_school();
         let page_buttons = this.get_page_buttons();
         let applications = this.get_applications();
+        let id = this.props.match.params.id;
+        if(typeof id === 'undefined') id = '';
         return (
             <div className="right-content">
                     <div className="wrap-search-result">
@@ -512,7 +543,7 @@ class Track extends React.Component{
                         </div>
                         <div className="wrap-result">
                             <div className="result-top">
-                                <span className="result-text">Results</span>
+                                <span style={{display: (this.state.applications.length === 0) ? "None" : ""}} className="result-text">Results</span>
                                 <button type="button" id="plot-btn" className="btn btn-primary shadow-none"
                                         data-toggle="modal" data-target="#plot-modal">View scatterplot
                                 </button>

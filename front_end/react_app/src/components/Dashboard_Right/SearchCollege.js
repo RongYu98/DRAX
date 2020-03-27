@@ -193,22 +193,24 @@ class SearchCollege extends React.Component{
                     let right = body[key].right;
                     if(typeof left !== 'undefined'){
                         body[key].left = (left === '' || left === '-') ? null : left;
-                    }
 
+                    }
                     if(typeof right !== 'undefined'){
                         body[key].right = (right === '' || right === '-') ? null : right;
                     }
 
                     if(typeof min !== 'undefined'){
-                        body[key].min = (min === '' || min === '-') ? null : min;
+                        body[key].min = (min === '' || min === '-') ? null : parseInt(min);
                     }
                     if(typeof max !== 'undefined') {
-                        body[key].max = (max === '' || max === '-') ? null : max;
+                        body[key].max = (max === '' || max === '-') ? null : parseInt(max);
                     }
 
                     body[key] = (body[key] === '' || body[key] === '-') ? null : body[key];
 
             });
+            body.max_ranking = (body.max_ranking == null) ? null : parseInt(body.max_ranking);
+            body.max_tuition = (body.max_tuition == null) ? null : parseInt(body.max_tuition);
             console.log(body);
             let response = await fetch(
                 SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
