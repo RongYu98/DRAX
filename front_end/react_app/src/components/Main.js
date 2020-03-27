@@ -4,7 +4,7 @@ import College from '../gui/img/college.png';
 import Application from '../gui/img/application.png';
 import MyPage from '../gui/img/mypage.png';
 import Logout from '../gui/img/logout.png';
-import SeachCollege from "./Dashboard_Right/SearchCollege";
+import SearchCollege from "./Dashboard_Right/SearchCollege";
 import Authenticator from "../common/Authenticator";
 import Track from "./Dashboard_Right/Track";
 import {BrowserRouter, Route, Switch, Redirect, Link} from "react-router-dom";
@@ -78,7 +78,7 @@ class Main extends React.Component{
                     </div>
                 </div>
                 <Switch>
-                    <Route path='/main/search' component={SeachCollege} />
+                    <Route path='/main/search' component={SearchCollege} />
                     <Route path='/main/track/' render={props => <Track {...props} /> } />
                     <Route path='/main/track/:college_id' render={props => <Track {...props} />} />
                     <Route path='/main/my_page/' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
