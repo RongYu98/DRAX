@@ -43,16 +43,26 @@ class Application extends React.Component{
         }
     }
 
+    get_badge_style(acceptance){
+        if(acceptance.toLowerCase.includes("accept")) return Application.badge_enum.SUCCESS;
+        if(acceptance.toLowerCase.includes("denied")) return Application.badge_enum.DANGER;
+        if(acceptance.toLowerCase.includes("deferred")) return Application.badge_enum.WARNING;
+        if(acceptance.toLowerCase.includes("wait")) return Application.badge_enum.WARNING;
+        if(acceptance.toLowerCase.includes("withdraw")) return Application.badge_enum.DANGER;
+        if(acceptance.toLowerCase.includes("pending")) return Application.badge_enum.WARNING;
+    }
+
 
     render() {
         let {btn_info,  personal, sat2, act} = this.props;
+        let style = this.get_badge_style(btn_info.acceptance);
         return (
             <React.Fragment>
                 <button className="list-group-item list-group-item-action" onClick={this.toggle_carousel}>
                     {/* student's username should be included inside h5 tag */}
                     <h5 className="username">{btn_info.username}<br/>
                         {/* accpeted: badge-success | denied: badge-danger | rest: badge-warning */}
-                        <span className={btn_info.style}>{btn_info.acceptance}</span>
+                        <span className={style}>{btn_info.acceptance}</span>
                     </h5>
                     {/* high school name should be one the left side of br tag
                     high school city  should be combined with high school state by comma and this combination should be on the right side of br tag and inside h5 tag */}
