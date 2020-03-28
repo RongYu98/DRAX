@@ -501,7 +501,7 @@ class Track extends React.Component{
                                 <span style={{display: ((this.state.summary.avg_gpa === '') && (!this.state.not_found)) ? "None" : ""}} className="result-text">Results</span>
                                 <button type="button" id="plot-btn" className="btn btn-primary shadow-none"
                                         data-toggle="modal" data-target="#plot-modal"
-                                        style={{display: ((this.state.summary.avg_gpa === '') && (!this.state.not_found)) ? "None" : "", marginBottom: "5%"}}
+                                        style={{display: (this.state.summary.avg_gpa === '') ? "None" : "", marginBottom: "5%"}}
                                         onClick={(event) => this.setState({show_modal: !this.state.show_modal})}
                                 >
                                     View scatterplot
