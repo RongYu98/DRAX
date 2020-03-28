@@ -13,6 +13,8 @@ from scraper import update_highschool_data
 
 import hash_utils
 import algorithms
+import file_parser
+import scraper
 
 connect('account', host='localhost', port=27017)
 connect('college', alias='college')
@@ -544,16 +546,17 @@ def get_highschool():
 
 @app.route('/api/update_rankings')
 def update_rankings():
-    if 'username' not in session or session['username'] != "admin":
-        return jsonify(status=400, result="Invalid User")
+    #if 'username' not in session or session['username'] != "admin":
+    #    return jsonify(status=400, result="Invalid User")
     scraper.update_college_ranking()
     return jsonify(status=200, result="OK")
 
 
 @app.route('/api/update_all_college_data')
 def update_all_college_data():
-    if 'username' not in session or session['username'] != "admin":
-        return jsonify(status=400, result="Invalid User")
+    #if 'username' not in session or session['username'] != "admin":
+    #    return jsonify(status=400, result="Invalid User")
+    file_parser.import_college_scorecard("Most-Recent-Cohorts-All-Data-Elements.csv")
     scraper.update_all_colleges()
     return jsonify(status=200, result="OK")
 
