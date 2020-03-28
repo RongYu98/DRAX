@@ -256,7 +256,7 @@ class SearchCollege extends React.Component{
                <CollegeItem key={`college_key-${i}`} data= {
                    {
                        name: (college.name == null) ? "-" : college.name,
-                       state: (college.region == null) ? "-" : college.region,
+                       state: (college.state == null) ? "-" : college.state,
                        institution: (college.institution == null) ? "-" : college.institution,
                        admission_rate: (college.admission_rate == null) ? "-" : college.admission_rate,
                        tuition: (college.tuition == null) ? "-" : college.tuition,
