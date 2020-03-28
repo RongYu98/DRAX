@@ -139,15 +139,6 @@ def get_region(region, state):
         return "Other"
 
 
-def get_size(size):
-    if size <= 500:
-        return "Small"
-    elif size <= 10000:
-        return "Medium"
-    else:
-        return "Large"
-
-
 def import_college_scorecard(scorecard):
     f = open('colleges.txt', "r")
     college_list = []
@@ -178,7 +169,7 @@ def import_college_scorecard(scorecard):
                 region = get_region(line[header.index("REGION")], state)
                 institution = institution_type(line[header.index("CONTROL")])
                 admission_rate = line[header.index("ADM_RATE")]
-                size = get_size(int(line[header.index("UGDS")]))
+                size = int(line[header.index("UGDS")])
                 median_debt = line[header.index("GRAD_DEBT_MDN")]
                 salary = line[header.index("MN_EARN_WNE_P6")]
                 try:
