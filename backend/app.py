@@ -388,6 +388,8 @@ def get_college_list():
     info = request.json
     if info == None:
         info = request.form
+    student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+    residence_state = student.residence_state
     query = Q()
     
     # Check filters
@@ -409,7 +411,12 @@ def get_college_list():
     if 'size' in info: # small, medium, or large
         size = info["size"]
         if size not in {"", None}:
-            query = query & Q(size=size)
+            if size == "small":
+                query = query & Q(size__lt=2000)
+            elif size == "medium":
+                query = query & Q(size__lte=15000)
+            else:
+                query = query & Q(size__gt=15000)
     if 'major' in info: # left and right
         major_left = info["major"]["left"]
         majors = []
@@ -427,7 +434,10 @@ def get_college_list():
     if 'max_tuition' in info:
         max_tuition = info["max_tuition"]
         if max_tuition not in {"", None}:
-            query = query & Q(cost__lte=max_tuition)
+            out_state = Q(out_cost__lte=max_tuition)
+            in_state = Q(in_cost__lte=max_tuition) & Q(state=residence_state)
+            cost_q = (out_state | in_state)
+            query = query & cost_q
     if 'sat_ebrw' in info: # min and max
         sat_ebrw_min = info["sat_ebrw"]["min"]
         if sat_ebrw_min not in {"", None}:
@@ -451,9 +461,6 @@ def get_college_list():
             query = query & Q(avg_act_composite__lte=act_max)
     if 'policy' in info: # strict or lax
         policy = info["policy"]#do stuff with this after clarification
-    
-    student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
-    residence_state = student.residence_state
     
     # Check sorting method
     sort = ""
