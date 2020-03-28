@@ -79,6 +79,7 @@ def update_college_ranking():
                     ranking = ranking.split('-')[1]
                 c = College.objects.get(name=name)
                 c.ranking = int(ranking)
+                c.save()
             except Exception as e:
                 print(e)
                 try: # college not in db, so make a class for it
@@ -91,7 +92,8 @@ def update_college_ranking():
 def get_college_data_data(name):
     url_name = college_name_conversion(name)
     # url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/collegedata/'
-    url = 'https://www.niche.com/k12/'
+    # url = 'https://www.niche.com/k12/'
+    url = 'https://www.collegedata.com/college/'
     url = url + url_name
     print(url)
     majors = []

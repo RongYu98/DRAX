@@ -189,10 +189,12 @@ def import_college_scorecard(scorecard):
                     college.update(set__institution=institution)
                     if admission_rate != "NULL":
                         college.update(set__admission_rate=admission_rate)
-                    college.update(set__size=size)
+                    college.size=size
+                    college.save()
                     college.update(set__median_debt=median_debt)
                     college.update(set__salary=salary)
-                except:
+                except Exception as e:
+                    print(e)
                     if admission_rate != "NULL":
                         college = College(
                             name=name, city=city, state=state,
@@ -206,10 +208,10 @@ def import_college_scorecard(scorecard):
                             institution=institution, size=size,
                             median_debt=median_debt, salary=salary,
                         )
-                    try:
-                        college.save()
-                    except:
-                        print("Error importing college: " + name)
+                    #try:
+                    college.save()
+                    #except:
+                    #    print("Error importing college: " + name)
 
 # global variable to store the file content of colleges.txt in list form
 college_list = None
