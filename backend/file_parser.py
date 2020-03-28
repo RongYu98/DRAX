@@ -5,6 +5,7 @@ from classes import Account, Application, StudentProfile, College
 from mongoengine import *
 connect('account', host='localhost', port=27017)
 
+
 def import_student_data(filename):
     lines = []
     with open(filename) as f:
@@ -67,8 +68,8 @@ def import_student_data(filename):
             print(e)
             print("Profile couldn't be loaded: "+username)
             continue
-        
-        
+
+
 def import_application_data(filename):
     lines = []
     with open(filename) as f:
@@ -105,11 +106,13 @@ def import_application_data(filename):
             print(e)
             print(line[0]+" "+line[1])
             continue
-    
+
+
 def delete_student_data():
     Account.objects(type="Student").delete() # should delete all account fields, including admin?
     # StudentProfile.objects().delete()
     # Application.objects().delete() 
+
 
 def institution_type(arg):
     switcher = {
@@ -118,6 +121,7 @@ def institution_type(arg):
         "3": "Private For-Profit",
     }
     return switcher.get(arg, None)
+
 
 def get_region(region, state):
     northeast = ["NJ", "NY", "PA"]
@@ -134,6 +138,7 @@ def get_region(region, state):
     if region == "9":
         return "Other"
 
+
 def get_size(size):
     if size <= 500:
         return "Small"
@@ -142,6 +147,7 @@ def get_size(size):
     else:
         return "Large"
 
+
 def import_college_scorecard(scorecard, colleges):
     f = open(colleges, "r")
     college_list = []
@@ -149,14 +155,18 @@ def import_college_scorecard(scorecard, colleges):
     for c in f:
         n = c.rstrip()
         college_list.append(n)
-        mod_list.append(n.replace("&", "and").replace(",", "").replace("The ", ""))
+        mod_list.append(
+            n.replace("&", "and").replace(",", "").replace("The ", "")
+            )
     f.close()
     with open(scorecard) as sc:
         sc_reader = csv.reader(sc)
         header = next(sc_reader)
         for line in sc_reader:
             sc_name = line[header.index("INSTNM")]
-            sc_mod_name = sc_name.replace("-", " ").replace("The ", "").replace("Saint", "St")
+            sc_mod_name = sc_name.replace("-", " ")
+            sc_mod_name = sc_mod_name.replace("The ", "")
+            sc_mod_name = sc_mod_name.replace("Saint", "St")
             name = ""
             if sc_name in college_list:
                 name = sc_name
@@ -171,20 +181,35 @@ def import_college_scorecard(scorecard, colleges):
                 size = get_size(int(line[header.index("UGDS")]))
                 median_debt = line[header.index("GRAD_DEBT_MDN")]
                 salary = line[header.index("MN_EARN_WNE_P6")]
-                if admission_rate != "NULL":
-                    college = College(
-                        name=name, city=city, state=state, region=region, institution=institution,
-                        admission_rate=admission_rate, size=size, median_debt=median_debt, salary = salary,
-                    )
-                else:
-                    college = College(
-                        name=name, city=city, state=state, region=region, institution=institution,
-                        size=size, median_debt=median_debt, salary = salary,
-                    )
                 try:
-                    college.save()
+                    college = College.objects.get(name=name)
+                    college.update(set__city=city)
+                    college.update(set__state=state)
+                    college.update(set__region=region)
+                    college.update(set__institution=institution)
+                    if admission_rate != "NULL":
+                        college.update(set__admission_rate=admission_rate)
+                    college.update(set__size=size)
+                    college.update(set__median_debt=median_debt)
+                    college.update(set__salary=salary)
                 except:
-                    print("Error importing college: " + name)
+                    if admission_rate != "NULL":
+                        college = College(
+                            name=name, city=city, state=state,
+                            region=region, institution=institution,
+                            admission_rate=admission_rate, size=size,
+                            median_debt=median_debt, salary=salary,
+                        )
+                    else:
+                        college = College(
+                            name=name, city=city, state=state, region=region,
+                            institution=institution, size=size,
+                            median_debt=median_debt, salary=salary,
+                        )
+                    try:
+                        college.save()
+                    except:
+                        print("Error importing college: " + name)
 
 # global variable to store the file content of colleges.txt in list form
 college_list = None
@@ -201,6 +226,7 @@ def generate_collegetxt_list():
             cleaned_data.append(name)
     college_list = cleaned_data
     return cleaned_data
+
 
 def get_collegetxt_list(refresh=False):
     global college_list
