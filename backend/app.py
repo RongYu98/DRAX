@@ -455,7 +455,7 @@ def get_college_list():
     if 'act' in info: # min and max
         act_min = info["act"]["min"]
         if act_min not in {"", None}:
-            query = query & Q(avg_act_composite__lte=act_min)
+            query = query & Q(avg_act_composite__gte=act_min)
         act_max = info["act"]["max"]
         if act_max not in {"", None}:
             query = query & Q(avg_act_composite__lte=act_max)
