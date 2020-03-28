@@ -19,9 +19,9 @@ class ScatterPlotModal extends React.Component{
         super(props);
         this.state = {
             scatter_plots: [],
-            graph_type: ScatterPlotModal.graph_type_enum.ACT
-        };
-
+            graph_type: ScatterPlotModal.graph_type_enum.ACT,
+            empty: false
+        }
         this.fetch_data = this.fetch_data.bind(this);
         this.on_button_click = this.on_button_click.bind(this);
         this.get_scatter_plot = this.get_scatter_plot.bind(this);
@@ -33,7 +33,6 @@ class ScatterPlotModal extends React.Component{
 
     async fetch_data(type){
         try{
-
             let body = {...this.props.input_json, test_type: type};
             console.log(body);
             let response = await fetch(
@@ -41,7 +40,7 @@ class ScatterPlotModal extends React.Component{
                 {
                     method: 'POST',
                     credentials: 'include',
-                    header:{
+                    headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
@@ -51,7 +50,8 @@ class ScatterPlotModal extends React.Component{
             if(response.status != STATUS_OK) throw new Error(response.statusText);
             let response_json = await response.json();
             if(response_json.result !== "OK") throw new Error(response_json.result);
-            this.state.scatter_plots = response_json.coordinate;
+            this.state.scatter_plots = response_json.coordinates;
+            this.state.empty = (response_json.coordinates.length === 0) ? true : false;
         }catch (err) {
             console.log(err.stack);
             alert(err.message);
@@ -64,6 +64,7 @@ class ScatterPlotModal extends React.Component{
     }
 
     get_scatter_plot(){
+       if(this.state.empty) return "no coordinates found";
        if(this.state.scatter_plots.length === 0) return "Click on a button to see scatter plot";
 
        let x = this.state.scatter_plots.forEach(function (coordinate) {
