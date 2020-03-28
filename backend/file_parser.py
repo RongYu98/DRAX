@@ -170,7 +170,7 @@ def import_college_scorecard(scorecard):
                 institution = institution_type(line[header.index("CONTROL")])
                 adm_rate = line[header.index("ADM_RATE")]
                 if adm_rate != "NULL":
-                    admission_rate = float()*100
+                    admission_rate = float(adm_rate)*100
                 else:
                     admission_rate = adm_rate
                 size = int(line[header.index("UGDS")])
