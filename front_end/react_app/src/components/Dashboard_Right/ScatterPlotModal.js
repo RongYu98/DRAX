@@ -33,7 +33,9 @@ class ScatterPlotModal extends React.Component{
 
     async fetch_data(type){
         try{
+
             let body = {...this.props.input_json, test_type: type};
+            console.log(body);
             let response = await fetch(
                 SERVER_URL + PLOT_ENDPOINT,
                 {
