@@ -45,12 +45,12 @@ class ScatterPlotModal extends React.Component{
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: body
+                    body: JSON.stringify(body)
                 }
             );
             if(response.status != STATUS_OK) throw new Error(response.statusText);
             let response_json = await response.json();
-            if(response_json.result !== "OK") throw new Error(response_json.status);
+            if(response_json.result !== "OK") throw new Error(response_json.result);
             this.state.scatter_plots = response_json.coordinate;
         }catch (err) {
             console.log(err.stack);
