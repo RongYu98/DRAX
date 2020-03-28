@@ -28,7 +28,7 @@ class College(Document):
     institution = StringField()#required=True, max_length=20)
     admission_rate = FloatField()
     completion_rate = FloatField()
-    size = StringField()#required=True, max_length=6)
+    size = IntField()#required=True, max_length=6)
     median_debt = StringField()#required=True, max_length=6)
     salary = StringField()
     in_cost = IntField()
