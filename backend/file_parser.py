@@ -148,8 +148,8 @@ def get_size(size):
         return "Large"
 
 
-def import_college_scorecard(scorecard, colleges):
-    f = open(colleges, "r")
+def import_college_scorecard(scorecard):
+    f = open('colleges.txt', "r")
     college_list = []
     mod_list = []
     for c in f:
