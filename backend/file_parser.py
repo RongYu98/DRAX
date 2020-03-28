@@ -168,7 +168,7 @@ def import_college_scorecard(scorecard):
                 state = line[header.index("STABBR")]
                 region = get_region(line[header.index("REGION")], state)
                 institution = institution_type(line[header.index("CONTROL")])
-                admission_rate = line[header.index("ADM_RATE")]
+                admission_rate = float(line[header.index("ADM_RATE")])*100
                 size = int(line[header.index("UGDS")])
                 median_debt = line[header.index("GRAD_DEBT_MDN")]
                 salary = line[header.index("MN_EARN_WNE_P6")]
