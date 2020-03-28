@@ -202,20 +202,21 @@ def compare_students(s1, s2):
 
     gpa_weight, sat_weight, act_weight = None, None, None
     if gpa_num!=None:
-        gpa_weight = ((s1_avg_gpa - s2_avg_gpa) * 100/4.0 * gpa_num / 10)**2
+        gpa_weight = ((s1_avg_gpa - s2_avg_gpa) * 100/4.0 * gpa_num / 100)**2
     if sat_num != None:
-        sat_weight = ((s1_avg_sat - s2_avg_sat) * 100/1600. * sat_num / 10)**2
+        sat_weight = ((s1_avg_sat - s2_avg_sat) * 100/1600. * sat_num / 100)**2
     if act_num != None:
-        act_weight = ((s1_avg_act - s2_avg_act) * 100/36. * act_num / 10)**2
+        act_weight = ((s1_avg_act - s2_avg_act) * 100/36. * act_num / 100)**2
     
     print(gpa_weight, sat_weight, act_weight)
     total = [gpa_weight, sat_weight, act_weight]
     total = [x for x in total if x!=None]
     dissimilarity = sum(total) if total!=[] else None
-
     number = [x for x in [gpa_num, sat_num, act_num] if x!=None]
     number = max(number) if number!=[] else None
     return dissimilarity, number
+
+
 def compare_highschool(h1, h2, s1, s2):
     hs_dissimilarity = compare_highschool_grades(h1, h2)
     student_dissimilarity = compare_students(s1, s2)

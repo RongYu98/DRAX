@@ -194,8 +194,10 @@ def generate_collegetxt_list():
     with open('colleges.txt') as f:
         data = f.read().split('\n')
         cleaned_data = []
-        for college in data: # clean the names
-            name = college # moved cleaning elsewhere
+        for college in data:  # clean the names
+            name = college  # moved cleaning elsewhere
+            if (name.strip() == ''):
+                continue  # no empty string as name
             cleaned_data.append(name)
     college_list = cleaned_data
     return cleaned_data

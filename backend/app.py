@@ -19,14 +19,15 @@ connect('college', alias='college')
 
 app = Flask(__name__)
 app.secret_key = 'Draconian Rich Awesome Xenomorphs'
-CORS(app, supports_credentials=True) # may wish to disable cross origin in the cloud server for security
+CORS(app, supports_credentials=True)
+# may wish to disable cross origin in the cloud server for security
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
     info = request.json
     # check there is a username and password
-    if info==None or 'username' not in info or 'password' not in info:
-        return jsonify(status = 400, result = "Missing Fields")
+    if info is None or 'username' not in info or 'password' not in info:
+        return jsonify(status=400, result="Missing Fields")
     print(info)
     username = str(info['username'])
     password = str(info['password'])
@@ -34,21 +35,20 @@ def signup():
     # make an account class with the hashed info
     salt = hash_utils.generate_salt()
     digest = hash_utils.hmac_hash(password, salt)
-    account = Account(username=username, 
+    account = Account(username=username,
                       hashed_password=digest,
                       salt=salt, type="Student")
-    
+
     # try to save the data
     # if the username is not unique, pymongo will tell us :D
     try:
         student = account.save()
         # Create a student profile
         profile = StudentProfile(student=student).save()
-        session['username'] = username
-        return jsonify(status = 200, result = "OK")
+        return jsonify(status=200, result="OK")
     except ValidationError as e:
         print(e)
-        return jsonify(status = 400, result = "Validation Error " + e)
+        return jsonify(status=400, result="Validation Error " + e)
     except NotUniqueError as e:
         print(e)
         return jsonify(status = 400, result = "Username already taken.")
@@ -60,7 +60,7 @@ def login():
 
     # check there is a username and password
     if info==None or 'username' not in info or 'password' not in info:
-        return jsonify(status = 400, result = "Invalid Login")
+        return jsonify(status=400, result="Invalid Login")
     username = str(info['username'])
     password = str(info['password'])
 
@@ -69,7 +69,7 @@ def login():
         account = Account.objects.get(username=username)
         print(account)
     except DoesNotExist as e:
-        return jsonify(status = 400, result = "Invalid Login")
+        return jsonify(status=400, result="Invalid Login")
     
     # check the password
     digest = hash_utils.hmac_hash(password, account.salt)
@@ -79,12 +79,14 @@ def login():
     else:
         return jsonify(status = 400, result = "Invalid Login")
 
+    
 @app.route('/api/logout', methods=['POST'])
 def logout():
     if 'username' in session and session['username'] != None:
         session['username'] = None
         return jsonify(status=200, result="Logged Out")
     return jsonify(status=400, result="Not Logged In")
+
 
 @app.route('/api/alive', methods=['POST'])
 def alive():
@@ -112,10 +114,11 @@ def get_profile():
         grades = student.grades
         for field in grades:
             profile[field] = grades[field]
-        return jsonify(status=200, result="OK", profile = profile)
+        return jsonify(status=200, result="OK", profile=profile)
     except:
         return jsonify(status=400, result="Get Profile Failed")
 
+    
 @app.route('/api/save_profile', methods=['POST'])
 def save_profile():
     # Check if logged in
@@ -182,6 +185,7 @@ def get_admission_decision():
         return jsonify(status=200, result="OK", admission_decisions = admission_decisions)
     except:
         return jsonify(status=400, result="Get Admission Decisions Failed")
+
 
 @app.route('/api/submit_admission_decision', methods=['POST'])
 def submit_admission_decision():
@@ -297,6 +301,7 @@ def track_applications_list():
         except:
             return jsonify(status = 400, result = "College Not Found")
     return jsonify(status = 400, result = "Missing Fields")
+
 
 @app.route('/api/track_applications_plot', methods=['POST'])
 def track_applications_plot():
@@ -520,12 +525,14 @@ def get_college_list():
         college_list.sort(key=get_tuition)
     return jsonify(status=200, result="OK", colleges = college_list)
 
+
 @app.route('/api/all_majors')
 def get_majors():
-    import script # we will hardcode the list, so this will change...
+    import script  # we may hardcode the list, so this will change...
     d = script.get_clean_majors()
     data = jsonify(status=200, result="OK", majors=d)
     return data
+
 
 @app.route('/api/get_all_highschools')
 def get_highschool():
@@ -533,27 +540,30 @@ def get_highschool():
     for h in HighSchool.objects:
         highschools.append(h.name)
     return jsonify(status=200, result="OK", highschools=highschools)
+
+
 @app.route('/api/update_rankings')
 def update_rankings():
-    if 'username' not in session or session['username']!="admin":
+    if 'username' not in session or session['username'] != "admin":
         return jsonify(status=400, result="Invalid User")
     scraper.update_college_ranking()
     return jsonify(status=200, result="OK")
 
+
 @app.route('/api/update_all_college_data')
 def update_all_college_data():
-    if 'username' not in session or session['username']!="admin":
+    if 'username' not in session or session['username'] != "admin":
         return jsonify(status=400, result="Invalid User")
     scraper.update_all_colleges()
     return jsonify(status=200, result="OK")
 
+
 @app.route('/delete_all_students')
 def delete_all_students():
-    if 'username' not in session or session['username']!="admin":
+    if 'username' not in session or session['username'] != "admin":
         return jsonify(status=400, result="Invalid User")
     scraper.delete_student_data()
     return jsonify(status=200, result="OK")
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9000, debug=True)
-    

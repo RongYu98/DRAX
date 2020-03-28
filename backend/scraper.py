@@ -74,17 +74,19 @@ def update_college_ranking():
     for name in colleges:
         if name in data:
             try:
+                ranking = data[name]
+                if '-' in ranking:	# e.g. 401-500 => 500
+                    ranking = ranking.split('-')[1]
                 c = College.objects.get(name=name)
-                c.ranking = int(data[name])
+                c.ranking = int(ranking)
             except Exception as e:
                 print(e)
                 try: # college not in db, so make a class for it
-                    c = College(name=name, ranking=int(data[name]))
+                    c = College(name=name, ranking=int(ranking))
                     c.save()
                 except:
                     print("Error updating rank for college: "+name)
                     continue
-            
 
 def get_college_data_data(name):
     url_name = college_name_conversion(name)
@@ -316,5 +318,5 @@ def update_highschool_data(name, city, state):
 # update_college_data_data("Stony Brook University")
 # update_college_ranking()
 # print(get_highschool_info("Stuyvesant High School", 'New York', "NY"))
-print(update_highschool_data("Stuyvesant High School", 'New York', "NY"))
+# print(update_highschool_data("Stuyvesant High School", 'New York', "NY"))
 #update_all_colleges()
