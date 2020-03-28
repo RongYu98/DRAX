@@ -135,7 +135,8 @@ def get_college_data_data(name):
         d = fresh_grades[sat_math_index].split()[0].split('-') 
         sat_math_25th = int(d[0])
         sat_math_75th = int(d[1])
-
+        if avg_sat_math == None:
+            avg_sat_math = (sat_math_25th+sat_math_75th)/2
     avg_sat_ebrw, sat_ebrw_25th, sat_ebrw_75th = None, None, None
     if ('average' in fresh_grades[sat_ebrw_index]):
         avg_sat_ebrw = int(fresh_grades[sat_ebrw_index].split()[0])
@@ -144,7 +145,8 @@ def get_college_data_data(name):
         d = fresh_grades[sat_ebrw_index].split()[0].split('-')
         sat_ebrw_25th = int(d[0])
         sat_ebrw_75th =	int(d[1])
-        
+        if avg_sat_ebrw == None:
+            avg_sat_ebrw = (sat_ebrw_25th+sat_ebrw_75th)/2
     avg_act_comp, act_comp_25th, act_comp_75th = None, None, None
     if ('average' in fresh_grades[act_comp_index]):
         avg_act_comp = int(fresh_grades[act_comp_index].split()[0])
@@ -153,6 +155,9 @@ def get_college_data_data(name):
         d = fresh_grades[act_comp_index].split()[0].split('-')
         act_comp_25th = int(d[0])
         act_comp_75th = int(d[1])
+        if avg_act_comp == None:
+            avg_act_comp = (act_comp_25th+act_comp_75th)/2
+            
     #print(avg_gpa)
     #print(avg_sat_math, sat_math_25th, sat_math_75th)
     #print(avg_act_comp, act_comp_25th, act_comp_75th)
