@@ -3,7 +3,7 @@ import '../../gui/css/track_application.css';
 import Application from "./Application";
 import {SERVER_URL, STATUS_OK} from "../../common/Constants";
 import ScatterPlotModal from "./ScatterPlotModal";
-let badge_enum = Application.badge_enum;
+
 
 
 
@@ -30,7 +30,8 @@ class Track extends React.Component{
             high_schools: [],
             applications: [],
             current_page_num: 1,
-            show_modal: false
+            show_modal: false,
+            not_found : false
         }
         this.button_list = [];
         this.searchClicked = this.searchClicked.bind(this);
@@ -40,14 +41,9 @@ class Track extends React.Component{
         this.application_checked = this.application_checked.bind(this);
         this.fetch_applications = this.fetch_applications.bind(this);
         this.get_applications = this.get_applications.bind(this);
-        this.fetch_scatter_plot = this.fetch_scatter_plot.bind(this);
         this.get_input_json = this.get_input_json.bind(this);
     }
 
-
-    async fetch_scatter_plot(){
-
-    }
 
     async fetch_highschool() {
         try{
@@ -96,14 +92,18 @@ class Track extends React.Component{
 
             if(response.status !== STATUS_OK) throw new Error(response.statusText);
             let response_json = await response.json();
-            if(response_json.status !== STATUS_OK) throw new Error(response_json.result);
+            if(response_json.status !== STATUS_OK) {
+                this.setState({not_found: true});
+                throw new Error(response_json.result);
+            }
             console.log(response_json);
             let summary = {
-                avg_gpa: (response_json.summary.avg_gpa == null) ? "null" : response_json.summary.avg_gpa,
-                avg_sat_ebrw: (response_json.summary.avg_sat_ebrw == null) ? "null" : response_json.summary.avg_sat_ebrw,
-                avg_sat_math: (response_json.summary.avg_sat_math == null) ? "null" : response_json.summary.avg_sat_math,
-                avg_act_composite: (response_json.summary.avg_act == null) ? "null" : response_json.summary.avg_act
+                avg_gpa: (response_json.summary.avg_gpa == null) ? "-" : response_json.summary.avg_gpa,
+                avg_sat_ebrw: (response_json.summary.avg_sat_ebrw == null) ? "-" : response_json.summary.avg_sat_ebrw,
+                avg_sat_math: (response_json.summary.avg_sat_math == null) ? "-" : response_json.summary.avg_sat_math,
+                avg_act_composite: (response_json.summary.avg_act == null) ? "-" : response_json.summary.avg_act
             }
+            this.state.not_found = (response_json.profiles.length === 0) ? true : false;
             this.setState({applications: response_json.profiles, summary: summary});
         }catch (err) {
             console.log(err.stack);
@@ -112,7 +112,9 @@ class Track extends React.Component{
     }
 
     get_applications(){
-        console.log(this.state);
+        if(this.state.not_found){
+            return (<h1>No profiles found</h1>);
+        }
         let applications = [];
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
         let end_index = beginning + 10;
@@ -496,10 +498,10 @@ class Track extends React.Component{
                         </div>
                         <div className="wrap-result">
                             <div className="result-top">
-                                <span style={{display: (this.state.summary.avg_gpa === '') ? "None" : ""}} className="result-text">Results</span>
+                                <span style={{display: ((this.state.summary.avg_gpa === '') && (!this.state.not_found)) ? "None" : ""}} className="result-text">Results</span>
                                 <button type="button" id="plot-btn" className="btn btn-primary shadow-none"
                                         data-toggle="modal" data-target="#plot-modal"
-                                        style={{display: (this.state.summary.avg_gpa === '') ? "" : "", marginBottom: "5%"}}
+                                        style={{display: ((this.state.summary.avg_gpa === '') && (!this.state.not_found)) ? "None" : "", marginBottom: "5%"}}
                                         onClick={(event) => this.setState({show_modal: !this.state.show_modal})}
                                 >
                                     View scatterplot

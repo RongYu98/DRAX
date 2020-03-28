@@ -34,6 +34,7 @@ class SearchCollege extends React.Component{
             current_page_num: 1,
             college_list: [],
             majors_list: [],
+            not_found: false,
             filter_data: {
                 name: "",
                 admission_rate: {min: "", max: ""},
@@ -228,6 +229,10 @@ class SearchCollege extends React.Component{
             if(response.status !== STATUS_OK) throw new Error(response.statusText);
             let response_json = await response.json();
             if(this.state.filter_data.sort === SearchCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
+            if(response_json.colleges.length === 0)
+                this.state.not_found = true;
+            else
+                this.state.not_found = false;
             this.setState({current_page_num: 1, college_list: response_json.colleges});
         }catch (err) {
             console.log(err.stack);
@@ -237,6 +242,10 @@ class SearchCollege extends React.Component{
 
 
     get_colleges(){
+        if(this.state.not_found){
+            return (<h1>No results found</h1>);
+        }
+
         let list = [];
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
         let end_index = beginning + 10;
@@ -246,16 +255,16 @@ class SearchCollege extends React.Component{
             list.push(
                <CollegeItem key={`college_key-${i}`} data= {
                    {
-                       name: (college.name == null) ? "null" : college.name,
-                       state: (college.region == null) ? "null" : college.region,
-                       institution: (college.institution == null) ? "null" : college.institution,
-                       admission_rate: (college.admission_rate == null) ? "null" : college.admission_rate,
-                       tuition: (college.tuition == null) ? "null" : college.tuition,
-                       debt: (college.debt == null) ? "null" : college.debt,
-                       completion: (college.completion_rate == null) ? "null" : college.completion_rate,
-                       ranking: (college.rank == null) ? "null": college.rank,
-                       size: (college.size == null) ? "null" : college.size,
-                       college_id: (college.college_id == null) ? "null" : college.college_id
+                       name: (college.name == null) ? "-" : college.name,
+                       state: (college.region == null) ? "-" : college.region,
+                       institution: (college.institution == null) ? "-" : college.institution,
+                       admission_rate: (college.admission_rate == null) ? "-" : college.admission_rate,
+                       tuition: (college.tuition == null) ? "-" : college.tuition,
+                       debt: (college.debt == null) ? "-" : college.debt,
+                       completion: (college.completion_rate == null) ? "-" : college.completion_rate,
+                       ranking: (college.ranking == null) ? "-": college.ranking,
+                       size: (college.size == null) ? "-" : college.size,
+                       college_id: (college.college_id == null) ? "-" : college.college_id
                     }
                }/>
             )
@@ -531,7 +540,7 @@ class SearchCollege extends React.Component{
                     </div>
                     <div className="wrap-result">
                         <div className="search-result-top">
-                            <span className="result-text" style={{display: (this.state.college_list.length === 0) ? "None" : ''}}>Results</span>
+                            <span className="result-text" style={{display: ((!this.state.not_found) && (this.state.college_list.length === 0)) ? "None" : ''}}>Results</span>
 
                             {
                                 (this.state.college_list.length > 1) ?
