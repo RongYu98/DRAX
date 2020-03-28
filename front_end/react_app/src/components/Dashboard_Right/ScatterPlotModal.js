@@ -1,7 +1,9 @@
 import React from "react";
 import Modal from 'react-bootstrap/Modal'
 import {SERVER_URL, STATUS_OK} from "../../common/Constants";
-import Plot from 'react-plotly.js';
+import Plotly from "plotly.js"
+import createPlotlyComponent from 'react-plotly.js/factory';
+const Plot = createPlotlyComponent(Plotly);
 
 const PLOT_ENDPOINT = "/track_applications_plot";
 
