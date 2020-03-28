@@ -10,7 +10,7 @@ const PLOT_ENDPOINT = "/track_applications_plot";
 class ScatterPlotModal extends React.Component{
 
    static graph_type_enum = {
-       SAT: "math_EBRW",
+       SAT: "SAT",
        ACT: "ACT",
        BOTH: "SAT_ACT"
    }
