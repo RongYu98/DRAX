@@ -97,7 +97,7 @@ def compute_recommendation_score(college, student):
     # Calculate non-academic similarity aspect
     non_academic_factors = []
     debt = college.median_debt
-    if debt != None:
+    if debt not in {None, "NULL"}:
         non_academic_factors.append(1-int(debt)/100000)
     if student.residence_state == college.state:
         cost = college.in_cost
@@ -106,7 +106,7 @@ def compute_recommendation_score(college, student):
     if cost != None:
         non_academic_factors.append(1-int(cost)/40000)
     salary = college.salary
-    if salary != None:
+    if salary not in {None, "NULL"}:
         non_academic_factors.append(int(salary)/50000)
     completion_rate = college.completion_rate
     if completion_rate != None:
