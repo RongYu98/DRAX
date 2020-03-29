@@ -23,7 +23,7 @@
     border-radius: 0px 0px 10px 10px;
     display: none;
 }
-div.search-result-top > div{display: inline;position: absolute; right: 0;z-index: 2;}
+div.search-result-top > div{display: inline;position: absolute; right: 0;z-index: 1;}
 div.search-result-top > div > button {width: 204px;}
 /***************************************************************** react fixes ********************************************************/
 

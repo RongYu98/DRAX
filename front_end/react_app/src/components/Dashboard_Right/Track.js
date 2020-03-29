@@ -3,6 +3,7 @@ import '../../gui/css/track_application.css';
 import Application from "./Application";
 import {SERVER_URL, STATUS_OK} from "../../common/Constants";
 import ScatterPlotModal from "./ScatterPlotModal";
+import SearchCollege from "./SearchCollege";
 
 
 
@@ -113,7 +114,7 @@ class Track extends React.Component{
 
     get_applications(){
         if(this.state.not_found){
-            return (<h1>No profiles found</h1>);
+            return (<h1 style={SearchCollege.not_found_style}>No profiles found</h1>);
         }
         let applications = [];
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
