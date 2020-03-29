@@ -43,6 +43,7 @@ class Track extends React.Component{
         this.fetch_applications = this.fetch_applications.bind(this);
         this.get_applications = this.get_applications.bind(this);
         this.get_input_json = this.get_input_json.bind(this);
+        this.input_check = this.input_check.bind(this);
     }
 
 
@@ -57,7 +58,6 @@ class Track extends React.Component{
             this.setState({high_schools: response_json.highschools});
         }catch (err) {
             console.log(err.stack);
-            alert(err.message);
         }
 
     }
@@ -75,6 +75,7 @@ class Track extends React.Component{
 
     async fetch_applications(){
         try{
+            this.input_check();
             // deep copy
             let body = this.get_input_json();
             console.log(body);
@@ -95,7 +96,6 @@ class Track extends React.Component{
             let response_json = await response.json();
             if(response_json.status !== STATUS_OK) {
                 this.setState({not_found: true});
-                throw new Error(response_json.result);
             }
             console.log(response_json);
             let summary = {
@@ -110,6 +110,11 @@ class Track extends React.Component{
             console.log(err.stack);
             alert(`failed to fetch new application list, err msg: ${err.message}`);
         }
+    }
+
+    input_check(){
+        let filter_data = this.state.filter_data;
+        if(filter_data.college_class.from > 2027 || filter_data.college_class.to > 2027) throw new Error("collage class should be < 2027");
     }
 
     get_applications(){

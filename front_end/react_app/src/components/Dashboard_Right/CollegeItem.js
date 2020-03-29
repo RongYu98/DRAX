@@ -35,13 +35,13 @@ class CollegeItem extends React.Component{
                         <tbody>
                         <tr>
                             <td><b>{institution}</b><br/><label>Institution</label></td>
-                            <td><b>{admission_rate}</b><br/><label>Admission rate</label></td>
-                            <td><b>{completion}</b><br/><label>Completion rate</label></td>
+                            <td><b>{admission_rate + "%"}</b><br/><label>Admission rate</label></td>
+                            <td><b>{completion +"%"}</b><br/><label>Completion rate</label></td>
                             <td/>
                         </tr>
                         <tr>
-                            <td><b>{tuition}</b><br/><label>Tuition</label></td>
-                            <td><b>{debt}</b><br/><label>Median debt amount</label></td>
+                            <td><b>{`$${tuition}`}</b><br/><label>Tuition</label></td>
+                            <td><b>{"$" + debt}</b><br/><label>Median debt amount</label></td>
                             <td><b>{ranking}</b><br/><label>Ranking</label></td>
                             <td><b>{size}</b><br/><label>Size</label></td>
                         </tr>
