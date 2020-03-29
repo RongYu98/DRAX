@@ -30,7 +30,7 @@ class SearchCollege extends React.Component{
 
     static sort_enum = {
         NAME: "name",
-        COST: "attendance",
+        COST: "cost",
         RANKING: "ranking",
         RECOMMENDATION: "recommendation",
         ADMISSION: "admission"
