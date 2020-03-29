@@ -4,6 +4,7 @@ from classes import College
 connect('account', host='localhost', port=27017)
 majors = []
 
+
 def get_clean_majors():
     majors = []
     for c in College.objects:
@@ -23,7 +24,7 @@ def get_clean_majors():
     majors = []
     prev = cleaned_majors[0].strip()
     for m in cleaned_majors[1:]:
-        if m.startswith(prev): # purge or no purge?
+        if m.startswith(prev):  # purge or no purge?
             if (m.startswith(prev+" and ")):
                 # then likely different, so we want this.
                 majors.append(m)
@@ -32,4 +33,3 @@ def get_clean_majors():
         prev = m
         majors.append(m)
     return majors
-

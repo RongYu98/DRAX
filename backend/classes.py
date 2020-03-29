@@ -1,4 +1,7 @@
-from mongoengine import Document, StringField, BooleanField, FloatField, IntField, ReferenceField, ListField, DynamicField, CASCADE
+from mongoengine import Document, StringField, BooleanField, FloatField,
+from mongoengine import IntField, ReferenceField, ListField, DynamicField,
+from mongoengine import CASCADE
+
 
 class Account(Document):
     username = StringField(required=True, max_length=32, unique=True)
@@ -6,36 +9,38 @@ class Account(Document):
     salt = StringField(required=True, max_length=256)
     type = StringField(choices=('Student', 'Admin'), required=True)
 
+
 class StudentProfile(Document):
-    # TODO: replace primary key
     student = ReferenceField(Account, required=True, unique=True,
-                             reverse_delete_rule=CASCADE) 
-    gpa = FloatField(min_value=0.0, max_value=5.0) # unweighted GPA goes up to 5.0?
+                             reverse_delete_rule=CASCADE)
+    gpa = FloatField(min_value=0.0, max_value=5.0)
+    # unweighted GPA goes up to 5.0?
     grades = DynamicField(default=dict)
-    residence_state = StringField(max_length=2) # store state acronym.
+    residence_state = StringField(max_length=2)  # store state acronym.
     high_school_name = StringField()
     high_school_city = StringField()
     high_school_state = StringField(max_length=2)
     college_class = IntField(min_value=2016, max_value=3000)
 
+
 class College(Document):
     name = StringField(required=True, max_length=100, unique=True)
     # Longest college name in colleges.txt is 50 characters:
     # SUNY College of Environmental Science and Forestry
-    city = StringField(max_length=30) #, required=True)
-    state = StringField(max_length=2) #, required=True)
-    region = StringField()#required=True, max_length=10)
-    institution = StringField()#required=True, max_length=20)
+    city = StringField(max_length=30)  # , required=True)
+    state = StringField(max_length=2)  # , required=True)
+    region = StringField()  # required=True, max_length=10)
+    institution = StringField()  # required=True, max_length=20)
     admission_rate = FloatField()
     completion_rate = FloatField()
-    size = IntField()#required=True, max_length=6)
-    median_debt = StringField()#required=True, max_length=6)
+    size = IntField()  # required=True, max_length=6)
+    median_debt = StringField()  # required=True, max_length=6)
     salary = StringField()
     in_cost = IntField()
     out_cost = IntField()
     avg_gpa = FloatField(min_value=0.0, max_value=5.0)
     majors = ListField()
-    ranking = IntField(min_value=1, max_value=601) # StringField(max_length=4)
+    ranking = IntField(min_value=1, max_value=601)  # StringField(max_length=4)
     avg_sat_math = IntField(max_length=3)
     sat_math_25 = IntField(max_length=3)
     sat_math_75 = IntField(max_length=3)
@@ -45,7 +50,8 @@ class College(Document):
     avg_act_composite = IntField(max_length=2)
     act_composite_25 = IntField(max_length=2)
     act_composite_75 = IntField(max_length=2)
-    
+
+
 class Application(Document):
     # TODO: add cascade, so if student deleted, delete this too?
     # TODO: reference the correct student class?
@@ -56,11 +62,11 @@ class Application(Document):
     student = ReferenceField(StudentProfile, required=True,
                              reverse_delete_rule=CASCADE)
     # unique with cannot work with reference fields
-    college = ReferenceField(College, required=True)# , unique_with=student) # reference the college?
+    college = ReferenceField(College, required=True)
     status = StringField(choices=('Pending', 'Accepted', 'Denied', 'Deferred',
                                   'Wait-listed', 'Withdrawn'), required=True)
-    application_id = StringField() # not sure if this is needed.
-    is_verified = BooleanField() # make this required later?
+    application_id = StringField()  # not sure if this is needed.
+    is_verified = BooleanField()  # make this required later?
 
 
 class HighSchool(Document):
@@ -70,6 +76,6 @@ class HighSchool(Document):
     reading_prof = IntField(min_value=0, max_value=100)
     math_prof = IntField(mind_value=0, max_value=100)
     grad_rate = IntField(mind_value=0, max_value=100)
-    avg_sat = IntField() # SAT might change again
+    avg_sat = IntField()  # SAT might change again
     avg_act = IntField(min_value=0, max_value=36)
     ap_enroll = IntField(min_value=0, max_value=100)
