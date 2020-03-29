@@ -249,7 +249,7 @@ def track_applications_list():
         for application in applications:
             application_status = application.status
             if 'statuses' in info and info['statuses'] != None:
-                if info['statuses'] != [] and application_status not in info['statuses']:
+                if info['statuses'] != [] and application_status.lower() not in info['statuses']:
                     continue
             student = application.student
             if 'high_schools' in info and info['high_schools'] != None:
@@ -327,7 +327,7 @@ def track_applications_plot():
         for application in applications:
             application_status = application.status
             if 'statuses' in info and info['statuses'] != None:
-                if info['statuses'] != [] and application_status not in info['statuses']:
+                if info['statuses'] != [] and application_status.lower() not in info['statuses']:
                     continue
             student = application.student
             if 'high_schools' in info and info['high_schools'] != None:
