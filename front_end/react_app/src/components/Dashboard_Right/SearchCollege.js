@@ -259,7 +259,7 @@ class SearchCollege extends React.Component{
 
             });
             body.max_ranking = (body.max_ranking == null) ? null : parseInt(body.max_ranking);
-            body.max_tuition = (body.max_tuition == null) ? null : parseInt(body.max_tuition);
+            body.max_tuition = (body.max_tuition == null) ? null : parseInt(body.max_tuition) * 1000;
             console.log(body);
             let response = await fetch(
                 SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
