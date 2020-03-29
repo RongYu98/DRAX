@@ -72,6 +72,7 @@ class SearchCollege extends React.Component{
         this.sort_clicked = this.sort_clicked.bind(this);
         this.fetch_majors = this.fetch_majors.bind(this);
         this.get_majors = this.get_majors.bind(this);
+        this.input_check = this.input_check.bind(this);
     }
 
     sort_clicked(event){
@@ -193,10 +194,46 @@ class SearchCollege extends React.Component{
         }
     }
 
+    input_check(){
+        let filter_data = this.state.filter_data;
+        if(filter_data.max_tuition !== "" ){
+            if(filter_data.max_tuition <= 0 || filter_data.max_tuition > 100) throw new Error("cost of attendance should be 1-100");
+        }
+        if(filter_data.sat_ebrw.min !== ""){
+            if(filter_data.sat_ebrw.min < 200 || filter_data.sat_ebrw.min > 800) throw  new Error("sat ebrw min should be 200-800");
+        }
+
+        if(filter_data.sat_ebrw.max !== ""){
+            if( filter_data.sat_ebrw.max < 200 || filter_data.sat_ebrw.max > 800) throw  new Error("sat ebrw max should be 200-800");
+        }
+
+        if(filter_data.sat_math.min !== ""){
+            if(filter_data.sat_math.min < 200 || filter_data.sat_math.min > 800 ) throw  new Error("sat math min should be 200-800");
+        }
+
+        if(filter_data.sat_math.max !== ""){
+            if(filter_data.sat_math.max < 200 || filter_data.sat_math.max > 800 ) throw  new Error("sat math max should be 200-800");
+        }
+
+        if(filter_data.act.min !== ""){
+            if(filter_data.act.min < 1 || filter_data.act.min > 36) throw  new Error("act min should be 1-36");
+        }
+        if(filter_data.act.max !== ""){
+            if(filter_data.act.max < 1 || filter_data.act.max > 36) throw new Error("act max should be 1-36");
+        }
+        if(filter_data.admission_rate.min !== ""){
+            if(filter_data.admission_rate.min < 0 || filter_data.admission_rate.min > 100) throw  new Error("admission rate min should be 0-100");
+        }
+        if(filter_data.admission_rate.max !== "") {
+            if(filter_data.admission_rate.max > 100 || filter_data.admission_rate.max < 0) throw  new Error("admission rate max should be 0-100");
+        }
+    }
+
 
     async fetch_new_college_list(){
         try{
             // deep copy
+            this.input_check();
             let body = JSON.parse(JSON.stringify(this.state.filter_data));
             Object.keys(body).map(function(key, index) {
                     let min = body[key].min;
@@ -321,7 +358,7 @@ class SearchCollege extends React.Component{
                                 <input onChange={(event)=>{this.set_none_scores_filter_data({name: event.target.value})}}
                                        value={this.state.filter_data.name}
                                        type="text" className="form-control shadow-none"
-                                       placeholder="College Name"
+                                       placeholder="College name"
                                        aria-label="College Name" aria-describedby="search-btn"
                                 />
                                 <div className="input-group-append">
