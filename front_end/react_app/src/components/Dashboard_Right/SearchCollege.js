@@ -185,12 +185,12 @@ class SearchCollege extends React.Component{
     async fetch_majors(){
         try{
             let response = await fetch(SERVER_URL + MAJOR_ENDPOINT);
-            if(!response.ok) throw new Error(response.statusText);
+            if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
-            if(response_json.result !== "OK") throw new Error(response_json.result);
             this.setState({majors_list: response_json.majors});
         } catch (err) {
-            return err.message;
+            console.log(err.stack);
+            alert(err.message);
         }
     }
 
@@ -273,8 +273,7 @@ class SearchCollege extends React.Component{
                     body: JSON.stringify(body)
                 }
             );
-
-            if(response.status !== STATUS_OK) throw new Error(response.statusText);
+            if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
             if(this.state.filter_data.sort === SearchCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
             if(response_json.colleges.length === 0)
@@ -284,7 +283,7 @@ class SearchCollege extends React.Component{
             this.setState({current_page_num: 1, college_list: response_json.colleges});
         }catch (err) {
             console.log(err.stack);
-            alert(`failed to fetch new college list, err msg: ${err.message}`);
+            alert(err.message);
         }
     }
 

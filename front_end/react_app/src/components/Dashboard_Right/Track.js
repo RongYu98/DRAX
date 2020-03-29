@@ -58,6 +58,7 @@ class Track extends React.Component{
             this.setState({high_schools: response_json.highschools});
         }catch (err) {
             console.log(err.stack);
+            alert(err.message);
         }
 
     }
@@ -96,6 +97,7 @@ class Track extends React.Component{
             let response_json = await response.json();
             if(response_json.status !== STATUS_OK) {
                 this.setState({not_found: true});
+                return;
             }
             console.log(response_json);
             let summary = {
@@ -115,6 +117,7 @@ class Track extends React.Component{
     input_check(){
         let filter_data = this.state.filter_data;
         if(filter_data.college_class.from > 2027 || filter_data.college_class.to > 2027) throw new Error("collage class should be < 2027");
+        if(filter_data.name === "") throw new Error("college name can not be empty");
     }
 
     get_applications(){
