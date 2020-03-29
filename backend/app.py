@@ -538,6 +538,64 @@ def get_college_list():
     return jsonify(status=200, result="OK", colleges = college_list)
 
 
+@app.route('/api/get_similar_profiles', methods=['POST'])
+def get_similar_profiles():
+    # Check if logged in
+    if 'username' not in session or session['username'] == None:
+        return jsonify(status=400, result="Not Logged In")
+    info = request.json
+    if info == None:
+        info = request.form
+    if 'college_name' in info:
+        college_name = info['college_name']
+        college = None
+        try:
+            college = College.objects.get(name=college_name)
+        except:
+            return jsonify(status = 400, result = "College Not Found")
+        student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+        grades = student.grades
+        applications = Application.objects(Q(college=college) & Q(student__ne=student))
+        students = []
+        for application in applications:
+            students.append(application.student)
+        def get_score(s):
+            s_grades = s.grades
+            score = 0
+            if student.gpa not in {None, ''} and s.gpa not in {None, ''}:
+                diff = abs(student.gpa-s.gpa)
+                score += (100-diff*75) * .3
+            if 'sat_math' in grades and 'sat_math' in s_grades:
+                diff = abs(grades['sat_math']-s_grades['sat_math'])
+                score += (100-diff/2) * .15
+            if 'sat_ebrw' in grades and 'sat_ebrw' in s_grades:
+                diff = abs(grades['sat_ebrw']-s_grades['sat_ebrw'])
+                score += (100-diff/2) * .15
+            if 'act_composite' in grades and 'act_composite' in grades:
+                diff = abs(grades['act_composite']-s_grades['act_composite'])
+                score += (100-diff*(60/7)) * .30
+            return score
+        students.sort(reverse=True, key=get_score)
+        students = students[0:10]
+        profiles = []
+        for student in students:
+            profile = {
+                'username': student.student.username,
+                'residence_state': student.residence_state,
+                'high_school_name': student.high_school_name,
+                'high_school_city': student.high_school_city,
+                'high_school_state': student.high_school_state,
+                'gpa': student.gpa,
+                'college_class': student.college_class,
+                }
+            grades = student.grades
+            for field in grades:
+                profile[field] = grades[field]    
+            profiles.append(profile)
+        return jsonify(status = 200, result = "OK", profiles = profiles)
+    return jsonify(status = 400, result = "Missing Fields")
+
+
 @app.route('/api/all_majors')
 def get_majors():
     import script  # we may hardcode the list, so this will change...
