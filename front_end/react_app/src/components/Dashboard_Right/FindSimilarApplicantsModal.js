@@ -107,7 +107,7 @@ class FindSimilarApplicantsModal extends React.Component{
             <Modal show={this.props.show} onHide={this.props.show_collage_modal} aria-labelledby="plot-modal-label" centered>
                 <div className="modal-content">
                     <Modal.Header closeButton>
-                        <Modal.Title >Scatterplot</Modal.Title>
+                        <Modal.Title >Similar applicants</Modal.Title>
                     </Modal.Header>
                     <div className="modal-body">
                         {/* Initially, there should be no tags inside the tag below. */}
