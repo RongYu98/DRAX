@@ -179,9 +179,9 @@ def get_admission_decision():
         admission_decisions = []
         for application in applications:
             admission = {
-                'college': result.college.name,
-                'status': result.status,
-                'is_verified': is_verified,
+                'college': application.college.name,
+                'status': application.status,
+                'is_verified': application.is_verified,
                 }
             admission_decisions.append(admission)
         return jsonify(status=200, result="OK", admission_decisions = admission_decisions)
