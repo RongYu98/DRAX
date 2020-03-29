@@ -57,8 +57,8 @@ class Application(Document):
                              reverse_delete_rule=CASCADE)
     # unique with cannot work with reference fields
     college = ReferenceField(College, required=True)# , unique_with=student) # reference the college?
-    status = StringField(choices=('Pending', 'Accepted', 'Rejected',
-                                  'Wait-listed'), required=True)
+    status = StringField(choices=('Pending', 'Accepted', 'Denied', 'Deferred',
+                                  'Wait-listed', 'Withdrawn'), required=True)
     application_id = StringField() # not sure if this is needed.
     is_verified = BooleanField() # make this required later?
 
