@@ -15,6 +15,8 @@ class ScatterPlotModal extends React.Component{
        BOTH: "SAT_ACT"
    }
 
+
+
     constructor(props) {
         super(props);
         this.state = {
@@ -25,10 +27,23 @@ class ScatterPlotModal extends React.Component{
         this.fetch_data = this.fetch_data.bind(this);
         this.on_button_click = this.on_button_click.bind(this);
         this.get_scatter_plot = this.get_scatter_plot.bind(this);
+        this.get_title = this.get_title.bind(this);
     }
 
     static center_title = {
         marginLeft: "37.5%"
+    }
+
+    get_title(type){
+       if(type === ScatterPlotModal.graph_type_enum.SAT){
+           return "SAT(Math + EBRW)";
+       }
+       if(type === ScatterPlotModal.graph_type_enum.ACT){
+           return "ACT Composite";
+       }
+       if(type === ScatterPlotModal.graph_type_enum.BOTH){
+           return "SAT2+SAT/ACT";
+       }
     }
 
     async fetch_data(type){
@@ -85,10 +100,10 @@ class ScatterPlotModal extends React.Component{
                       y: y,
                       type: 'scatter',
                       mode: 'markers+text',
-                      marker: {color: 'red'},
-                  }
+                      marker: {color: ["red", "green", "black", "purple", "yellow"] }
+                  },
                ]}
-                layout={ {width: 450, height: 450, title: 'Scatter Plot'} }
+                layout={ {width: 450, height: 450, title:  this.get_title(this.state.graph_type)}}
             />
        );
     }
