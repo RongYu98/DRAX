@@ -3,9 +3,11 @@ import '../../gui/css/search_college.css';
 import CollegeItem from "./CollegeItem";
 import {DropdownButton, Dropdown} from "react-bootstrap";
 import {SERVER_URL, STATUS_OK} from "../../common/Constants";
+import FindSimilarApplicantsModal from "./FindSimilarApplicantsModal";
 
 const RECOMMENDED_COLLEGE_ENDPOINT = "/get_college_list";
 const MAJOR_ENDPOINT = "/all_majors";
+const SIMILAR_ENDPOINT = "/get_similar_profiles";
 
 class SearchCollege extends React.Component{
 
@@ -60,7 +62,9 @@ class SearchCollege extends React.Component{
                 policy: "strict",
                 sort: SearchCollege.sort_enum.NAME
             },
-            majors: {left: [], right: []}
+            majors: {left: [], right: []},
+            show_modal: false,
+            current_modal_collage_profiles: []
         }
         this.button_list = [];
         this.filter_drop_down_clicked = this.filter_drop_down_clicked.bind(this);
@@ -73,6 +77,9 @@ class SearchCollege extends React.Component{
         this.fetch_majors = this.fetch_majors.bind(this);
         this.get_majors = this.get_majors.bind(this);
         this.input_check = this.input_check.bind(this);
+        this.show_collage_modal = this.show_collage_modal.bind(this);
+        this.set_current_modal_college = this.set_current_modal_college.bind(this);
+        this.fetch_similar_profiles = this.fetch_similar_profiles.bind(this);
     }
 
     sort_clicked(event){
@@ -100,6 +107,11 @@ class SearchCollege extends React.Component{
             new_value = (new_value === "601") ? "600+" : new_value;
         }
         this.setState({filter_data:{...this.state.filter_data, max_ranking: new_value}});
+    }
+
+    async set_current_modal_college(name){
+        let result =  await this.fetch_similar_profiles(name);
+        this.setState({current_modal_collage_profiles: result});
     }
 
     page_clicked(event){
@@ -287,6 +299,10 @@ class SearchCollege extends React.Component{
         }
     }
 
+    show_collage_modal(){
+        this.setState({show_modal: !this.state.show_modal});
+    }
+
 
     get_colleges(){
         if(this.state.not_found){
@@ -313,7 +329,10 @@ class SearchCollege extends React.Component{
                        size: (college.size == null) ? "-" : college.size,
                        college_id: (college.college_id == null) ? "-" : college.college_id
                     }
-               }/>
+               }
+               show_collage_modal={this.show_collage_modal}
+               set_current_modal_college={this.set_current_modal_college}
+               />
             )
         }
         return list;
@@ -341,6 +360,30 @@ class SearchCollege extends React.Component{
 
     async componentDidMount() {
         await this.fetch_majors();
+    }
+
+    async fetch_similar_profiles(name){
+      try{
+            let response = await fetch(
+                SERVER_URL + SIMILAR_ENDPOINT,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({college_name: name})
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            return response_json.profiles;
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+            return [];
+        }
     }
 
 
@@ -612,6 +655,9 @@ class SearchCollege extends React.Component{
                                 colleges
                             }
                         </div>
+
+                        <FindSimilarApplicantsModal current_modal_collage_profiles={this.state.current_modal_collage_profiles} show_collage_modal={this.show_collage_modal} show={this.state.show_modal}/>
+
                         <nav>
                             {/* Initially, there should be no tags inside the tag below. */}
                             <ul className="pagination" id="pagination">
