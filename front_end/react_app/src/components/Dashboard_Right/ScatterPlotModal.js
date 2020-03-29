@@ -103,7 +103,7 @@ class ScatterPlotModal extends React.Component{
                       marker: {color: ["red", "green", "black", "purple", "yellow"] }
                   },
                ]}
-                layout={ {width: 450, height: 450, title:  this.get_title(this.state.graph_type)}}
+                layout={ {xaxis:{title: "Test scores"}, yaxis:{title: "GPA"}, width: 450, height: 450, title:  this.get_title(this.state.graph_type)}}
             />
        );
     }
