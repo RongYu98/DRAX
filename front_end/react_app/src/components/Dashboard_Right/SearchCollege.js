@@ -280,7 +280,6 @@ class SearchCollege extends React.Component{
                 this.state.not_found = true;
             else
                 this.state.not_found = false;
-            console.log(response_json.colleges);
             this.setState({current_page_num: 1, college_list: response_json.colleges});
         }catch (err) {
             console.log(err.stack);
@@ -409,7 +408,8 @@ class SearchCollege extends React.Component{
                                                 <div  className="wrap-filter">
                                                     <select  id="major1" defaultValue={this.state.filter_data.major.left}
                                                             onChange={(event)=>{
-                                                                    this.setState({filtered_data: {...this.state.filter_data, major: {left: this.state.filter_data.major.left, right: event.target.value}}});
+                                                                    console.log(event.target.value);
+                                                                    this.setState({filter_data: {...this.state.filter_data, major: {left: this.state.filter_data.major.left, right: event.target.value}}});
                                                                 }
                                                             }
                                                     >
@@ -421,7 +421,8 @@ class SearchCollege extends React.Component{
                                                     &amp;
                                                     <select style={SearchCollege.fixes} id="major2" defaultValue={this.state.filter_data.major.right}
                                                         onChange={(event)=>{
-                                                                    this.setState({filtered_data: {...this.state.filter_data, major: {right: this.state.filter_data.major.right, left: event.target.value}}});
+                                                                console.log(event.target.value);
+                                                                    this.setState({filter_data: {...this.state.filter_data, major: {right: this.state.filter_data.major.right, left: event.target.value}}});
                                                                 }
                                                             }
                                                     >
