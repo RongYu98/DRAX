@@ -7,13 +7,18 @@ class CollegeItem extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            display : {display: "None"}
+            display : {display: "None"},
+            modal_clicked: false
         }
 
         this.show_college_details = this.show_college_details.bind(this);
     }
 
     show_college_details(event){
+        if(this.state.modal_clicked){
+            this.state.modal_clicked = false;
+            return;
+        }
         this.setState({display: {display: (this.state.display.display === "None") ? "flex" : "None"}});
     }
 
@@ -21,13 +26,17 @@ class CollegeItem extends React.Component{
         let {college_id, state, name, institution, admission_rate, tuition, debt, completion, ranking, size} = this.props.data;
         return(
             <React.Fragment>
-                <button className="list-group-item list-group-item-action" onClick={this.show_college_details}>
+                <button className="list-group-item list-group-item-action" onClick ={this.show_college_details}>
                     <h5 className="college-name">{name}</h5>
-                    <Link to={{ pathname: `/main/track/`,
-                                state: {
-                                college_name: name
-                              }
-                    }}>Find Similar Applicants</Link>
+                    <button className="find-similar-applicants" data-toggle="modal" data-target="#find-similar-applicants-modal"
+                            onClick={()=>{
+                                this.props.show_collage_modal();
+                                this.state.modal_clicked = true;
+                                this.props.set_current_modal_college(name);
+                            }}
+                    >
+                        Find Similar Applicants
+                    </button>
                     <h5>{state}</h5>
                 </button>
                 <div className="item-info" style={this.state.display}>
