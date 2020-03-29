@@ -9,8 +9,19 @@ const MAJOR_ENDPOINT = "/all_majors";
 
 class SearchCollege extends React.Component{
 
+    static not_found_style={
+        backgroundColor: "white",
+        textAlign: "center"
+    }
+
+    static fixes ={
+        flexWrap: "wrap",
+        display: "inline-flex"
+    }
+
     static show = {
-        display : "flex"
+        display : "flex",
+        verticalAlign:"top"
     }
 
     static hide = {
@@ -243,7 +254,7 @@ class SearchCollege extends React.Component{
 
     get_colleges(){
         if(this.state.not_found){
-            return (<h1>No results found</h1>);
+            return (<h1 style={SearchCollege.not_found_style}>No results found</h1>);
         }
 
         let list = [];
@@ -329,8 +340,8 @@ class SearchCollege extends React.Component{
                                     <table>
                                         <tbody>
                                         <tr>
-                                            <td><b>Admission rate (%)</b><br/>
-                                                <div style={{display: "inline-flex"}} className="wrap-filter range">
+                                            <td><b>Admission rate (%)</b>
+                                                <div style={SearchCollege.fixes} className="wrap-filter range">
                                                     <input onChange={(event)=>{
                                                         let new_min = event.target.value;
                                                         let admissionRate = this.state.filter_data.admission_rate;
@@ -358,8 +369,8 @@ class SearchCollege extends React.Component{
                                                 </div>
                                             </td>
                                             <td><b>Major</b>
-                                                <div className="wrap-filter">
-                                                    <select id="major1" defaultValue={this.state.filter_data.major.left}
+                                                <div  className="wrap-filter">
+                                                    <select  id="major1" defaultValue={this.state.filter_data.major.left}
                                                             onChange={(event)=>{
                                                                     this.setState({filtered_data: {...this.state.filter_data, major: {left: this.state.filter_data.major.left, right: event.target.value}}});
                                                                 }
@@ -371,7 +382,7 @@ class SearchCollege extends React.Component{
                                                         {/* Frontend should add option tags with the major names from here */}
                                                     </select>
                                                     &amp;
-                                                    <select id="major2" defaultValue={this.state.filter_data.major.right}
+                                                    <select style={SearchCollege.fixes} id="major2" defaultValue={this.state.filter_data.major.right}
                                                         onChange={(event)=>{
                                                                     this.setState({filtered_data: {...this.state.filter_data, major: {right: this.state.filter_data.major.right, left: event.target.value}}});
                                                                 }
@@ -444,8 +455,8 @@ class SearchCollege extends React.Component{
                                         <tr style={{height: '15px'}}/>
                                         <tr>
                                             {/* frontend javascript should check whether the min is less than or eqal to max */}
-                                            <td><b>SAT EBRW score</b><br/>
-                                                <div style={{display: "inline-flex"}} className="wrap-filter range">
+                                            <td><b>SAT EBRW score</b>
+                                                <div style={SearchCollege.fixes} className="wrap-filter range">
                                                     <input onChange={(event)=>{
                                                         let new_min = event.target.value;
                                                         let old_sat_ebrw = this.state.filter_data.sat_ebrw;
@@ -453,7 +464,7 @@ class SearchCollege extends React.Component{
                                                     }}
                                                            value={this.state.filter_data.sat_ebrw.min} type="number" className="form-control shadow-none" id="sat-ebrw-min" placeholder="200 - 800" min={200} max={800}
                                                     />
-                                                    &nbsp;-&nbsp;
+                                                    -
                                                     <input onChange={(event)=>{
                                                         let new_max = event.target.value;
                                                         let old_sat_ebrw = this.state.filter_data.sat_ebrw;
@@ -463,8 +474,8 @@ class SearchCollege extends React.Component{
                                                     />
                                                 </div>
                                             </td>
-                                            <td><b>SAT Math score</b> <br/>
-                                                <div style={ {display: "inline-flex"}} className="wrap-filter">
+                                            <td><b>SAT Math score</b>
+                                                <div style={SearchCollege.fixes} className="wrap-filter">
                                                      <input onChange={(event)=>{
                                                         let new_min = event.target.value;
                                                         let old_sat_math = this.state.filter_data.sat_math;
@@ -475,7 +486,7 @@ class SearchCollege extends React.Component{
                                                             id="sat-math-min" placeholder="200 - 800" min={200}
                                                             max={800}
                                                      />
-                                                     &nbsp;-&nbsp;
+                                                     -
                                                      <input onChange={(event)=>{
                                                         let new_max = event.target.value;
                                                         let old_sat_math = this.state.filter_data.sat_math;
@@ -489,7 +500,7 @@ class SearchCollege extends React.Component{
                                                 </div>
                                             </td>
                                             <td><b>ACT Composite score</b><br/>
-                                                <div style={{display:"inline-flex"}} className="wrap-filter">
+                                                <div style={SearchCollege.fixes} className="wrap-filter">
                                                      <input onChange={(event)=>{
                                                         let new_min = event.target.value;
                                                         let old_act = this.state.filter_data.act;
