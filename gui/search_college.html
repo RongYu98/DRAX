@@ -171,17 +171,130 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Initially, there should be no tags inside the tag below. -->
+                        <!-- Initially, there should be no tags inside the tag below, except modal. -->
                         <!-- Frontend ajax should add tags with data inside the tag below -->
                         <div class="list-group" id="college-list">
-                            <button class="list-group-item list-group-item-action">
+                            <div class="modal fade" id="find-similar-applicants-modal" tabindex="-1" role="dialog" aria-labelledby="find-similar-applicants-modal-label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="find-similar-applicants-modal-label">Similar applicants</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Initially, there should be no tags inside the tag below. -->
+                                            <div class="similar-applicant-list">
+                                                <!-- .similar-applicant-name tag and .similar-applicant-info tag are a pair -->
+                                                <button class="list-group-item list-group-item-action similar-applicant-name">Amy</button>
+                                                <div class="similar-applicant-info item-info">
+                                                    <ul>
+                                                        <!-- add data. the order is same as the order in the profile. if there is no data, use - sign -->
+                                                        <li>College class: 2023</li>
+                                                        <li>Residence state: NY</li>
+                                                        <li>High School: Stony Brook High School, Stony Brook, NY</li>
+                                                        <li>Major 1: Theology Religious Vocation</li>
+                                                        <li>Major 2: Public Administration Social Service</li>
+                                                        <li>APs Passed: 5</li>
+                                                        <li>GPA: 3.8</li>
+                                                        <li>SAT Math: 800</li>
+                                                        <li>SAT EBRW: 800</li>
+                                                        <li>ACT Composite: 36</li>
+                                                        <li>ACT English: 36</li>
+                                                        <li>ACT Math: 36</li>
+                                                        <li>ACT Reading: 36</li>
+                                                        <li>ACT Science: 36</li>
+                                                        <li>SAT2 Chemistry: 800</li> 
+                                                        <li>SAT2 Eco-Bio: 800</li> 
+                                                        <li>SAT2 Literature: 800</li> 
+                                                        <li>SAT2 Math I: 800</li> 
+                                                        <li>SAT2 Math II: 800</li> 
+                                                        <li>SAT2 Mol-Bio: 800</li> 
+                                                        <li>SAT2 Physics: 800</li> 
+                                                        <li>SAT2 US History: 800</li> 
+                                                        <li>SAT2 World History: 800</li> 
+                                                    </ul>
+                                                </div>
+                                                <button class="list-group-item list-group-item-action similar-applicant-name">Alice</button>
+                                                <div class="similar-applicant-info item-info">
+                                                    <ul>
+                                                        <li>College class: 2023</li>
+                                                        <li>Residence state: NY</li>
+                                                        <li>High School: Stony Brook High School, Stony Brook, NY</li>
+                                                        <li>Major 1: Theology Religious Vocation</li>
+                                                        <li>Major 2: Public Administration Social Service</li>
+                                                        <li>APs Passed: 5</li>
+                                                        <li>GPA: 3.8</li>
+                                                        <li>SAT Math: 800</li>
+                                                        <li>SAT EBRW: 800</li>
+                                                        <li>ACT Composite: 36</li>
+                                                        <li>ACT English: 36</li>
+                                                        <li>ACT Math: 36</li>
+                                                        <li>ACT Reading: 36</li>
+                                                        <li>ACT Science: 36</li>
+                                                        <li>SAT2 Chemistry: 800</li> 
+                                                        <li>SAT2 Eco-Bio: 800</li> 
+                                                        <li>SAT2 Literature: 800</li> 
+                                                        <li>SAT2 Math I: 800</li> 
+                                                        <li>SAT2 Math II: 800</li> 
+                                                        <li>SAT2 Mol-Bio: 800</li> 
+                                                        <li>SAT2 Physics: 800</li> 
+                                                        <li>SAT2 US History: 800</li> 
+                                                        <li>SAT2 World History: 800</li> 
+                                                    </ul>
+                                                </div>
+                                                <button class="list-group-item list-group-item-action similar-applicant-name">Sam</button>
+                                                <div class="similar-applicant-info item-info">
+                                                    <ul>
+                                                        <li>College class: 2023</li>
+                                                        <li>Residence state: NY</li>
+                                                        <li>High School: Stony Brook High School, Stony Brook, NY</li>
+                                                        <li>Major 1: Theology Religious Vocation</li>
+                                                        <li>Major 2: Public Administration Social Service</li>
+                                                        <li>APs Passed: 5</li>
+                                                        <li>GPA: 3.8</li>
+                                                        <li>SAT Math: 800</li>
+                                                        <li>SAT EBRW: 800</li>
+                                                        <li>ACT Composite: 36</li>
+                                                        <li>ACT English: 36</li>
+                                                        <li>ACT Math: 36</li>
+                                                        <li>ACT Reading: 36</li>
+                                                        <li>ACT Science: 36</li>
+                                                        <li>SAT2 Chemistry: 800</li> 
+                                                        <li>SAT2 Eco-Bio: 800</li> 
+                                                        <li>SAT2 Literature: 800</li> 
+                                                        <li>SAT2 Math I: 800</li> 
+                                                        <li>SAT2 Math II: 800</li> 
+                                                        <li>SAT2 Mol-Bio: 800</li> 
+                                                        <li>SAT2 Physics: 800</li> 
+                                                        <li>SAT2 US History: 800</li> 
+                                                        <li>SAT2 World History: 800</li> 
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <nav>
+                                            <!-- Initially, there should be no tags inside the tag below. -->
+                                            <ul class="pagination" id="pagination">
+                                                <!-- "active" class below means the current active page button  -->
+                                                <!-- first page button must be active in default after completing search -->
+                                                <li class="page-item"><button class="page-link shadow-none active">1</button></li>
+                                                <li class="page-item"><button class="page-link shadow-none">2</button></li>
+                                                <li class="page-item"><button class="page-link shadow-none">3</button></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item list-group-item-action">
                                 <!-- data should be included inside h5 tag -->
                                 <h5 class="college-name">State University of New York, Albany</h5>
-                                <!-- use this a tag as a button. once the user clicks this a tag, the modal with the list of similar students will pop up.  -->
-                                <a href="#">Find Similar Applicants</a>
+                                <!-- once the user clicks this button tag, the modal with the list of similar students will pop up.  -->
+                                <button class="find-similar-applicants" data-toggle="modal" data-target="#find-similar-applicants-modal">Find Similar Applicants</button>
                                 <!-- data should be included inside h5 tag -->
                                 <h5>NY</h5>
-                            </button>
+                            </div>
                             <div class="item-info">
                                 <table>
                                     <tr>
@@ -199,11 +312,11 @@
                                     </tr>
                                 </table>
                             </div>
-                            <button class="list-group-item list-group-item-action">
+                            <div class="list-group-item list-group-item-action">
                                 <h5 class="college-name">State University of New York, Stony Brook</h5>
-                                <a href="#">Find Similar Applicants</a>
+                                <button class="find-similar-applicants" data-toggle="modal" data-target="#find-similar-applicants-modal">Find Similar Applicants</button>
                                 <h5>NY</h5>
-                            </button>
+                            </div>
                             <div class="item-info">
                                 <table>
                                     <tr>

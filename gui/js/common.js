@@ -30,9 +30,9 @@ $( document ).ready(function() {
         }
     });
     
-    // target : result items
-    // event handler which hides/shows .item-info div/.carousel div whenever .list-group-item button is clicked
-    $(".list-group-item").on("click", function(){
+    // target : result items in every page except search college page
+    // event handler which hides/shows .item-info tag/.carousel tag whenever button.list-group-item is clicked
+    $("button.list-group-item").on("click", function(){
         var target = $(this);
         var isDisplayed = target.next().css("display");
         if(isDisplayed == "none"){
@@ -40,6 +40,19 @@ $( document ).ready(function() {
         }
         else{
             target.next().hide();
+        }
+    });
+
+    // target : result items in search college page
+    // event handler which hides/shows .item-info tag whenever div.list-group-item > .college-name is clicked
+    $("div.list-group-item .college-name").on("click", function(){
+        var target = $(this);
+        var isDisplayed = target.parent().next().css("display");
+        if(isDisplayed == "none"){
+            target.parent().next().css("display", "flex");
+        }
+        else{
+            target.parent().next().hide();
         }
     });
 

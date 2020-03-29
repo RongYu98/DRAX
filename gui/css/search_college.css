@@ -18,7 +18,7 @@
 div.result-top > div{display: inline;position: absolute; right: 0;z-index: 1;}
 div.result-top > div > button {width: 204px;}
 .sort-option:hover{background-color: rgb(211, 210, 210);}
-.college-name{color: black;width: 80%;}
+.college-name{color: black;width: 80%;cursor: pointer;}
 .dropdown-menu{z-index: 1;}
 div.result-top > div > button {width: 204px;}
 .sort-option:hover{background-color: rgb(211, 210, 210);}
@@ -27,3 +27,28 @@ div.result-top > div > button {width: 204px;}
 .item-info td{width: 25%;}
 .item-info td b{font-size: 20px;}
 /* result */
+
+/* find similar applicants modal */
+#find-similar-applicants-modal > div{
+    left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    width: 500px;height: 615px;
+    position: fixed;
+}
+#find-similar-applicants-modal > div > div{
+    height: 100%;
+}
+.similar-applicant-list{
+    height: 450px;
+    border-radius: 5px;
+    border: rgb(190, 190, 190) 1px solid;
+    overflow: auto;
+}
+.similar-applicant-list > div{
+    border-bottom: rgb(190, 190, 190) 1px solid;
+    width: 100%;
+    height: fit-content;
+}
+.similar-applicant-name{text-align: center;}
+.similar-applicant-info > ul{margin: 0;}
+/* find similar applicants modal */
