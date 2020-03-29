@@ -259,7 +259,7 @@ def track_applications_list():
             if 'high_schools' in info and info['high_schools'] != None:
                 if policy == "lax" and student.high_school_name == None:
                     pass
-                if info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
+                elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
                     continue
             if 'college_class_min' in info and info['college_class_min'] != None:
                 if policy == "lax" and student.college_class == None:
@@ -267,7 +267,7 @@ def track_applications_list():
                 elif student.college_class == None or student.college_class < info['college_class_min']:
                     continue
             if 'college_class_max' in info and info['college_class_max'] != None:
-                if policy == "strict" and student.college_class == None:
+                if policy == "lax" and student.college_class == None:
                     pass
                 elif student.college_class == None or student.college_class > info['college_class_max']:
                     continue
