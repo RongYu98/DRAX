@@ -8,6 +8,13 @@ class ProfileButtons extends React.Component{
         }
         this.clicked= this.clicked.bind(this);
         this.sanitized_list = this.sanitized_list.bind(this);
+        this.page_clicked = this.page_clicked.bind(this);
+    }
+
+    page_clicked(event){
+       let button = event.target;
+       let number = button.innerHTML;
+       this.setState({current_page_num: parseInt(number)})
     }
 
 

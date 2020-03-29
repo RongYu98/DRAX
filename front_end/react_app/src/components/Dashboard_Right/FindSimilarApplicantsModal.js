@@ -116,17 +116,17 @@ class FindSimilarApplicantsModal extends React.Component{
                           {profiles}
                         </div>
                       </div>
-                </div>
-                 <nav>
-                            {/* Initially, there should be no tags inside the tag below. */}
-                            <ul className="pagination" id="pagination">
-                                {/* "active" class below means the current active page button  */}
-                                {/* first page button must be active in default after completing search */}
-                                {
-                                    buttons
-                                }
-                            </ul>
-                 </nav>
+                    </div>
+                     <nav>
+                        {/* Initially, there should be no tags inside the tag below. */}
+                        <ul className="pagination" id="pagination">
+                            {/* "active" class below means the current active page button  */}
+                            {/* first page button must be active in default after completing search */}
+                            {
+                                buttons
+                            }
+                        </ul>
+                     </nav>
             </Modal>
         )
     }
