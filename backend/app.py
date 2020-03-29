@@ -231,77 +231,78 @@ def track_applications_list():
         info = request.form
     if 'college_name' in info:
         college_name = info['college_name']
+        college = None
         try:
             college = College.objects.get(name=college_name)
-            applications = Application.objects(college=college)
-            profiles = []
-            sum_gpa = 0
-            count_gpa = 0
-            sum_sat_ebrw = 0
-            count_sat_ebrw = 0
-            sum_sat_math = 0
-            count_sat_math = 0
-            sum_act = 0
-            count_act = 0
-            for application in applications:
-                application_status = application.status
-                if 'statuses' in info:
-                    if application_status not in info['statuses']:
-                        continue
-                student = application.student
-                if 'high_schools' in info:
-                    if student.high_school_name not in info['high_schools']:
-                        continue
-                if 'college_class_min' in info:
-                    if student.college_class < info['college_class_min']:
-                        continue
-                if 'college_class_max' in info:
-                    if student.college_class > info['college_class_max']:
-                        continue
-                profile = {
-                    'username': student.student.username,
-                    'residence_state': student.residence_state,
-                    'high_school_name': student.high_school_name,
-                    'high_school_city': student.high_school_city,
-                    'high_school_state': student.high_school_state,
-                    'gpa': student.gpa,
-                    'college_class': student.college_class,
-                    'application_status': application_status,
-                    }
-                grades = student.grades
-                for field in grades:
-                    profile[field] = grades[field]
-                profiles.append(profile)
-                if student.gpa not in {None, ""}:
-                    sum_gpa += student.gpa
-                    count_gpa += 1
-                if 'sat_ebrw' in grades and grades['sat_ebrw'] not in {None, ""}:
-                    sum_sat_ebrw += grades['sat_ebrw']
-                    count_sat_ebrw += 1
-                if 'sat_math' in grades and grades['sat_math'] not in {None, ""}:
-                    sum_sat_math += grades['sat_math']
-                    count_sat_math += 1
-                if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
-                    sum_act += grades['act_composite']
-                    count_act += 1
-            summary = {
-                'avg_gpa': None,
-                'avg_sat_ebrw': None,
-                'avg_sat_math': None,
-                'avg_act': None,
-                }
-            avg_gpa = None
-            if count_gpa:
-                summary['avg_gpa'] = sum_gpa/count_gpa
-            if count_sat_ebrw:
-                summary['avg_sat_ebrw'] = sum_sat_ebrw/count_sat_ebrw
-            if count_sat_math:
-                summary['avg_sat_math'] = sum_sat_math/count_sat_math
-            if count_act:
-                summary['avg_act'] = sum_act/count_act
-            return jsonify(status = 200, result = "OK", profiles = profiles, summary = summary)
         except:
             return jsonify(status = 400, result = "College Not Found")
+        applications = Application.objects(college=college)
+        profiles = []
+        sum_gpa = 0
+        count_gpa = 0
+        sum_sat_ebrw = 0
+        count_sat_ebrw = 0
+        sum_sat_math = 0
+        count_sat_math = 0
+        sum_act = 0
+        count_act = 0
+        for application in applications:
+            application_status = application.status
+            if 'statuses' in info:
+                if info['statuses'] != [] or application_status not in info['statuses']:
+                    continue
+            student = application.student
+            if 'high_schools' in info:
+                if info['high_schools'] != [] or student.high_school_name not in info['high_schools']:
+                    continue
+            if 'college_class_min' in info:
+                if student.college_class < info['college_class_min']:
+                    continue
+            if 'college_class_max' in info:
+                if student.college_class > info['college_class_max']:
+                    continue
+            profile = {
+                'username': student.student.username,
+                'residence_state': student.residence_state,
+                'high_school_name': student.high_school_name,
+                'high_school_city': student.high_school_city,
+                'high_school_state': student.high_school_state,
+                'gpa': student.gpa,
+                'college_class': student.college_class,
+                'application_status': application_status,
+                }
+            grades = student.grades
+            for field in grades:
+                profile[field] = grades[field]
+            profiles.append(profile)
+            if student.gpa not in {None, ""}:
+                sum_gpa += student.gpa
+                count_gpa += 1
+            if 'sat_ebrw' in grades and grades['sat_ebrw'] not in {None, ""}:
+                sum_sat_ebrw += grades['sat_ebrw']
+                count_sat_ebrw += 1
+            if 'sat_math' in grades and grades['sat_math'] not in {None, ""}:
+                sum_sat_math += grades['sat_math']
+                count_sat_math += 1
+            if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
+                sum_act += grades['act_composite']
+                count_act += 1
+        summary = {
+            'avg_gpa': None,
+            'avg_sat_ebrw': None,
+            'avg_sat_math': None,
+            'avg_act': None,
+            }
+        avg_gpa = None
+        if count_gpa:
+            summary['avg_gpa'] = sum_gpa/count_gpa
+        if count_sat_ebrw:
+            summary['avg_sat_ebrw'] = sum_sat_ebrw/count_sat_ebrw
+        if count_sat_math:
+            summary['avg_sat_math'] = sum_sat_math/count_sat_math
+        if count_act:
+            summary['avg_act'] = sum_act/count_act
+        return jsonify(status = 200, result = "OK", profiles = profiles, summary = summary)
     return jsonify(status = 400, result = "Missing Fields")
 
 
