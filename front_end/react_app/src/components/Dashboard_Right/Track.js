@@ -100,7 +100,14 @@ class Track extends React.Component{
             if(response.status !== STATUS_OK) throw new Error(response.statusText);
             let response_json = await response.json();
             if(response_json.status !== STATUS_OK) {
-                this.setState({not_found: true});
+                let summary = {
+                avg_gpa: "",
+                avg_sat_ebrw: "",
+                avg_sat_math: "",
+                avg_act_composite: ""
+                }
+                this.state.applications = [];
+                this.setState({summary: summary, not_found: true});
                 return;
             }
             console.log(response_json);
@@ -132,11 +139,12 @@ class Track extends React.Component{
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
         let end_index = beginning + 10;
         let displayItems = this.state.applications.slice(beginning, end_index);
-        displayItems.forEach((element)=>{
+        displayItems.forEach((element, index)=>{
             let {application_status, username, residence_state, high_school_name, high_school_city, high_school_state, gpa, college_class } = element;
             let {major_1, major_2, sat_math, sat_ebrw, act_english, act_math, act_reading, act_science, act_composite, sat_lit, sat_us, sat_world, sat_math_1, sat_math_2, sat_eco_bio, sat_mol_bio, sat_chem, sat_physics, ap_passed} = element;
             applications.push(
                 <Application
+                    key={index}
                     btn_info={{
                         username: (username == null) ? "-" : username,
                         acceptance: (application_status == null) ? "-" : application_status,
