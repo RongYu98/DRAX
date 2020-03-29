@@ -293,7 +293,8 @@ def track_applications_list():
             'avg_sat_math': None,
             'avg_act': None,
             }
-        avg_gpa = None
+        if profiles == []:
+            return jsonify(status = 200, result = "OK", profiles = profiles)
         if count_gpa:
             summary['avg_gpa'] = sum_gpa/count_gpa
         if count_sat_ebrw:
