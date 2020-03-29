@@ -332,6 +332,7 @@ class SearchCollege extends React.Component{
                }
                show_collage_modal={this.show_collage_modal}
                set_current_modal_college={this.set_current_modal_college}
+               current_sort={this.state.filter_data.sort}
                />
             )
         }
