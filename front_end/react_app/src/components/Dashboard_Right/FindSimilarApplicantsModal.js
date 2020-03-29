@@ -22,6 +22,7 @@ class FindSimilarApplicantsModal extends React.Component{
 
     get_profiles(){
       let profiles = this.props.current_modal_collage_profiles;
+      if(profiles.length === 0) return (<h1>No similar students found</h1>);
       let result = profiles.map((element) =>{
           return(<ProfileButtons key={element.username} data={element}/>);
       });
