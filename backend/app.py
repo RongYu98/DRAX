@@ -249,25 +249,25 @@ def track_applications_list():
         for application in applications:
             application_status = application.status
             if 'statuses' in info and info['statuses'] != None:
-                if info['statuses'] != [] and application_status.lower() not in info['statuses']:
-                    continue
-                if policy == "strict" and application_status == None:
+                if policy == "lax" and application_status == None:
+                    pass
+                elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
                     continue
             student = application.student
             if 'high_schools' in info and info['high_schools'] != None:
+                if policy == "lax" and student.high_school_name == None:
+                    pass
                 if info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
                     continue
-                if policy == "strict" and student.high_school_name == None:
-                    continue
             if 'college_class_min' in info and info['college_class_min'] != None:
-                if student.college_class == None or student.college_class < info['college_class_min']:
-                    continue
-                if policy == "strict" and student.college_class == None:
+                if policy == "lax" and student.college_class == None:
+                    pass
+                elif student.college_class == None or student.college_class < info['college_class_min']:
                     continue
             if 'college_class_max' in info and info['college_class_max'] != None:
-                if student.college_class == None or student.college_class > info['college_class_max']:
-                    continue
                 if policy == "strict" and student.college_class == None:
+                    pass
+                elif student.college_class == None or student.college_class > info['college_class_max']:
                     continue
             profile = {
                 'username': student.student.username,
@@ -338,25 +338,25 @@ def track_applications_plot():
         for application in applications:
             application_status = application.status
             if 'statuses' in info and info['statuses'] != None:
-                if info['statuses'] != [] and application_status.lower() not in info['statuses']:
-                    continue
-                if policy == "strict" and application_status == None:
+                if policy == "lax" and application_status == None:
+                    pass
+                elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
                     continue
             student = application.student
             if 'high_schools' in info and info['high_schools'] != None:
-                if info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
-                    continue
-                if policy == "strict" and student.high_school_name == None:
+                if policy == "lax" and student.high_school_name == None:
+                    pass
+                elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
                     continue
             if 'college_class_min' in info and info['college_class_min'] != None:
-                if student.college_class == None or student.college_class < info['college_class_min']:
-                    continue
-                if policy == "strict" and student.college_class == None:
+                if policy == "lax" and student.college_class == None:
+                    pass
+                elif student.college_class == None or student.college_class < info['college_class_min']:
                     continue
             if 'college_class_max' in info and info['college_class_max'] != None:
-                if student.college_class == None or student.college_class > info['college_class_max']:
-                    continue
-                if policy == "strict" and student.college_class == None:
+                if policy == "lax" and student.college_class == None:
+                    pass
+                elif student.college_class == None or student.college_class > info['college_class_max']:
                     continue
             grades = student.grades
             test_score = None
@@ -423,31 +423,43 @@ def get_college_list():
     if 'admission_rate' in info: # min and max
         admission_rate_min = info["admission_rate"]["min"]
         if admission_rate_min not in {"", None}:
-            query = query & Q(admission_rate__gte=admission_rate_min)
-            if policy == "strict":
-                query = query & Q(admission_rate__ne=None)
+            adm_rte_query = Q(admission_rate__gte=admission_rate_min)
+            if policy == "lax":
+                lax = (adm_rte_min_query | Q(admission_rate=None))
+                query = query & lax
+            else:
+                query = query & adm_rte_min_query
         admission_rate_max = info["admission_rate"]["max"]
         if admission_rate_min not in {"", None}:
-            query = query & Q(admission_rate__lte=admission_rate_max)
-            if policy == "strict":
-                query = query & Q(admission_rate__ne=None)
+            adm_rte_max_query = Q(admission_rate__lte=admission_rate_max)
+            if policy == "lax":
+                lax = (adm_rte_max_query | Q(admission_rate=None))
+                query = query & lax
+            else:
+                query = query & adm_rte_max_query
     if 'location' in info: # region
         location = info["location"]
         if location not in {"", None}:
-            query = query & Q(region=location)
-            if policy == "strict":
-                query = query & Q(region__ne=None)
+            location_query = Q(region=location)
+            if policy == "lax":
+                lax = (location_query | Q(region=None))
+                query = query & lax
+            else:
+                query = query & location_query
     if 'size' in info: # small, medium, or large
         size = info["size"]
         if size not in {"", None}:
             if size == "small":
-                query = query & Q(size__lt=2000)
+                size_query = Q(size__lt=2000)
             elif size == "medium":
-                query = query & Q(size__lte=15000)
+                size_query = Q(size__lte=15000)
             else:
-                query = query & Q(size__gt=15000)
-            if policy == "strict":
-                query = query & Q(size__ne=None)
+                size_query = Q(size__gt=15000)
+            if policy == "lax":
+                lax = (size_query | Q(size=None))
+                query = query & lax
+            else:
+                query = query & size_query
     if 'major' in info: # left and right
         major_left = info["major"]["left"]
         majors = []
@@ -461,53 +473,74 @@ def get_college_list():
     if 'max_ranking' in info:
         max_ranking = info["max_ranking"]
         if max_ranking not in {"", None}:
-            query = query & Q(ranking__lte=max_ranking)
-            if policy == "strict":
-                query = query & Q(ranking__ne=None)
+            ranking_query = Q(ranking__lte=max_ranking)
+            if policy == "lax":
+                lax = (ranking_query | Q(ranking=None))
+                query = query & lax
+            else:
+                query = query & ranking_query
     if 'max_tuition' in info:
         max_tuition = info["max_tuition"]
         if max_tuition not in {"", None}:
             out_state = Q(out_cost__lte=max_tuition)
-            if policy == "strict":
-                out_state = out_state & Q(cost__ne=None)
+            if policy == "lax":
+                out_state = (out_state | Q(out_cost=None))
             in_state = Q(in_cost__lte=max_tuition) & Q(state=residence_state)
-            if policy == "strict":
-                in_state = in_state & Q(cost__ne=None)
+            if policy == "lax":
+                in_state = (in_state | Q(in_cost=None))
             cost_q = (out_state | in_state)
             query = query & cost_q
     if 'sat_ebrw' in info: # min and max
         sat_ebrw_min = info["sat_ebrw"]["min"]
         if sat_ebrw_min not in {"", None}:
-            query = query & Q(avg_sat_ebrw__gte=sat_ebrw_min)
-            if policy == "strict":
-                query = query & Q(avg_sat_ebrw__ne=None)
+            ebrw_min_query = Q(avg_sat_ebrw__gte=sat_ebrw_min)
+            if policy == "lax":
+                lax = (ebrw_min_query | Q(avg_sat_ebrw=None))
+                query = query & lax
+            else:
+                query = query & ebrw_min_query
         sat_ebrw_max = info["sat_ebrw"]["max"]
         if sat_ebrw_max not in {"", None}:
-            query = query & Q(avg_sat_ebrw__lte=sat_ebrw_max)
-            if policy == "strict":
-                query = query & Q(avg_sat_ebrw__ne=None)
+            ebrw_max_query = Q(avg_sat_ebrw__lte=sat_ebrw_max)
+            if policy == "lax":
+                lax = (ebrw_max_query | Q(avg_sat_ebrw__ne=None))
+                query = query & lax
+            else:
+                query = query & ebrw_max_query
     if 'sat_math' in info: # min and max
         sat_math_min = info["sat_math"]["min"]
         if sat_math_min not in {"", None}:
-            query = query & Q(avg_sat_math__gte=sat_math_min)
-            if policy == "strict":
-                query = query & Q(avg_sat_math__ne=None)
+            math_min_query = Q(avg_sat_math__gte=sat_math_min)
+            if policy == "lax":
+                lax = (math_min_query | Q(avg_sat_math__ne=None))
+                query = query & lax
+            else:
+                query = query & math_min_query
         sat_math_max = info["sat_math"]["max"]
         if sat_math_max not in {"", None}:
-            query = query & Q(avg_sat_math__lte=sat_math_max)
-            if policy == "strict":
-                query = query & Q(avg_sat_math__ne=None)
+            math_max_query = Q(avg_sat_math__lte=sat_math_max)
+            if policy == "lax":
+                lax = (math_max_query | Q(avg_sat_math__ne=None))
+                query = query & lax
+            else:
+                query = query & math_max_query
     if 'act' in info: # min and max
         act_min = info["act"]["min"]
         if act_min not in {"", None}:
-            query = query & Q(avg_act_composite__gte=act_min)
-            if policy == "strict":
-                query = query & Q(avg_act_composite__ne=None)
+            act_min_query = Q(avg_act_composite__gte=act_min)
+            if policy == "lax":
+                lax = (act_min_query | Q(avg_act_composite__ne=None))
+                query = query & lax
+            else:
+                query = query & act_min_query
         act_max = info["act"]["max"]
         if act_max not in {"", None}:
-            query = query & Q(avg_act_composite__lte=act_max)
-            if policy == "strict":
-                query = query & Q(avg_act_composite__ne=None)
+            act_max_query = Q(avg_act_composite__lte=act_max)
+            if policy == "lax":
+                lax = (act_max_query | Q(avg_act_composite__ne=None))
+                query = query & lax
+            else:
+                query = query & act_max_query
     
     # Check sorting method
     sort = ""
