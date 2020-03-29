@@ -4,8 +4,7 @@ import Application from "./Application";
 import {SERVER_URL, STATUS_OK} from "../../common/Constants";
 import ScatterPlotModal from "./ScatterPlotModal";
 import SearchCollege from "./SearchCollege";
-
-
+const RECOMMENDED_COLLEGE_ENDPOINT = "/get_college_list";
 
 
 const APPLICATION_ENDPOINT = "/track_applications_list";
@@ -13,7 +12,26 @@ const HIGHSCHOOL_ENDPOINT = "/get_all_highschools";
 
 class Track extends React.Component{
 
+    static suggestions_style={
+        width: "100%",
+        border: "1px solid grey",
+        marginBottom: "2%",
+        boxShadow: `1px 3px 1px grey`,
+        backgroundColor: "white",
 
+    }
+
+    static suggestion_list_style={
+        // not working
+        // '& li:hover': {
+        //     textDecoration: 'underline',
+        // },
+        listStyleType: "none"
+    }
+
+    static suggestion_item_style={
+        cursor: "pointer"
+    }
 
     constructor(props) {
         super(props);
@@ -36,7 +54,8 @@ class Track extends React.Component{
             applications: [],
             current_page_num: 1,
             show_modal: false,
-            not_found : false
+            not_found : false,
+            suggestions: []
         }
         this.button_list = [];
         this.searchClicked = this.searchClicked.bind(this);
@@ -48,6 +67,32 @@ class Track extends React.Component{
         this.get_applications = this.get_applications.bind(this);
         this.get_input_json = this.get_input_json.bind(this);
         this.input_check = this.input_check.bind(this);
+        this.update_search_input = this.update_search_input.bind(this);
+        this.fetch_suggestions = this.fetch_suggestions.bind(this);
+        this.get_suggestions = this.get_suggestions.bind(this);
+    }
+
+    get_suggestions(){
+        if(this.state.suggestions.length === 0) return null;
+        return(
+            <div style={Track.suggestions_style}>
+                <ul style={Track.suggestion_list_style}>
+                  {this.state.suggestions.map((element)=>{
+                        return (<li style={Track.suggestion_item_style}
+                                    onClick={(event => {
+                                        this.state.filter_data.name = element;
+                                        this.setState({suggestions: []});
+                                    })}
+                                    key={element}
+                                >
+                                    {element}
+                                </li>
+                        );
+                  })}
+              </ul>
+            </div>
+
+        );
     }
 
 
@@ -324,6 +369,8 @@ class Track extends React.Component{
     }
 
 
+
+
     componentDidMount() {
         if (typeof this.props.location.state !== 'undefined') {
             let college_name = this.props.location.state.college_name;
@@ -339,13 +386,59 @@ class Track extends React.Component{
 
     searchClicked(event){
         this.fetch_applications();
+    }
 
+    async update_search_input(event){
+        this.state.filter_data.name = event.target.value;
+        await this.fetch_suggestions();
+    }
+
+    async fetch_suggestions(){
+        try{
+            let filter_data = {
+                name: this.state.filter_data.name,
+                admission_rate: {min: null, max: null},
+                location: null,
+                sat_ebrw: {min: null, max: null},
+                max_ranking: null,
+                size: null,
+                sat_math: {min: null, max: null},
+                major: {left: null, right: null},
+                max_tuition: null,
+                act: {min: null, max: null},
+                policy: this.props.sort,
+                sort: SearchCollege.sort_enum.NAME
+            };
+            let response = await fetch(
+                SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(filter_data)
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            let result = response_json.colleges.slice(0,5);
+            result = result.map((element)=>{
+                return element.name;
+            });
+            this.setState({suggestions: result});
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
     }
 
     render() {
         let high_schools = this.get_high_school();
         let page_buttons = this.get_page_buttons();
         let applications = this.get_applications();
+        let suggestions = this.get_suggestions();
         return (
             <div className="right-content">
                     <div className="wrap-search-result">
@@ -353,11 +446,9 @@ class Track extends React.Component{
                             <div className="search-box">
                                 <div className="input-group mb-3">
                                     <input type="text" className="form-control shadow-none" placeholder="College name"
-                                           aria-label="College name" aria-describedby="search-btn"
-                                           value={this.state.filter_data.name}
-                                           onChange={(event)=>{
-                                                this.setState({filter_data:{...this.state.filter_data, name: event.target.value}});
-                                           }}
+                                       aria-label="College name" aria-describedby="search-btn"
+                                       value={this.state.filter_data.name}
+                                       onChange={this.update_search_input}
                                     />
                                     <div className="input-group-append">
                                         <button onClick={this.searchClicked}
@@ -368,6 +459,7 @@ class Track extends React.Component{
                                     </div>
                                 </div>
                             </div>
+                            {suggestions}
                             <div className="filters-box">
                                 <div className="filters-dropdown">
                                     <button onClick={()=>{
