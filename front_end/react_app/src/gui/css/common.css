@@ -58,7 +58,7 @@ select{
 }
 .left-menu{
     width:15%;
-    min-width: 150px;   
+    min-width: 150px;
     height: 100vh;
     justify-content: space-around;
     display:flex;
@@ -177,7 +177,7 @@ label[for="strict"],label[for="lax"]{cursor: pointer;}
 .list-group-item:hover{
     background-color: #c3c5f7f7;
 }
-.item-info{    
+.item-info{
     flex-direction:column;
     padding: 2% 0% 2% 3%;
     background-color: #a4a7fcf7;
