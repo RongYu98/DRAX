@@ -12,6 +12,9 @@ const APPLICATION_ENDPOINT = "/track_applications_list";
 const HIGHSCHOOL_ENDPOINT = "/get_all_highschools";
 
 class Track extends React.Component{
+
+
+
     constructor(props) {
         super(props);
         this.state = {
@@ -26,7 +29,8 @@ class Track extends React.Component{
                 college_class: {from: "" , to: ""},
                 checked_high_schools: [],
                 application_status: [],
-                name: ""
+                name: "",
+                policy: "strict"
             },
             high_schools: [],
             applications: [],
@@ -494,12 +498,24 @@ class Track extends React.Component{
                                 <div className="filters-radio">
                                     <div className="custom-control custom-radio">
                                         <input type="radio" id="strict" name="customRadio"
-                                               className="custom-control-input"/>
+                                               className="custom-control-input"
+                                               checked={this.state.filter_data.policy === "strict"}
+                                               onChange={(event)=>{
+                                                    this.setState({filter_data: {...this.state.filter_data, policy: "strict"}});
+                                                    console.log(this.state.filter_data.policy);
+                                               }}
+                                        />
                                         <label className="custom-control-label" htmlFor="strict">Strict</label>
                                     </div>
                                     <div className="custom-control custom-radio">
                                         <input type="radio" id="lax" name="customRadio"
-                                               className="custom-control-input"/>
+                                               className="custom-control-input"
+                                               checked={this.state.filter_data.policy === "lax"}
+                                               onChange={(event)=>{
+                                                   this.setState({filter_data: {...this.state.filter_data, policy: "lax"}});
+                                                   console.log(this.state.filter_data.policy);
+                                               }}
+                                        />
                                         <label className="custom-control-label" htmlFor="lax">Lax</label>
                                     </div>
                                 </div>
