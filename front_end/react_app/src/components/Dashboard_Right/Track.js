@@ -131,38 +131,38 @@ class Track extends React.Component{
             applications.push(
                 <Application
                     btn_info={{
-                        username: username,
-                        acceptance: application_status,
-                        high_school: high_school_name,
-                        high_school_location: `${high_school_city}, ${high_school_state}`
+                        username: (username == null) ? "-" : username,
+                        acceptance: (application_status == null) ? "-" : application_status,
+                        high_school: (high_school_name == null) ? "-" : high_school_name,
+                        high_school_location: (high_school_state == null || high_school_city == null) ? "-" : `${high_school_city}, ${high_school_state}`
                     }}
                     personal={{
-                        state: residence_state,
-                        math: sat_math,
-                        ap: ap_passed,
-                        majors1: major_1,
-                        class: college_class,
-                        ebrw: sat_ebrw,
-                        gpa: gpa,
-                        majors2: major_2
+                        state: (residence_state == null) ? "-" : residence_state,
+                        math: (sat_math == null) ? "-" : sat_math,
+                        ap: (ap_passed == null) ? "-" : ap_passed,
+                        majors1: (major_1 == null) ? "-" : major_1,
+                        class: (college_class == null) ? "-"  : college_class,
+                        ebrw: (sat_ebrw == null) ? "-" : sat_ebrw,
+                        gpa: (gpa == null) ? "-" : gpa,
+                        majors2: (major_2 == null) ? "-" : major_2
                     }}
                     sat2={{
-                        chemistry: sat_chem,
-                        eco_bio: sat_eco_bio,
-                        literature: sat_lit,
-                        mol_bio: sat_mol_bio,
-                        math_I: sat_math_1,
-                        math_II: sat_math_2,
-                        physics: sat_physics,
-                        us_history: sat_us,
-                        world_history: sat_world
+                        chemistry: (sat_chem == null) ? "-" : sat_chem,
+                        eco_bio: (sat_eco_bio == null) ? "-" : sat_eco_bio,
+                        literature: (sat_lit == null) ? "-" : sat_lit,
+                        mol_bio: (sat_mol_bio == null) ? "-" : sat_mol_bio,
+                        math_I: (sat_math_1 == null) ? "-" : sat_math_1,
+                        math_II: (sat_math_2 == null) ? "-" : sat_math_2,
+                        physics: (sat_physics == null) ? "-" : sat_physics,
+                        us_history: (sat_us == null) ? "-" : sat_us,
+                        world_history: (sat_world == null) ? "-" : sat_world
                     }}
                     act={{
-                        english: act_english,
-                        math: act_math,
-                        reading: act_reading,
-                        science: act_science,
-                        composite: act_composite
+                        english: (act_english == null) ? "-" : act_english,
+                        math: (act_math == null) ? "-" : act_math,
+                        reading: (act_reading == null) ? "-" : act_reading,
+                        science: (act_science == null) ? "-" : act_science,
+                        composite: (act_composite == null) ? "-" : act_composite
                     }}
                 />
             );
