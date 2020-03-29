@@ -67,13 +67,15 @@ class ScatterPlotModal extends React.Component{
        if(this.state.empty) return "no coordinates found";
        if(this.state.scatter_plots.length === 0) return "Click on a button to see scatter plot";
 
-       let x = this.state.scatter_plots.forEach(function (coordinate) {
+       let x = this.state.scatter_plots.map(function (coordinate) {
             return coordinate.x;
         });
 
-       let y = this.state.scatter_plots.forEach(function (coordinate) {
+       let y = this.state.scatter_plots.map(function (coordinate) {
             return coordinate.y;
         });
+       console.log(x);
+       console.log(y);
 
        return(
            <Plot
