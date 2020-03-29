@@ -44,12 +44,12 @@ class Application extends React.Component{
     }
 
     get_badge_style(acceptance){
-        if(acceptance.toLowerCase.includes("accept")) return Application.badge_enum.SUCCESS;
-        if(acceptance.toLowerCase.includes("denied")) return Application.badge_enum.DANGER;
-        if(acceptance.toLowerCase.includes("deferred")) return Application.badge_enum.WARNING;
-        if(acceptance.toLowerCase.includes("wait")) return Application.badge_enum.WARNING;
-        if(acceptance.toLowerCase.includes("withdraw")) return Application.badge_enum.DANGER;
-        if(acceptance.toLowerCase.includes("pending")) return Application.badge_enum.WARNING;
+        if(acceptance.toLowerCase().includes("accept")) return Application.badge_enum.SUCCESS;
+        if(acceptance.toLowerCase().includes("denied")) return Application.badge_enum.DANGER;
+        if(acceptance.toLowerCase().includes("deferred")) return Application.badge_enum.WARNING;
+        if(acceptance.toLowerCase().includes("wait")) return Application.badge_enum.WARNING;
+        if(acceptance.toLowerCase().includes("withdraw")) return Application.badge_enum.DANGER;
+        if(acceptance.toLowerCase().includes("pending")) return Application.badge_enum.WARNING;
     }
 
 
