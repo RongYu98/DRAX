@@ -118,7 +118,8 @@ class Track extends React.Component{
             college_class_min: (this.state.filter_data.college_class.from === "") ? null : parseInt(this.state.filter_data.college_class.from),
             college_class_max: (this.state.filter_data.college_class.to === "") ? null : parseInt(this.state.filter_data.college_class.to),
             statuses: (this.state.filter_data.application_status.length === 0) ? null : this.state.filter_data.application_status,
-            high_schools: (this.state.filter_data.checked_high_schools.length === 0) ? null : this.state.filter_data.checked_high_schools
+            high_schools: (this.state.filter_data.checked_high_schools.length === 0) ? null : this.state.filter_data.checked_high_schools,
+            sort: this.state.filter_data.policy
         }
         return body;
     }
