@@ -139,11 +139,11 @@ class Application extends React.Component{
                                 <tr>
                                     {/* add data in b tags */}
                                     {/* if there is no data, add dash in b tags */}
-                                    <td><b>{act.english}</b><br/><label>ACT English</label></td>
-                                    <td><b>{act.math}</b><br/><label>ACT Math</label></td>
-                                    <td><b>{act.reading}</b><br/><label>ACT Reading</label></td>
-                                    <td><b>{act.science}</b><br/><label>ACT Science</label></td>
-                                    <td><b>{act.composite}</b><br/><label>ACT Composite</label></td>
+                                    <td key={"english"}><b>{act.english}</b><br/><label>ACT English</label></td>
+                                    <td key={"math"}><b>{act.math}</b><br/><label>ACT Math</label></td>
+                                    <td key={"reading"}><b>{act.reading}</b><br/><label>ACT Reading</label></td>
+                                    <td key={"science"}><b>{act.science}</b><br/><label>ACT Science</label></td>
+                                    <td key={"composite"}><b>{act.composite}</b><br/><label>ACT Composite</label></td>
                                 </tr>
                                 </tbody>
                             </table>

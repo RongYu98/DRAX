@@ -86,8 +86,7 @@ class ScatterPlotModal extends React.Component{
                       type: 'scatter',
                       mode: 'markers+text',
                       marker: {color: 'red'},
-                  },
-                  // {type: 'bar', x: [1, 2, 3], y: [2, 5, 3]},
+                  }
                ]}
                 layout={ {width: 450, height: 450, title: 'Scatter Plot'} }
             />
