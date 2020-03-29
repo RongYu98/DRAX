@@ -7,6 +7,7 @@ class ProfileButtons extends React.Component{
             display: "None"
         }
         this.clicked= this.clicked.bind(this);
+        this.sanitized_list = this.sanitized_list.bind(this);
     }
 
 
@@ -15,12 +16,25 @@ class ProfileButtons extends React.Component{
          this.setState({display: new_display});
     }
 
-    render() {
+    sanitized_list(){
         for (let property in this.props.data){
             this.props.data[property] = (this.props.data[property] == null) ? "-" : this.props.data[property];
         }
+        let keys = ["application_status", "username", "residence_state", "high_school_name", "high_school_city", "high_school_state", "gpa", "college_class",
+                    "major_1", "major_2", "sat_math", "sat_ebrw", "act_english", "act_math", "act_reading", "act_science", "act_composite", "sat_lit", "sat_us",
+                    "sat_world", "sat_math_1", "sat_math_2", "sat_eco_bio", "sat_mol_bio", "sat_chem", "sat_physics", "ap_passed"];
+        keys.forEach((element) => {
+            let field = this.props.data[element];
+            if(typeof field === 'undefined'){
+                this.props.data[element] = "-";
+            }
+        })
+    }
+
+    render() {
+        this.sanitized_list();
         let {application_status, username, residence_state, high_school_name, high_school_city, high_school_state, gpa, college_class } = this.props.data;
-            let {major_1, major_2, sat_math, sat_ebrw, act_english, act_math, act_reading, act_science, act_composite, sat_lit, sat_us, sat_world, sat_math_1, sat_math_2, sat_eco_bio, sat_mol_bio, sat_chem, sat_physics, ap_passed} = this.props.data;
+        let {major_1, major_2, sat_math, sat_ebrw, act_english, act_math, act_reading, act_science, act_composite, sat_lit, sat_us, sat_world, sat_math_1, sat_math_2, sat_eco_bio, sat_mol_bio, sat_chem, sat_physics, ap_passed} = this.props.data;
 
         return (
             <React.Fragment>
