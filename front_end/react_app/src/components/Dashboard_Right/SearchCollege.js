@@ -280,6 +280,7 @@ class SearchCollege extends React.Component{
                 this.state.not_found = true;
             else
                 this.state.not_found = false;
+            console.log(response_json.colleges);
             this.setState({current_page_num: 1, college_list: response_json.colleges});
         }catch (err) {
             console.log(err.stack);
