@@ -87,13 +87,18 @@ def detect_questionable_acceptance(college, student):
         return score/denominator
     return -1
 
+
+def calc_academic_similarity(college, student):
+    return 0
+    
+    
 def compute_recommendation_score(college, student):
     # Calculate acceptance likelihood aspect
     acceptance_likelihood = detect_questionable_acceptance(college, student)
     
     # Calculate academic similarity aspect
-    academic_similarity = 0
-    
+    academic_similarity = calc_academic_similarity(college, student)
+
     # Calculate non-academic similarity aspect
     non_academic_factors = []
     debt = college.median_debt

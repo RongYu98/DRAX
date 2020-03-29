@@ -23,7 +23,7 @@ class Track extends React.Component{
                 avg_gpa: "",
                 avg_sat_ebrw: "",
                 avg_sat_math: "",
-                avg_act_composite: ""
+                avg_act: ""
             },
             filter_data: {
                 college_class: {from: "" , to: ""},
@@ -104,7 +104,7 @@ class Track extends React.Component{
                 avg_gpa: "",
                 avg_sat_ebrw: "",
                 avg_sat_math: "",
-                avg_act_composite: ""
+                avg_act: ""
                 }
                 this.state.applications = [];
                 this.setState({summary: summary, not_found: true});
@@ -116,7 +116,7 @@ class Track extends React.Component{
                 avg_gpa: "",
                 avg_sat_ebrw: "",
                 avg_sat_math: "",
-                avg_act_composite: ""
+                avg_act: ""
                 }
                 this.state.applications = [];
                 this.setState({summary: summary, not_found: true});
@@ -558,7 +558,7 @@ class Track extends React.Component{
                                         <td><b>{this.state.summary.avg_gpa}</b><br/><label>Average GPA</label></td>
                                         <td><b>{this.state.summary.avg_sat_ebrw}</b><br/><label>Average SAT EBRW</label></td>
                                         <td><b>{this.state.summary.avg_sat_math}</b><br/><label>Average SAT Math</label></td>
-                                        <td><b>{this.state.summary.avg_act_composite}</b><br/><label>Average ACT Composite</label></td>
+                                        <td><b>{this.state.summary.avg_act}</b><br/><label>Average ACT Composite</label></td>
                                         <td/>
                                     </tr>
                                     </tbody>
