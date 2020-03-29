@@ -152,7 +152,7 @@ class Track extends React.Component{
                 avg_act: ""
                 }
                 this.state.applications = [];
-                this.setState({summary: summary, not_found: true});
+                this.setState({suggestions: [], summary: summary, not_found: true});
                 return;
             }
             console.log(response_json);
@@ -164,11 +164,11 @@ class Track extends React.Component{
                 avg_act: ""
                 }
                 this.state.applications = [];
-                this.setState({summary: summary, not_found: true});
+                this.setState({suggestions: [], summary: summary, not_found: true});
                 return;
             }
             this.state.not_found = (response_json.profiles.length === 0) ? true : false;
-            this.setState({applications: response_json.profiles, summary: response_json.summary});
+            this.setState({suggestions: [], applications: response_json.profiles, summary: response_json.summary});
         }catch (err) {
             console.log(err.stack);
             alert(`failed to fetch new application list, err msg: ${err.message}`);
