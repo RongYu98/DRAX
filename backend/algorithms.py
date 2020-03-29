@@ -45,7 +45,7 @@ def detect_questionable_acceptance(college, student):
         sat_ebrw_25 = college.sat_ebrw_25
         sat_ebrw_75 = college.sat_ebrw_75
         if sat_ebrw_25 and sat_ebrw_75:
-            sat_ebrw_percentile = estimate_exam_percentile(SAT_MIN, sat_ebrw_25, sat_ebrw_75, SAT_MAX, student_ebrw_math)
+            sat_ebrw_percentile = estimate_exam_percentile(SAT_MIN, sat_ebrw_25, sat_ebrw_75, SAT_MAX, student_sat_ebrw)
             if sat_ebrw_percentile < 1: # Mark as questionable if below 1st percentile
                 return 0
     
