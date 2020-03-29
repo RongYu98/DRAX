@@ -62,4 +62,11 @@ $( document ).ready(function() {
         });
         target.attr('disabled', 'disabled');
     });
+
+    // target : filters
+    // event handler which hides filter box when search button is clicked
+    $("#search-btn").on("click", function(){
+        var target = $("#filters-dropdown-content");
+        target.css("display", "none");
+    });
 });
