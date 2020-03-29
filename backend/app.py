@@ -236,6 +236,8 @@ def track_applications_list():
             college = College.objects.get(name=college_name)
         except:
             return jsonify(status = 400, result = "College Not Found")
+        if 'policy' in info: # strict or lax
+            policy = info["policy"]
         applications = Application.objects(college=college)
         profiles = []
         sum_gpa = 0
