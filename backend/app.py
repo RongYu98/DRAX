@@ -248,18 +248,18 @@ def track_applications_list():
         count_act = 0
         for application in applications:
             application_status = application.status
-            if 'statuses' in info:
-                if info['statuses'] != [] or application_status not in info['statuses']:
+            if 'statuses' in info and info['statuses'] != None:
+                if info['statuses'] != [] and application_status not in info['statuses']:
                     continue
             student = application.student
-            if 'high_schools' in info:
-                if info['high_schools'] != [] or student.high_school_name not in info['high_schools']:
+            if 'high_schools' in info and info['high_schools'] != None:
+                if info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
                     continue
-            if 'college_class_min' in info:
-                if student.college_class < info['college_class_min']:
+            if 'college_class_min' in info and info['college_class_min'] != None:
+                if student.college_class == None or student.college_class < info['college_class_min']:
                     continue
-            if 'college_class_max' in info:
-                if student.college_class > info['college_class_max']:
+            if 'college_class_max' in info and info['college_class_max'] != None:
+                if student.college_class == None or student.college_class > info['college_class_max']:
                     continue
             profile = {
                 'username': student.student.username,
@@ -316,68 +316,69 @@ def track_applications_plot():
         info = request.form
     if 'college_name' in info and 'test_type' in info:
         college_name = info['college_name']
+        college = None
         try:
             college = College.objects.get(name=college_name)
-            applications = Application.objects(college=college)
-            test_type = info['test_type']
-            coordinates = []
-            for application in applications:
-                application_status = application.status
-                if 'statuses' in info:
-                    if application_status not in info['statuses']:
-                        continue
-                student = application.student
-                if 'high_schools' in info:
-                    if student.high_school_name not in info['high_schools']:
-                        continue
-                if 'college_class_min' in info:
-                    if student.college_class < info['college_class_min']:
-                        continue
-                if 'college_class_max' in info:
-                    if student.college_class > info['college_class_max']:
-                        continue
-                grades = student.grades
-                test_score = None
-                if test_type == "SAT":
-                    if ('sat_math' in grades and grades['sat_math'] not in {None, ""} and
-                        'sat_ebrw' in grades and grades['sat_ebrw'] not in {None, ""}):
-                        test_score = int(grades['sat_math']) + int(grades['sat_ebrw'])
-                if test_type == "ACT":
-                    if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
-                        test_score = 400 + round((grades['act_composite']-1)*(1200/35), -1)
-                if test_type == "SAT_ACT":
-                    test_count = 0
-                    total = 0
-                    if ('sat_math' in grades and grades['sat_math'] not in {None, ""} and
-                        'sat_ebrw' in grades and grades['sat_ebrw'] not in {None, ""}):
-                        test_count += 1
-                        total += (int(grades['sat_math']) + int(grades['sat_ebrw']))
-                    if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
-                        test_count += 1
-                        adjusted = 400 + round((grades['act_composite']-1)*(1200/35), -1)
-                        total += adjusted
-                    if not test_count:
-                        continue
-                    remainder = total/test_count                    
-                    weighted_subjects = 0
-                    remaining_weight = 1.0
-                    for field in grades:
-                        if 'sat_' in field and field not in {'sat_math', 'sat_ebrw'}:
-                            if grades[field] not in {None, ""}:
-                                weighted_subjects += grades[field]*0.1
-                                remaining_weight -= 0.05
-                    test_score = weighted_subjects + remainder*remaining_weight
-                if test_score == None:
-                    continue
-                coordinate = {
-                    'x': test_score,
-                    'y': student.gpa,
-                    'status': application_status
-                    }
-                coordinates.append(coordinate)
-            return jsonify(status = 200, result = "OK", coordinates = coordinates)
         except:
             return jsonify(status = 400, result = "College Not Found")
+        applications = Application.objects(college=college)
+        test_type = info['test_type']
+        coordinates = []
+        for application in applications:
+            application_status = application.status
+            if 'statuses' in info and info['statuses'] != None:
+                if info['statuses'] != [] and application_status not in info['statuses']:
+                    continue
+            student = application.student
+            if 'high_schools' in info and info['high_schools'] != None:
+                if info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
+                    continue
+            if 'college_class_min' in info and info['college_class_min'] != None:
+                if student.college_class == None or student.college_class < info['college_class_min']:
+                    continue
+            if 'college_class_max' in info and info['college_class_max'] != None:
+                if student.college_class == None or student.college_class > info['college_class_max']:
+                    continue
+            grades = student.grades
+            test_score = None
+            if test_type == "SAT":
+                if ('sat_math' in grades and grades['sat_math'] not in {None, ""} and
+                    'sat_ebrw' in grades and grades['sat_ebrw'] not in {None, ""}):
+                    test_score = int(grades['sat_math']) + int(grades['sat_ebrw'])
+            if test_type == "ACT":
+                if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
+                    test_score = 400 + round((grades['act_composite']-1)*(1200/35), -1)
+            if test_type == "SAT_ACT":
+                test_count = 0
+                total = 0
+                if ('sat_math' in grades and grades['sat_math'] not in {None, ""} and
+                    'sat_ebrw' in grades and grades['sat_ebrw'] not in {None, ""}):
+                    test_count += 1
+                    total += (int(grades['sat_math']) + int(grades['sat_ebrw']))
+                if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
+                    test_count += 1
+                    adjusted = 400 + round((grades['act_composite']-1)*(1200/35), -1)
+                    total += adjusted
+                if not test_count:
+                    continue
+                remainder = total/test_count                    
+                weighted_subjects = 0
+                remaining_weight = 1.0
+                for field in grades:
+                    if 'sat_' in field and field not in {'sat_math', 'sat_ebrw'}:
+                        if grades[field] not in {None, ""}:
+                            weighted_subjects += grades[field]*0.1
+                            remaining_weight -= 0.05
+                test_score = weighted_subjects + remainder*remaining_weight
+            if test_score == None:
+                continue
+            coordinate = {
+                'x': test_score,
+                'y': student.gpa,
+                'status': application_status
+                }
+            coordinates.append(coordinate)
+        return jsonify(status = 200, result = "OK", coordinates = coordinates)
     return jsonify(status = 400, result = "Missing Fields")
 
 
