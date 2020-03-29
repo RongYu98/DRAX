@@ -111,14 +111,19 @@ class Track extends React.Component{
                 return;
             }
             console.log(response_json);
-            let summary = {
-                avg_gpa: (response_json.summary.avg_gpa == null) ? "-" : response_json.summary.avg_gpa,
-                avg_sat_ebrw: (response_json.summary.avg_sat_ebrw == null) ? "-" : response_json.summary.avg_sat_ebrw,
-                avg_sat_math: (response_json.summary.avg_sat_math == null) ? "-" : response_json.summary.avg_sat_math,
-                avg_act_composite: (response_json.summary.avg_act == null) ? "-" : response_json.summary.avg_act
+            if(response_json.summary == null){
+                let summary = {
+                avg_gpa: "",
+                avg_sat_ebrw: "",
+                avg_sat_math: "",
+                avg_act_composite: ""
+                }
+                this.state.applications = [];
+                this.setState({summary: summary, not_found: true});
+                return;
             }
             this.state.not_found = (response_json.profiles.length === 0) ? true : false;
-            this.setState({applications: response_json.profiles, summary: summary});
+            this.setState({applications: response_json.profiles, summary: response_json.summary});
         }catch (err) {
             console.log(err.stack);
             alert(`failed to fetch new application list, err msg: ${err.message}`);
