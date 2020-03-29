@@ -407,7 +407,7 @@ class Track extends React.Component{
                 major: {left: null, right: null},
                 max_tuition: null,
                 act: {min: null, max: null},
-                policy: this.props.sort,
+                policy: this.state.filter_data.policy,
                 sort: SearchCollege.sort_enum.NAME
             };
             let response = await fetch(
