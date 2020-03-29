@@ -27,7 +27,7 @@ class CollegeItem extends React.Component{
                                 state: {
                                 college_name: name
                               }
-                    }}>Track Application</Link>
+                    }}>Find Similar Applicants</Link>
                     <h5>{state}</h5>
                 </button>
                 <div className="item-info" style={this.state.display}>
