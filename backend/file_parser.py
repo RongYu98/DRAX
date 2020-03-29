@@ -15,13 +15,14 @@ def import_student_data(filename):
 
     header = lines[0]
 
-    index = ['username', 'password', 'state', 'high_school_name', 'high_school_city',
-             'high_school_state', 'gpa', 'college_class', 'major_1',
-             'major_2', 'sat_math', 'sat_ebrw', 'act_english', 'act_math',
-             'act_reading', 'act_science', 'act_composite', 'sat_lit',
-             'sat_us', 'sat_world', 'sat_math_1', 'sat_math_2', 'sat_eco_bio',
-             'sat_mol_bio', 'sat_chem', 'sat_physics', 'ap_passed']
-    
+    index = ['username', 'password', 'state', 'high_school_name',
+             'high_school_city', 'high_school_state', 'gpa', 'college_class',
+             'major_1', 'major_2', 'sat_math', 'sat_ebrw', 'act_english',
+             'act_math', 'act_reading', 'act_science', 'act_composite',
+             'sat_lit', 'sat_us', 'sat_world', 'sat_math_1', 'sat_math_2',
+             'sat_eco_bio', 'sat_mol_bio', 'sat_chem', 'sat_physics',
+             'ap_passed']
+
     for line in lines[1:]:
         username = line[0]
         password = line[1]
@@ -30,7 +31,7 @@ def import_student_data(filename):
         account = Account(username=username,
                           hashed_password=digest,
                           salt=salt, type="Student")
-        
+
         try:
             account.save()
         except Exception as e:
@@ -47,10 +48,10 @@ def import_student_data(filename):
         # Make student profile class
         # TODO: Decide on what attributes are optional
         # TODO: Add checks for if this data is not pressent?
-        
+
         p = StudentProfile(
-            student = account,
-            gpa = float(line[index.index('gpa')]),
+            student=account,
+            gpa=float(line[index.index('gpa')]),
             residence_state=line[index.index('state')],
             high_school_name=line[index.index('high_school_name')],
             high_school_city=line[index.index('high_school_city')],
@@ -59,7 +60,7 @@ def import_student_data(filename):
         for x in range(index.index('major_1'), len(index)):
             info = index[x]
             data = line[x]
-            if data!='': # the field isn't empty
+            if data != '':  # the field isn't empty
                 p.grades[info] = data
 
         try:
@@ -91,7 +92,7 @@ def import_application_data(filename):
             continue
         try:
             university = College.objects.get(name=college)
-        except:#  DoesNotExist as e:
+        except:  # DoesNotExist as e:
             print("College Doesn't Exist: "+college)
             continue
 
@@ -109,9 +110,9 @@ def import_application_data(filename):
 
 
 def delete_student_data():
-    Account.objects(type="Student").delete() # should delete all account fields, including admin?
+    Account.objects(type="Student").delete()
     # StudentProfile.objects().delete()
-    # Application.objects().delete() 
+    # Application.objects().delete()
 
 
 def institution_type(arg):
@@ -184,7 +185,7 @@ def import_college_scorecard(scorecard):
                     college.update(set__institution=institution)
                     if admission_rate != "NULL":
                         college.update(set__admission_rate=admission_rate)
-                    college.size=size
+                    college.size = size
                     college.save()
                     college.update(set__median_debt=median_debt)
                     college.update(set__salary=salary)
@@ -203,14 +204,15 @@ def import_college_scorecard(scorecard):
                             institution=institution, size=size,
                             median_debt=median_debt, salary=salary,
                         )
-                    #try:
+                    # try:
                     college.save()
-                    #except:
+                    # except:
                     #    print("Error importing college: " + name)
 
 # global variable to store the file content of colleges.txt in list form
 college_list = None
-# function to read the file list should only happen once?
+
+
 def generate_collegetxt_list():
     global college_list
     with open('colleges.txt') as f:
@@ -227,8 +229,8 @@ def generate_collegetxt_list():
 
 def get_collegetxt_list(refresh=False):
     global college_list
-    if (college_list == None or refresh == False):
-        return generate_collegetxt_list() # wait, will our global variable be refreshed?
+    if (college_list is None or refresh is False):
+        return generate_collegetxt_list()
     return college_list
 
 '''
@@ -242,5 +244,5 @@ college.save()
 college = College(name='Cornell University')
 college.save()'''
 # delete_student_data()
-# import_student_data("students-1.csv") 
+# import_student_data("students-1.csv")
 # import_application_data('applications-1.csv')
