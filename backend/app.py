@@ -73,7 +73,7 @@ def login():
         print(account)
     except DoesNotExist as e:
         return jsonify(status=400, result="Invalid Login")
-    
+
     # check the password
     digest = hash_utils.hmac_hash(password, account.salt)
     if digest == account.hashed_password:
@@ -82,10 +82,10 @@ def login():
     else:
         return jsonify(status=400, result="Invalid Login")
 
-    
+
 @app.route('/api/logout', methods=['POST'])
 def logout():
-    if 'username' in session and session['username'] is not  None:
+    if 'username' in session and session['username'] is not None:
         session['username'] = None
         return jsonify(status=200, result="Logged Out")
     return jsonify(status=400, result="Not Logged In")
@@ -121,7 +121,7 @@ def get_profile():
     except:
         return jsonify(status=400, result="Get Profile Failed")
 
-    
+
 @app.route('/api/save_profile', methods=['POST'])
 def save_profile():
     # Check if logged in
@@ -165,8 +165,6 @@ def save_profile():
         student.update(set__high_school_name=name)
         student.update(set__high_school_city=city)
         student.update(set__high_school_state=state)
-    else:
-        print(high_school_exists(name,city,state))
     return jsonify(status=200, result="OK")
 
 
@@ -178,7 +176,7 @@ def get_admission_decision():
     # Get student profile
     try:
         student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
-        applications = Application.objects(student = student)
+        applications = Application.objects(student=student)
         admission_decisions = []
         for application in applications:
             admission = {
@@ -239,7 +237,7 @@ def track_applications_list():
             college = College.objects.get(name=college_name)
         except:
             return jsonify(status=400, result="College Not Found")
-        if 'policy' in info: # strict or lax
+        if 'policy' in info:  # strict or lax
             policy = info["policy"]
         applications = Application.objects(college=college)
         profiles = []
@@ -253,7 +251,7 @@ def track_applications_list():
         count_act = 0
         for application in applications:
             application_status = application.status
-            if 'statuses' in info and info['statuses'] != None:
+            if 'statuses' in info and info['statuses'] is not None:
                 if policy == "lax" and application_status is None:
                     pass
                 elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
@@ -264,7 +262,7 @@ def track_applications_list():
             for x in profile:
                 print(x)
                 print(profile[x])
-            if 'high_schools' in info and info['high_schools'] != None:
+            if 'high_schools' in info and info['high_schools'] is not None:
                 if policy == "lax" and student.high_school_name is None:
                     pass
                 elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
@@ -331,6 +329,12 @@ def track_applications_list():
             summary['avg_sat_math'] = round(sum_sat_math/count_sat_math, 2)
         if count_act:
             summary['avg_act'] = round(sum_act/count_act, 2)
+
+        def get_status(p):
+            return p['application_status']
+
+
+        profiles.sort(key=get_status)
         return jsonify(status=200, result="OK", profiles=profiles, summary=summary)
     return jsonify(status=400, result="Missing Fields")
 
@@ -349,15 +353,15 @@ def track_applications_plot():
         try:
             college = College.objects.get(name=college_name)
         except:
-            return jsonify(status = 400, result = "College Not Found")
-        if 'policy' in info: # strict or lax
+            return jsonify(status=400, result="College Not Found")
+        if 'policy' in info:  # strict or lax
             policy = info["policy"]
         applications = Application.objects(college=college)
         test_type = info['test_type']
         coordinates = []
         for application in applications:
             application_status = application.status
-            if 'statuses' in info and info['statuses'] != None:
+            if 'statuses' in info and info['statuses'] is not None:
                 if policy == "lax" and application_status is None:
                     pass
                 elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
@@ -384,7 +388,8 @@ def track_applications_plot():
             if ('college_class_max' in info and
                 info['college_class_max'] is not None and
                 college_year is not None):
-                if student.college_class is None or student.college_class > info['college_class_max']:
+                if (student.college_class is None or
+                    student.college_class > info['college_class_max']):
                     continue
             test_score = None
             if test_type == "SAT":
@@ -400,18 +405,20 @@ def track_applications_plot():
                 if ('sat_math' in grades and grades['sat_math'] not in {None, ""} and
                     'sat_ebrw' in grades and grades['sat_ebrw'] not in {None, ""}):
                     test_count += 1
-                    total += (int(grades['sat_math']) + int(grades['sat_ebrw']))
-                if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
+                    total += (int(grades['sat_math'])+int(grades['sat_ebrw']))
+                if ('act_composite' in grades and
+                    grades['act_composite'] not in {None, ""}):
                     test_count += 1
-                    adjusted = 400 + round((grades['act_composite']-1)*(1200/35), -1)
+                    adjusted = 400 + round((grades['act_composite']-1)*(240/7), -1)
                     total += adjusted
                 if not test_count:
                     continue
-                remainder = total/test_count                    
+                remainder = total/test_count
                 weighted_subjects = 0
                 remaining_weight = 1.0
                 for field in grades:
-                    if 'sat_' in field and field not in {'sat_math', 'sat_ebrw'}:
+                    if ('sat_' in field and
+                        field not in {'sat_math', 'sat_ebrw'}):
                         if grades[field] not in {None, ""}:
                             weighted_subjects += grades[field]*0.1
                             remaining_weight -= 0.05
@@ -439,7 +446,7 @@ def get_college_list():
     student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
     residence_state = student.residence_state
     query = Q()
-    
+
     # Check filters
     if 'name' in info:
         name = info["name"]
@@ -568,10 +575,10 @@ def get_college_list():
                 query = query & lax
             else:
                 query = query & act_max_query
-    
+
     # Check sorting method
     sort = ""
-    if 'sort' in info: # name, admission, cost, ranking
+    if 'sort' in info:  # name, admission, cost, ranking
         sort = info["sort"]
     if sort == "recommendation":
         query_result = College.objects(query)
@@ -579,7 +586,6 @@ def get_college_list():
         college_list = []
         for result in query_result:
             score = algorithms.compute_recommendation_score(result, student)
-            #if score < 20: # Eliminate college if the recommendation score is below a certain threshold
             if residence_state == result.state:
                 cost = result.in_cost
             else:
@@ -598,10 +604,12 @@ def get_college_list():
                 'recommendation': score
                 }
             college_list.append(college)
+
         def get_recommendation(c):
             return c["recommendation"]
+
         college_list.sort(reverse=True, key=get_recommendation)
-        return jsonify(status=200, result="OK", colleges = college_list)
+        return jsonify(status=200, result="OK", colleges=college_list)
     elif sort == "ranking":
         query_result = College.objects(query).order_by('ranking')
     elif sort == "admission":
@@ -610,7 +618,7 @@ def get_college_list():
         query_result = College.objects(query).order_by('name')
     else:
         query_result = College.objects(query)
-    
+
     # Return college list
     college_list = []
     for result in query_result:
@@ -632,14 +640,16 @@ def get_college_list():
             }
         college_list.append(college)
     if sort == "cost":
+
         def get_tuition(c):
             cost = c["tuition"]
-            if cost != None:
+            if cost is not None:
                 return cost
             else:
                 return 0
+
         college_list.sort(key=get_tuition)
-    return jsonify(status=200, result="OK", colleges = college_list)
+    return jsonify(status=200, result="OK", colleges=college_list)
 
 
 @app.route('/api/get_similar_profiles', methods=['POST'])
@@ -682,6 +692,7 @@ def get_similar_profiles():
                 diff = abs(grades['act_composite']-s_grades['act_composite'])
                 score += (100-diff*(60/7)) * .30
             return score
+
         students.sort(reverse=True, key=get_score)
         students = students[0:10]
         profiles = []
