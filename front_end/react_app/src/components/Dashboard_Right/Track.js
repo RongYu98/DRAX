@@ -387,11 +387,11 @@ class Track extends React.Component{
 
     searchClicked(event){
         this.fetch_applications();
+        this.setState({show_filter: false});
     }
 
     async update_search_input(event){
-        this.state.filter_data.name = event.target.value;
-        await this.fetch_suggestions();
+        this.setState({filter_data:{...this.state.filter_data, name: event.target.value}});
     }
 
     async fetch_suggestions(){

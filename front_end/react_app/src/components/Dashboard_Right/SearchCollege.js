@@ -357,6 +357,7 @@ class SearchCollege extends React.Component{
 
     search_clicked(event){
         this.fetch_new_college_list().then(()=>{}).catch();
+        this.setState({show_filter: false});
     }
 
     async componentDidMount() {
