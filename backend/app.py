@@ -269,19 +269,35 @@ def track_applications_list():
                     pass
                 elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
                     continue
-            print(student.college_class)
-            if 'college_class_min' in info and info['college_class_min'] is not None:
-                if policy == "lax" and student.college_class is None:
-                    pass
-                elif student.college_class is None or student.college_class < info['college_class_min']:
+            if (('college_class_min' in info or 'college_class_max' in info) and
+                (info['college_class_max'] is not None or
+                 info['college_class_min'] is not None)):
+                if (student.grades is None or
+                        'college_class' not in student.grades or   # maybe add strict lax checking here?
+                        student.grades['college_class'] is None):
                     continue
-            
-            if 'college_class_max' in info and info['college_class_max'] != None:
-                if policy == "lax" and student.college_class is None:
-                    pass
-                elif student.college_class is None or student.college_class > info['college_class_max']:
-                    continue
+                if 'college_class_min' in info and info['college_class_min'] is not None:
+                    # if (policy == "lax" and (student.grades is None or  # may change this later
+                    #                         student.grades['college_class'] is None)):
+                    #    pass
+                    # elif student.college_class is None or student.college_class < info['college_class_min']:
+                    # elif (student.grades is None or 'college_class' not in student.grades and 
+                    #       student.grades['college_class'] < info['college_class_min']):
+                    #     continue
+                    if student.grades['college_class'] < info['college_class_min']:
+                        continue
+                if 'college_class_max' in info and info['college_class_max'] is not None:
+                    #if (policy == "lax" and (student.grades is None or
+                    #                         student.grades['college_class'] is None)):
+                    #    pass
+                    #elif (student.grades is None or
+                    #      student.grades['college_class'] > info['college_class_max']):
+                    #    continue
+                    if student.grades['college_class'] > info['college_class_max']:
+                        continue
             print(application.student.student.username)
+            print(student)
+            print(student.grades)
             print("ROUND 2")
             profile = {
                 'username': student.student.username,
@@ -290,7 +306,7 @@ def track_applications_list():
                 'high_school_city': student.high_school_city,
                 'high_school_state': student.high_school_state,
                 'gpa': student.gpa,
-                'college_class': student.college_class,
+                'college_class': student.grades['college_class'],
                 'application_status': application_status,
                 }
             grades = student.grades
