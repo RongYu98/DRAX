@@ -286,7 +286,7 @@ def track_applications_list():
                         continue
                 if ('college_class_max' in info and
                     info['college_class_max'] is not None and
-                    college_year is not None:
+                    college_year is not None):
                     if grades['college_class'] > info['college_class_max']:
                         continue
             profile = {
@@ -374,6 +374,8 @@ def track_applications_plot():
                     pass
                 elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
                     continue
+            if policy == "strict" and college_year is None:
+                continue
             if ('college_class_min' in info and
                 info['college_class_min'] is not None and
                 college_year is not None):
