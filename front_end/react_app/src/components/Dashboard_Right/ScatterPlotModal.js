@@ -22,7 +22,8 @@ class ScatterPlotModal extends React.Component{
         this.state = {
             scatter_plots: [],
             graph_type: ScatterPlotModal.graph_type_enum.ACT,
-            empty: false
+            empty: false,
+            color: []
         }
         this.fetch_data = this.fetch_data.bind(this);
         this.on_button_click = this.on_button_click.bind(this);
@@ -66,6 +67,12 @@ class ScatterPlotModal extends React.Component{
             let response_json = await response.json();
             if(response_json.result !== "OK") throw new Error(response_json.result);
             this.state.scatter_plots = response_json.coordinates;
+            this.state.color = response_json.coordinates.map((element)=>{
+                    if(element.status.toLowerCase().includes("accept")) return "green";
+                    if(element.status.toLowerCase().includes("denied")) return "red";
+                    return "yellow";
+                }
+            );
             this.state.empty = (response_json.coordinates.length === 0) ? true : false;
         }catch (err) {
             console.log(err.stack);
@@ -100,7 +107,7 @@ class ScatterPlotModal extends React.Component{
                       y: y,
                       type: 'scatter',
                       mode: 'markers+text',
-                      marker: {color: ["red", "green", "black", "purple", "yellow"] }
+                      marker: {color: this.state.color}
                   },
                ]}
                 layout={ {xaxis:{title: "Test scores"}, yaxis:{title: "GPA"}, width: 450, height: 450, title:  this.get_title(this.state.graph_type)}}
