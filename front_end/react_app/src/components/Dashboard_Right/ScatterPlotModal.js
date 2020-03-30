@@ -88,14 +88,19 @@ class ScatterPlotModal extends React.Component{
     get_scatter_plot(){
        if(this.state.empty) return "no coordinates found";
        if(this.state.scatter_plots.length === 0) return "Click on a button to see scatter plot";
-
+       let total_x = 0;
+       let total_y = 0;
        let x = this.state.scatter_plots.map(function (coordinate) {
-            return coordinate.x;
+           total_x += coordinate.x;
+           return coordinate.x;
         });
 
        let y = this.state.scatter_plots.map(function (coordinate) {
-            return coordinate.y;
+           total_y += coordinate.y;
+           return coordinate.y;
         });
+       let avg_x = total_x / x.length;
+       let avg_y = total_y / y.length;
        console.log(x);
        console.log(y);
 
@@ -110,7 +115,43 @@ class ScatterPlotModal extends React.Component{
                       marker: {color: this.state.color}
                   },
                ]}
-                layout={ {xaxis:{title: "Test scores"}, yaxis:{title: "GPA"}, width: 450, height: 450, title:  this.get_title(this.state.graph_type)}}
+                layout={
+                    {
+                        xaxis: {title: "Test scores"},
+                        yaxis: {title: "GPA"},
+                        width: 450,
+                        height: 450,
+                        title: this.get_title(this.state.graph_type),
+                        shapes: [
+                        {
+                            type: 'line',
+                            xref: 'paper',
+                            x0: 0,
+                            y0: avg_y,
+                            x1: 1,
+                            y1: avg_y,
+                            line:{
+                                color: 'black',
+                                width: 4,
+                                dash:'dot'
+                            }
+                        },
+                            {
+                            type: 'line',
+                            xref: 'x',
+                            x0: avg_x,
+                            y0: 0,
+                            x1: avg_x,
+                            y1: 4,
+                            line:{
+                                color: 'blue',
+                                width: 4,
+                                dash:'dot'
+                            }
+                        }
+                        ]
+                    }
+                }
             />
        );
     }
@@ -118,7 +159,15 @@ class ScatterPlotModal extends React.Component{
     render() {
         let graph = this.get_scatter_plot();
         return (
-            <Modal show={this.props.show} onHide={this.props.on_hide} aria-labelledby="plot-modal-label" centered>
+            <Modal show={this.props.show} onHide={()=>{
+                this.setState({
+                scatter_plots: [],
+                graph_type: ScatterPlotModal.graph_type_enum.ACT,
+                empty: false,
+                color: []
+                });
+                this.props.on_hide();
+            }} aria-labelledby="plot-modal-label" centered>
                 <div className="modal-content">
                     <Modal.Header closeButton>
                         <Modal.Title  style={ScatterPlotModal.center_title}>Scatterplot</Modal.Title>
