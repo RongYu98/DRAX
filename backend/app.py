@@ -9,7 +9,7 @@ from classes import Application
 from classes import College
 from classes import HighSchool
 
-from scraper import update_highschool_data
+from scraper import highschool_exists
 
 import hash_utils
 import algorithms
@@ -132,40 +132,42 @@ def save_profile():
         account = Account.objects.get(username=session['username'])
         # Get student profile
         student = StudentProfile.objects.get(student=account)
-        info = request.json
-        if info is None:
-            info = request.form
-        grades = {}
-        name = None
-        city = None
-        state = None
-        for field in info:
-            if field == 'password':
-                digest = hash_utils.hmac_hash(info["password"], account.salt)
-                account.update(set__hashed_password=digest)
-            elif field == 'residence_state':
-                student.update(set__residence_state=info["residence_state"])
-            elif field == 'high_school_name':
-                name = info["high_school_name"]
-            elif field == 'high_school_city':
-                city = info["high_school_city"]
-            elif field == 'high_school_state':
-                state = info["high_school_state"]
-            elif field == 'gpa':
-                student.update(set__gpa=info["gpa"])
-            else:
-                grades[field] = info[field]
-        student.update(set__grades=grades)
-        if (name not in {None, ""} and
-            city not in {None, ""} and
-            state not in {None, ""} and
-            update_highschool_data(name, city, state)):
-            student.update(set__high_school_name=name)
-            student.update(set__high_school_city=city)
-            student.update(set__high_school_state=state)
-        return jsonify(status=200, result="OK")
     except:
         return jsonify(status=400, result="Save Failed")
+    info = request.json
+    if info is None:
+        info = request.form
+    grades = {}
+    name = None
+    city = None
+    state = None
+    for field in info:
+        if field == 'password':
+            digest = hash_utils.hmac_hash(info["password"], account.salt)
+            account.update(set__hashed_password=digest)
+        elif field == 'residence_state':
+            student.update(set__residence_state=info["residence_state"])
+        elif field == 'high_school_name':
+            name = info["high_school_name"]
+        elif field == 'high_school_city':
+            city = info["high_school_city"]
+        elif field == 'high_school_state':
+            state = info["high_school_state"]
+        elif field == 'gpa':
+            student.update(set__gpa=info["gpa"])
+        else:
+            grades[field] = info[field]
+    student.update(set__grades=grades)
+    if (name not in {None, ""} and
+        city not in {None, ""} and
+        state not in {None, ""} and
+        highschool_exists(name, city, state)):
+        student.update(set__high_school_name=name)
+        student.update(set__high_school_city=city)
+        student.update(set__high_school_state=state)
+    else:
+        print(high_school_exists(name,city,state))
+    return jsonify(status=200, result="OK")
 
 
 @app.route('/api/get_admission_decision', methods=['POST'])
@@ -306,7 +308,7 @@ def track_applications_list():
                 'high_school_city': student.high_school_city,
                 'high_school_state': student.high_school_state,
                 'gpa': student.gpa,
-                'college_class': student.grades['college_class'],
+                'college_class': student.grades['college_class'] if 'college_class' in student.grades else None,
                 'application_status': application_status,
                 }
             grades = student.grades
@@ -334,13 +336,13 @@ def track_applications_list():
         if profiles == []:
             return jsonify(status=200, result="OK", profiles=profiles)
         if count_gpa:
-            summary['avg_gpa'] = sum_gpa/count_gpa
+            summary['avg_gpa'] = round(sum_gpa/count_gpa, 2)
         if count_sat_ebrw:
-            summary['avg_sat_ebrw'] = sum_sat_ebrw/count_sat_ebrw
+            summary['avg_sat_ebrw'] = round(sum_sat_ebrw/count_sat_ebrw, 2)
         if count_sat_math:
-            summary['avg_sat_math'] = sum_sat_math/count_sat_math
+            summary['avg_sat_math'] = round(sum_sat_math/count_sat_math, 2)
         if count_act:
-            summary['avg_act'] = sum_act/count_act
+            summary['avg_act'] = round(sum_act/count_act, 2)
         return jsonify(status=200, result="OK", profiles=profiles, summary=summary)
     return jsonify(status=400, result="Missing Fields")
 
