@@ -62,6 +62,8 @@ def import_student_data(filename):
             data = line[x]
             if data != '':  # the field isn't empty
                 p.grades[info] = data
+                if data == "college_class":
+                    p.college_class = data
 
         try:
             p.save()
