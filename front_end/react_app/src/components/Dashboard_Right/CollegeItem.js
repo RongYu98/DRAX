@@ -28,7 +28,7 @@ class CollegeItem extends React.Component{
         let current_sort = this.props.current_sort;
         return(
             <React.Fragment>
-                <div className="list-group-item list-group-item-action" onClick ={this.show_college_details}>
+                <div className="list-group-item list-group-item-action" style={{z-index:"0"}} onClick ={this.show_college_details}>
                     <h5 className="college-name">{name}</h5>
                         <button style={{display: (current_sort === SearchCollege.sort_enum.RECOMMENDATION) ? "" : "None"}} className="find-similar-applicants" data-toggle="modal" data-target="#find-similar-applicants-modal"
                             onClick={()=>{
