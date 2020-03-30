@@ -270,7 +270,7 @@ def get_highschool_info(name, city, state):
     name = name.lower()
     # url = 'https://www.niche.com/k12/'+name
     url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/'+name
-    # print(url)
+    print(url)
     # url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/' \
     #    'academic-magnet-high-school-north-charleston-sc/'
     soup = get_pretty_html(url)
@@ -291,11 +291,20 @@ def get_highschool_info(name, city, state):
             'ap': ap_enroll}
 
 
-def update_highschool_data(name, city, state):
+def highschool_exists(name, city, state):
     try:
-        data = get_highschool_info(name, city, state)
-    except:
-        return False  # can't get college info
+        c = HighSchool.objects.get(name=name, city=city, state=state)
+        return True
+    except Exception as e:
+        print(e)
+        # Highschool not in db
+        try:
+            return update_highschool_data(name, city, state)
+        except Exception as e:
+            print(e)
+            return False
+
+def update_highschool_data(name, city, state):
     try:
         c = HighSchool.objects.get(name=name, city=city, state=state)
     except Exception as e:
@@ -303,7 +312,11 @@ def update_highschool_data(name, city, state):
         print("High School Not in DB: "+name)
         c = HighSchool(name=name, city=city, state=state)
         c.save()
-
+    try:
+        data = get_highschool_info(name, city, state)
+    except Exception as e:
+        print(e)
+        return False  # can't get college info
     # [:-1] is to remove percent sign in string
     c.reading_prof = int(data["reading"][:-1])
     c.math_prof = int(data["math"][:-1])
