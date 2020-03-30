@@ -356,6 +356,7 @@ class SearchCollege extends React.Component{
     }
 
     search_clicked(event){
+        this.state.filter_data.sort = SearchCollege.sort_enum.NAME;
         this.fetch_new_college_list().then(()=>{}).catch();
         this.setState({show_filter: false});
     }
