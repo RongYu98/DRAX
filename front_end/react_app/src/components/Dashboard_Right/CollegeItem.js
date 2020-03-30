@@ -51,7 +51,7 @@ class CollegeItem extends React.Component{
                             <td/>
                         </tr>
                         <tr>
-                            <td><b>{`$${tuition}`}</b><br/><label>Tuition</label></td>
+                            <td><b>{`$${tuition}`}</b><br/><label>Cost of attendance</label></td>
                             <td><b>{"$" + debt}</b><br/><label>Median debt amount</label></td>
                             <td><b>{ranking}</b><br/><label>Ranking</label></td>
                             <td><b>{size}</b><br/><label>Size</label></td>
