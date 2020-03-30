@@ -132,7 +132,7 @@ class ScatterPlotModal extends React.Component{
                             y1: avg_y,
                             line:{
                                 color: 'black',
-                                width: 4,
+                                width: 2,
                                 dash:'dot'
                             }
                         },
@@ -145,7 +145,7 @@ class ScatterPlotModal extends React.Component{
                             y1: 4,
                             line:{
                                 color: 'blue',
-                                width: 4,
+                                width: 2,
                                 dash:'dot'
                             }
                         }
