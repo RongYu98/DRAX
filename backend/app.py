@@ -277,7 +277,7 @@ def track_applications_list():
                     college_year = grades['college_class']
                 except:
                     pass
-                if (policy == "strict" and college_year = None:
+                if policy == "strict" and college_year is None:
                     continue
                 if ('college_class_min' in info and
                     info['college_class_min'] is not None and
