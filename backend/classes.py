@@ -79,3 +79,8 @@ class HighSchool(Document):
     avg_sat = IntField()  # SAT might change again
     avg_act = IntField(min_value=0, max_value=36)
     ap_enroll = IntField(min_value=0, max_value=100)
+
+
+class Student(Document):
+    profile = ReferenceField(StudentProfile)
+    account = ReferenceField(Account)
