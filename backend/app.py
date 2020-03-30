@@ -24,6 +24,7 @@ app.secret_key = 'Draconian Rich Awesome Xenomorphs'
 CORS(app, supports_credentials=True)
 # may wish to disable cross origin in the cloud server for security
 
+
 @app.route('/api/signup', methods=['POST'])
 def signup():
     info = request.json
@@ -53,7 +54,7 @@ def signup():
         return jsonify(status=400, result="Validation Error " + e)
     except NotUniqueError as e:
         print(e)
-        return jsonify(status = 400, result = "Username already taken.")
+        return jsonify(status=400, resuls="Username already taken.")
 
 
 @app.route('/api/login', methods=['POST'])
@@ -61,7 +62,7 @@ def login():
     info = request.json
 
     # check there is a username and password
-    if info==None or 'username' not in info or 'password' not in info:
+    if info is None or 'username' not in info or 'password' not in info:
         return jsonify(status=400, result="Invalid Login")
     username = str(info['username'])
     password = str(info['password'])
@@ -77,14 +78,14 @@ def login():
     digest = hash_utils.hmac_hash(password, account.salt)
     if digest == account.hashed_password:
         session['username'] = username
-        return jsonify(status = 200, result = "OK")
+        return jsonify(status=200, result="OK")
     else:
-        return jsonify(status = 400, result = "Invalid Login")
+        return jsonify(status=400, result="Invalid Login")
 
     
 @app.route('/api/logout', methods=['POST'])
 def logout():
-    if 'username' in session and session['username'] != None:
+    if 'username' in session and session['username'] is not  None:
         session['username'] = None
         return jsonify(status=200, result="Logged Out")
     return jsonify(status=400, result="Not Logged In")
@@ -92,7 +93,7 @@ def logout():
 
 @app.route('/api/alive', methods=['POST'])
 def alive():
-    if 'username' not in session or session['username']==None:
+    if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     return jsonify(status=200, result="OK")
 
@@ -100,7 +101,7 @@ def alive():
 @app.route('/api/get_profile', methods=['POST'])
 def get_profile():
     # Check if logged in
-    if 'username' not in session or session['username'] == None:
+    if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     # Get student profile
     try:
@@ -124,7 +125,7 @@ def get_profile():
 @app.route('/api/save_profile', methods=['POST'])
 def save_profile():
     # Check if logged in
-    if 'username' not in session or session['username'] == None:
+    if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     # Get student account
     try:
@@ -132,7 +133,7 @@ def save_profile():
         # Get student profile
         student = StudentProfile.objects.get(student=account)
         info = request.json
-        if info == None:
+        if info is None:
             info = request.form
         grades = {}
         name = None
@@ -162,15 +163,15 @@ def save_profile():
             student.update(set__high_school_name=name)
             student.update(set__high_school_city=city)
             student.update(set__high_school_state=state)
-        return jsonify(status = 200, result = "OK")
+        return jsonify(status=200, result="OK")
     except:
-        return jsonify(status = 400, result = "Save Failed")
+        return jsonify(status=400, result="Save Failed")
 
 
 @app.route('/api/get_admission_decision', methods=['POST'])
 def get_admission_decision():
     # Check if logged in
-    if 'username' not in session or session['username'] == None:
+    if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     # Get student profile
     try:
@@ -184,7 +185,7 @@ def get_admission_decision():
                 'is_verified': application.is_verified,
                 }
             admission_decisions.append(admission)
-        return jsonify(status=200, result="OK", admission_decisions = admission_decisions)
+        return jsonify(status=200, result="OK", admission_decisions=admission_decisions)
     except:
         return jsonify(status=400, result="Get Admission Decisions Failed")
 
@@ -192,12 +193,12 @@ def get_admission_decision():
 @app.route('/api/submit_admission_decision', methods=['POST'])
 def submit_admission_decision():
     # Check if logged in
-    if 'username' not in session or session['username'] == None:
+    if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     # Get student profile
     student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
     info = request.json
-    if info == None:
+    if info is None:
         info = request.form
     if 'college_name' in info and 'status' in info:
         try:
@@ -207,27 +208,27 @@ def submit_admission_decision():
             try:
                 college = College.objects.get(name=college_name)
             except:
-                return jsonify(status = 400, result = "College Not Found")
+                return jsonify(status=400, result="College Not Found")
             try:
                 application = Application.objects.get(Q(student=student) & Q(college=college))
                 application.update(set__status=status)
-                return jsonify(status = 200, result = "OK")
+                return jsonify(status=200, result="OK")
             except:
                 ID = hash_utils.sha_hash(username+"+=+"+college_name)
                 Application(ID=ID, student=student, college=college, status=status).save()
-                return jsonify(status = 200, result = "OK")
+                return jsonify(status=200, result="OK")
         except:
-            return jsonify(status = 400, result = "Submission Failed")
-    return jsonify(status = 400, result = "Missing Fields")
+            return jsonify(status=400, result="Submission Failed")
+    return jsonify(status=400, result="Missing Fields")
 
 
 @app.route('/api/track_applications_list', methods=['POST'])
 def track_applications_list():
     # Check if logged in
-    if 'username' not in session or session['username'] == None:
+    if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     info = request.json
-    if info == None:
+    if info is None:
         info = request.form
     if 'college_name' in info:
         college_name = info['college_name']
@@ -235,7 +236,7 @@ def track_applications_list():
         try:
             college = College.objects.get(name=college_name)
         except:
-            return jsonify(status = 400, result = "College Not Found")
+            return jsonify(status=400, result="College Not Found")
         if 'policy' in info: # strict or lax
             policy = info["policy"]
         applications = Application.objects(college=college)
@@ -249,28 +250,39 @@ def track_applications_list():
         sum_act = 0
         count_act = 0
         for application in applications:
+            print()
+            print(application.student.student.username)
             application_status = application.status
             if 'statuses' in info and info['statuses'] != None:
-                if policy == "lax" and application_status == None:
+                if policy == "lax" and application_status is None:
                     pass
                 elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
                     continue
             student = application.student
+            profile = application.student
+            print(profile)
+            for x in profile:
+                print(x)
+                print(profile[x])
             if 'high_schools' in info and info['high_schools'] != None:
-                if policy == "lax" and student.high_school_name == None:
+                if policy == "lax" and student.high_school_name is None:
                     pass
                 elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
                     continue
-            if 'college_class_min' in info and info['college_class_min'] != None:
-                if policy == "lax" and student.college_class == None:
+            print(student.college_class)
+            if 'college_class_min' in info and info['college_class_min'] is not None:
+                if policy == "lax" and student.college_class is None:
                     pass
-                elif student.college_class == None or student.college_class < info['college_class_min']:
+                elif student.college_class is None or student.college_class < info['college_class_min']:
                     continue
+            
             if 'college_class_max' in info and info['college_class_max'] != None:
-                if policy == "lax" and student.college_class == None:
+                if policy == "lax" and student.college_class is None:
                     pass
-                elif student.college_class == None or student.college_class > info['college_class_max']:
+                elif student.college_class is None or student.college_class > info['college_class_max']:
                     continue
+            print(application.student.student.username)
+            print("ROUND 2")
             profile = {
                 'username': student.student.username,
                 'residence_state': student.residence_state,
@@ -304,7 +316,7 @@ def track_applications_list():
             'avg_act': None,
             }
         if profiles == []:
-            return jsonify(status = 200, result = "OK", profiles = profiles)
+            return jsonify(status=200, result="OK", profiles=profiles)
         if count_gpa:
             summary['avg_gpa'] = sum_gpa/count_gpa
         if count_sat_ebrw:
@@ -313,17 +325,17 @@ def track_applications_list():
             summary['avg_sat_math'] = sum_sat_math/count_sat_math
         if count_act:
             summary['avg_act'] = sum_act/count_act
-        return jsonify(status = 200, result = "OK", profiles = profiles, summary = summary)
-    return jsonify(status = 400, result = "Missing Fields")
+        return jsonify(status=200, result="OK", profiles=profiles, summary=summary)
+    return jsonify(status=400, result="Missing Fields")
 
 
 @app.route('/api/track_applications_plot', methods=['POST'])
 def track_applications_plot():
     # Check if logged in
-    if 'username' not in session or session['username'] == None:
+    if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     info = request.json
-    if info == None:
+    if info is None:
         info = request.form
     if 'college_name' in info and 'test_type' in info:
         college_name = info['college_name']
@@ -340,25 +352,25 @@ def track_applications_plot():
         for application in applications:
             application_status = application.status
             if 'statuses' in info and info['statuses'] != None:
-                if policy == "lax" and application_status == None:
+                if policy == "lax" and application_status is None:
                     pass
                 elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
                     continue
             student = application.student
-            if 'high_schools' in info and info['high_schools'] != None:
-                if policy == "lax" and student.high_school_name == None:
+            if 'high_schools' in info and info['high_schools'] is not None:
+                if policy == "lax" and student.high_school_name is None:
                     pass
                 elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
                     continue
-            if 'college_class_min' in info and info['college_class_min'] != None:
-                if policy == "lax" and student.college_class == None:
+            if 'college_class_min' in info and info['college_class_min'] is not None:
+                if policy == "lax" and student.college_class is None:
                     pass
-                elif student.college_class == None or student.college_class < info['college_class_min']:
+                elif student.college_class is None or student.college_class < info['college_class_min']:
                     continue
-            if 'college_class_max' in info and info['college_class_max'] != None:
-                if policy == "lax" and student.college_class == None:
+            if 'college_class_max' in info and info['college_class_max'] is not None:
+                if policy == "lax" and student.college_class is None:
                     pass
-                elif student.college_class == None or student.college_class > info['college_class_max']:
+                elif student.college_class is None or student.college_class > info['college_class_max']:
                     continue
             grades = student.grades
             test_score = None
@@ -391,7 +403,7 @@ def track_applications_plot():
                             weighted_subjects += grades[field]*0.1
                             remaining_weight -= 0.05
                 test_score = weighted_subjects + remainder*remaining_weight
-            if test_score == None:
+            if test_score is None:
                 continue
             coordinate = {
                 'x': test_score,
@@ -399,17 +411,17 @@ def track_applications_plot():
                 'status': application_status
                 }
             coordinates.append(coordinate)
-        return jsonify(status = 200, result = "OK", coordinates = coordinates)
-    return jsonify(status = 400, result = "Missing Fields")
+        return jsonify(status=200, result="OK", coordinates=coordinates)
+    return jsonify(status=400, result="Missing Fields")
 
 
 @app.route('/api/get_college_list', methods=['POST'])
 def get_college_list():
     # Check if logged in
-    if 'username' not in session or session['username'] == None:
+    if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     info = request.json
-    if info == None:
+    if info is None:
         info = request.form
     student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
     residence_state = student.residence_state
@@ -420,26 +432,26 @@ def get_college_list():
         name = info["name"]
         if name not in {"", None}:
             query = query & Q(name__icontains=name)
-    if 'policy' in info: # strict or lax
+    if 'policy' in info:  # strict or lax
         policy = info["policy"]
-    if 'admission_rate' in info: # min and max
+    if 'admission_rate' in info:  # min and max
         admission_rate_min = info["admission_rate"]["min"]
         if admission_rate_min not in {"", None}:
-            adm_rte_query = Q(admission_rate__gte=admission_rate_min)
+            adm_rte_min_query = Q(admission_rate__gte=admission_rate_min)
             if policy == "lax":
                 lax = (adm_rte_min_query | Q(admission_rate=None))
                 query = query & lax
             else:
                 query = query & adm_rte_min_query
         admission_rate_max = info["admission_rate"]["max"]
-        if admission_rate_min not in {"", None}:
+        if admission_rate_max not in {"", None}:
             adm_rte_max_query = Q(admission_rate__lte=admission_rate_max)
             if policy == "lax":
                 lax = (adm_rte_max_query | Q(admission_rate=None))
                 query = query & lax
             else:
                 query = query & adm_rte_max_query
-    if 'location' in info: # region
+    if 'location' in info:  # region
         location = info["location"]
         if location not in {"", None}:
             location_query = Q(region=location)
@@ -448,7 +460,7 @@ def get_college_list():
                 query = query & lax
             else:
                 query = query & location_query
-    if 'size' in info: # small, medium, or large
+    if 'size' in info:  # small, medium, or large
         size = info["size"]
         if size not in {"", None}:
             if size == "small":
@@ -462,7 +474,7 @@ def get_college_list():
                 query = query & lax
             else:
                 query = query & size_query
-    if 'major' in info: # left and right
+    if 'major' in info:  # left and right
         major_left = info["major"]["left"]
         majors = []
         if major_left not in {"", None}:
@@ -492,7 +504,7 @@ def get_college_list():
                 in_state = (in_state | Q(in_cost=None))
             cost_q = (out_state | in_state)
             query = query & cost_q
-    if 'sat_ebrw' in info: # min and max
+    if 'sat_ebrw' in info:  # min and max
         sat_ebrw_min = info["sat_ebrw"]["min"]
         if sat_ebrw_min not in {"", None}:
             ebrw_min_query = Q(avg_sat_ebrw__gte=sat_ebrw_min)
@@ -509,7 +521,7 @@ def get_college_list():
                 query = query & lax
             else:
                 query = query & ebrw_max_query
-    if 'sat_math' in info: # min and max
+    if 'sat_math' in info:  # min and max
         sat_math_min = info["sat_math"]["min"]
         if sat_math_min not in {"", None}:
             math_min_query = Q(avg_sat_math__gte=sat_math_min)
@@ -526,7 +538,7 @@ def get_college_list():
                 query = query & lax
             else:
                 query = query & math_max_query
-    if 'act' in info: # min and max
+    if 'act' in info:  # min and max
         act_min = info["act"]["min"]
         if act_min not in {"", None}:
             act_min_query = Q(avg_act_composite__gte=act_min)
@@ -620,10 +632,10 @@ def get_college_list():
 @app.route('/api/get_similar_profiles', methods=['POST'])
 def get_similar_profiles():
     # Check if logged in
-    if 'username' not in session or session['username'] == None:
+    if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     info = request.json
-    if info == None:
+    if info is None:
         info = request.form
     if 'college_name' in info:
         college_name = info['college_name']
@@ -631,13 +643,16 @@ def get_similar_profiles():
         try:
             college = College.objects.get(name=college_name)
         except:
-            return jsonify(status = 400, result = "College Not Found")
-        student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+            return jsonify(status=400, result="College Not Found")
+        student = StudentProfile.objects.get(student=Account.objects.get(
+            username=session['username']))
         grades = student.grades
-        applications = Application.objects(Q(college=college) & Q(student__ne=student))
+        applications = Application.objects(Q(college=college) &
+                                           Q(student__ne=student))
         students = []
         for application in applications:
             students.append(application.student)
+
         def get_score(s):
             s_grades = s.grades
             score = 0
@@ -669,10 +684,10 @@ def get_similar_profiles():
                 }
             grades = student.grades
             for field in grades:
-                profile[field] = grades[field]    
+                profile[field] = grades[field]
             profiles.append(profile)
-        return jsonify(status = 200, result = "OK", profiles = profiles)
-    return jsonify(status = 400, result = "Missing Fields")
+        return jsonify(status=200, result="OK", profiles=profiles)
+    return jsonify(status=400, result="Missing Fields")
 
 
 @app.route('/api/all_majors')
@@ -693,17 +708,24 @@ def get_highschool():
 
 @app.route('/api/update_rankings')
 def update_rankings():
-    #if 'username' not in session or session['username'] != "admin":
+    # if 'username' not in session or session['username'] != "admin":
     #    return jsonify(status=400, result="Invalid User")
     scraper.update_college_ranking()
     return jsonify(status=200, result="OK")
 
 
+@app.route('/api/import_college_scorecard')
+def import_scorecard():
+    file_parser.import_college_scorecard("Most-Recent-Cohorts-All-Data-Elements.csv")
+    return jsonify(status=200, result="OK")
+
+
 @app.route('/api/update_all_college_data')
 def update_all_college_data():
-    #if 'username' not in session or session['username'] != "admin":
+    # if 'username' not in session or session['username'] != "admin":
     #    return jsonify(status=400, result="Invalid User")
-    file_parser.import_college_scorecard("Most-Recent-Cohorts-All-Data-Elements.csv")
+    # file_parser.import_college_scorecard("Most-Recent-Cohorts"\
+    #     "-All-Data-Elements.csv")
     scraper.update_all_colleges()
     return jsonify(status=200, result="OK")
 

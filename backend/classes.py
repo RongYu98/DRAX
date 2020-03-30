@@ -1,5 +1,5 @@
-from mongoengine import Document, StringField, BooleanField, FloatField,
-from mongoengine import IntField, ReferenceField, ListField, DynamicField,
+from mongoengine import Document, StringField, BooleanField, FloatField
+from mongoengine import IntField, ReferenceField, ListField, DynamicField
 from mongoengine import CASCADE
 
 
