@@ -26,6 +26,7 @@ div.result-top > div > button {width: 204px;}
 #college-list button a{min-width: 120px;}
 .item-info td{width: 25%;}
 .item-info td b{font-size: 20px;}
+.reco-score{color: white;}
 /* result */
 
 /* find similar applicants modal */
