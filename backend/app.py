@@ -754,6 +754,13 @@ def update_all_college_data():
     return jsonify(status=200, result="OK")
 
 
+@app.route('/api/import_student_profile_applications')
+def import_student_profile_applications():
+    file_parser.import_student_data("students-1.csv")
+    file_parser.import_application_data('applications-1.csv')
+    return jsonify(status=200, result="OK")
+
+
 @app.route('/delete_all_students')
 def delete_all_students():
     if 'username' not in session or session['username'] != "admin":
