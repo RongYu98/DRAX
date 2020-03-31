@@ -714,6 +714,42 @@ def get_similar_profiles():
     return jsonify(status=400, result="Missing Fields")
 
 
+@app.route('/api/find_similar_highschools')
+def find_similar_highschools():
+    # OUTPUT: This API should return the list of similar high schools with their info.
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
+    student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+    if (student.high_school_name is None or 
+        student.high_school_city is None or
+        student.high_school_state is None):
+        return  jsonify(status=400, result="High School Data Not Present")
+    try:
+        hs = HighSchools.objects.get(name=student.high_school_name,
+                                     city=student.city,
+                                     state=student.state)
+    except:
+        # this should not happen, because app confirms data being present
+        # first before assigning values. But just in case.
+        return jsonify(status=400, result="High School Data Not Present")
+
+    hs_students = Students.objects(high_school_name=student.high_school_name,
+                                  high_school_city=student.high_school_city,
+                                  high_school_state=student.high_school_state)
+    sorting = []  # a list of lists, each containing a score and HS
+    for h in HighSchools.objects:
+        h_students = Students.objects(high_school_nane=h.name,
+                                      high_school_city=h.city,
+                                      high_school_state=h.state) 
+        score = algorithm.compare_highschool(hs, h, hs_students, h_students)
+        sorting.append([score, h])
+    sorting.sort(key=lambda x: x[0])  # by the first element
+    response = []
+    for s in sorting[:]:  # to what length?
+        print(s[0])  # the score
+    return        
+
+
 @app.route('/api/all_majors')
 def get_majors():
     import script  # we may hardcode the list, so this will change...
