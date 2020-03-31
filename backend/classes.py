@@ -65,8 +65,7 @@ class Application(Document):
     college = ReferenceField(College, required=True)
     status = StringField(choices=('Pending', 'Accepted', 'Denied', 'Deferred',
                                   'Wait-listed', 'Withdrawn'), required=True)
-    application_id = StringField()  # not sure if this is needed.
-    is_verified = BooleanField()  # make this required later?
+    verification = StringField(choices=('Approved', 'Pending', 'Denied'), required=True)
 
 
 class HighSchool(Document):
