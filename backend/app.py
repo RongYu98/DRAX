@@ -182,7 +182,7 @@ def get_admission_decision():
             admission = {
                 'college': application.college.name,
                 'status': application.status,
-                'is_verified': application.is_verified,
+                'verification': application.verification,
                 }
             admission_decisions.append(admission)
         return jsonify(status=200, result="OK", admission_decisions=admission_decisions)
@@ -211,12 +211,19 @@ def submit_admission_decision():
                 return jsonify(status=400, result="College Not Found")
             try:
                 application = Application.objects.get(Q(student=student) & Q(college=college))
+                verification = "Approved"
+                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
+                    verification = "Pending"
                 application.update(set__status=status)
-                return jsonify(status=200, result="OK")
+                application.update(set__verification=verification)
+                return jsonify(status=200, result="OK", verification=verification)
             except:
                 ID = hash_utils.sha_hash(username+"+=+"+college_name)
-                Application(ID=ID, student=student, college=college, status=status).save()
-                return jsonify(status=200, result="OK")
+                verification = "Approved"
+                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
+                    verification = "Pending"
+                Application(ID=ID, student=student, college=college, status=status, verification=verification).save()
+                return jsonify(status=200, result="OK", verification=verification)
         except:
             return jsonify(status=400, result="Submission Failed")
     return jsonify(status=400, result="Missing Fields")
