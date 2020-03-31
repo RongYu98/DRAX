@@ -638,7 +638,7 @@ class SearchCollege extends React.Component{
                             <span className="result-text" style={{display: ((!this.state.not_found) && (this.state.college_list.length === 0)) ? "None" : ''}}>Results</span>
 
                             {
-                                (this.state.college_list.length > 1) ?
+                                (this.state.college_list.length > 0) ?
                                     <DropdownButton id="dropdown-basic-button" title="Sort By" onSelect={this.sort_clicked}>
                                       <Dropdown.Item eventKey={SearchCollege.sort_enum.NAME}>College name - Alphabetical Order</Dropdown.Item>
                                       <Dropdown.Item eventKey={SearchCollege.sort_enum.COST}>Cost of attendance - Low to High</Dropdown.Item>
