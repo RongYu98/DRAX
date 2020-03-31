@@ -94,7 +94,8 @@ def import_application_data(filename):
             continue
         try:
             university = College.objects.get(name=college)
-        except:  # DoesNotExist as e:
+        except Exception as e:  # DoesNotExist as e:
+            print(e)
             print("College Doesn't Exist: "+college)
             continue
 
