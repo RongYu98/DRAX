@@ -745,8 +745,8 @@ def find_similar_highschools():
                                          high_school_state=student.high_school_state)
     sorting = []  # a list of lists, each containing a score and HS
     for h in HighSchool.objects:
-        if h == hs:
-            continue
+        # if h == hs:  # do we mind sending the high school as well?
+        #     continue
         h_students = StudentProfile.objects(high_school_name=h.name,
                                             high_school_city=h.city,
                                             high_school_state=h.state)
@@ -757,8 +757,9 @@ def find_similar_highschools():
     print("SCORES")
     for s in sorting[:]:  # to what length?
         print(s[0])  # the score
-        data = {'name': s[1].name, 'city': s[1].city,
-                'state': s[1].state, 'reading_prof': s[1].reading_prof,
+        data = {'name': s[1].name,  # 'city': s[1].city,
+                'location': s[1].city+', '+s[1].state,  # 'state': s[1].state,
+                'reading_prof': s[1].reading_prof,
                 'math_prof': s[1].math_prof, 'grad_rate': s[1].grad_rate,
                 'avg_sat': s[1].avg_sat, 'avg_act': s[1].avg_act,
                 'ap_enroll': s[1].ap_enroll, 'dissimilarity': s[0]}
