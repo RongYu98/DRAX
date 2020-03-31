@@ -1,24 +1,50 @@
-.wrap-admin{
+.nav-tabs, .nav-content{
     margin:auto;
     width: 1020px;
     min-width: 1020px;
     padding-top:50px;    
 }
-#student-list, #admission-decision-list{
-    width: 500px;
-    height: 650px;
-    max-height: 650px;
+.nav-content{
     background-color: white;
-    border-radius: 5px;
-    padding: 10px;
+    height: 80vh;
+    padding: 20px;
 }
-.flex{display: flex;}
+/* tabs */
+.nav-link, .nav-item{
+    background-color: white;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    border-color: gray 0px 0px 1px 0px;
+}
+.nav{border-bottom-style: double;}
+.nav-item:nth-child(1){border-radius: 2px 0px 0px 2px;}
+.nav-link:nth-child(3), .nav-item:nth-child(3){flex:2;}
+.nav-link:nth-child(4), .nav-item:nth-child(4){
+    flex:2;
+    border-radius: 0px 2px 2px 0px;
+}
+/* tabs */
 
-/* student-list */
-#student-list{float: left;overflow: auto;}
-#student-list > *{width: 100%;}
-/* student-list */
+/* scrape, import */
+.scrape > div, .import > div{ margin-bottom: 50px; }
+.scrape > div > div, .import > div > div {   
+    display: flex;
+    justify-content: space-between;
+}
+/* scrape, import */
 
-/* admission-list */
-#admission-decision-list{float: right;}
-/* admission-list */
+/* review */
+.review > div:nth-child(1){margin-bottom: 20px;text-align: end;}
+#questionable-list{overflow-y: auto;height: 60vh;}
+#questionable-list > button{
+    display: flex;
+    justify-content: space-between;
+}
+#questionable-list .username, #questionable-list .high-school{
+    flex:5;
+    cursor: pointer;
+}
+#questionable-list .high-school{text-align: end;}
+.questionable-checkbox{margin-right: 20px;}
+/* review */

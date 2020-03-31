@@ -45,7 +45,7 @@ $( document ).ready(function() {
 
     // target : result items in search college page
     // event handler which hides/shows .item-info tag whenever div.list-group-item > .college-name is clicked
-    $("div.list-group-item .college-name").on("click", function(){
+    $("div.list-group-item .college-name, div.list-group-item .username, div.list-group-item .high-school").on("click", function(){
         var target = $(this);
         var isDisplayed = target.parent().next().css("display");
         if(isDisplayed == "none"){
@@ -55,7 +55,7 @@ $( document ).ready(function() {
             target.parent().next().hide();
         }
     });
-
+    
     // target : pagination buttons
     // event handler which add "active" class to clicked pagination button
     $(".page-item > button").on("click", function(){
@@ -81,5 +81,31 @@ $( document ).ready(function() {
     $("#search-btn").on("click", function(){
         var target = $("#filters-dropdown-content");
         target.css("display", "none");
+    });
+
+    // target : tabs in admin page
+    $(".nav-link").on("click", function(){
+        // event handler adds "active" class to clicked tab button
+        var target = $(this);
+        $('.nav-link').each(function(index, value) {
+            $(this).removeClass("active");
+        });
+        target.addClass("active");
+        // event handler shows only the one that corresponds to the tab clicked
+        $('.nav-content > div').each(function(index, value) {
+            $(this).css("display", "none");
+        });
+        if (target.hasClass('scrape')){
+            $(".nav-content > div.scrape").show();
+        }
+        else if (target.hasClass('import')){
+            $(".nav-content > div.import").show();
+        }
+        else if (target.hasClass('delete')){
+            $(".nav-content > div.delete").show();
+        }
+        else {
+            $(".nav-content > div.review").show();
+        }
     });
 });

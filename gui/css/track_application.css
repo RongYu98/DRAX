@@ -66,48 +66,4 @@
     width: 55%;
 }
 /* application button */
-/* carousel */
-.carousel{
-    height: 200px;
-    background-color: #a4a7fcf7;
-    display: none;
-}
-.carousel-inner > .carousel-item:nth-child(1) >{
-    display: flex;
-    flex-direction: column;
-}
-.carousel-item b{
-    font-size: 20px;
-}
-.carousel-control-prev, .carousel-control-next{
-    width: 50px;
-}
-.act{
-    padding: 20px 50px 20px 50px;
-}
-.sat2, .personal{
-    padding: 20px 50px 20px 50px;
-}
-.personal > table{
-    display: block;
-}
-.personal > table > tbody{
-    vertical-align: bottom;
-}
-.personal > table > tbody > tr > td:nth-child(1){
-    width: 130px;
-}
-.personal > table > tbody > tr > td:nth-child(2){
-    width: 100px;
-}
-.personal > table > tbody > tr > td:nth-child(3){
-    width: 100px;
-}
-.personal > table > tbody > tr > td:nth-child(4){
-    width: fit-content;
-}
-.sat2 > table > tbody > tr > td > label, .act > table > tbody > tr > td > label{
-    margin-right: 30px;
-}
-/* carousel */
 /* application result */

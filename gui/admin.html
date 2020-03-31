@@ -16,26 +16,92 @@
             <div class="left-menu">
                 <div class="wrap-logo"><img class="logo" src="img/logo.png" alt="logo"></div>
                 <div>
-                    <!-- for each menu button, replace # with appropriate end point  -->
+                    <!-- replace # with appropriate end point  -->
                     <button onclick="location.href='#'">
                         <div class="wrap-icon"><img src="img/logout.png" alt="logout"></div>
                         <div>Log out</div>
                     </button>
                 </div>
             </div>
-            <div class="right-content overflow-hidden"> 
-                <div class="wrap-admin">
-                    <div id="student-list">
+            <div class="right-content"> 
+                <div class="nav-tabs">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <button class="nav-link active scrape">Scrape Data</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link import">Import Data</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link delete" >Delete all student profiles</button>
+                        </li>                      
+                        <li class="nav-item">
+                            <button class="nav-link review">Review questionable acceptance decisions</button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-content">
+                    <div class="scrape">
                         <div>
-                            <span class="result-text">Student List</span>
+                            <div>
+                                <h3>Scrape college rankings</h3>
+                                <button class="btn btn-primary">Scrape</button>
+                            </div>
+                            <span>Scrape WSJ/THE 2020 rankings of all colleges</span>
                         </div>
-                        
-                        <div class="list-group" id="college-list">
-                            <button class="list-group-item list-group-item-action">
-                                <!-- data should be included inside h5 tag -->
-                                <h5 class="student-username">username1</h5>
+                        <div>
+                            <div>
+                                <h3>Scrape CollegeData.com</h3>
+                                <button class="btn btn-primary">Scrape</button>
+                            </div>                            
+                            <span>Scrape information about all colleges from CollegeData.com</span>
+                        </div>                        
+                    </div>
+                    <div class="import" style="display: none;">
+                        <div>
+                            <div>
+                                <h3>Import College Scorecard data file</h3>
+                                <button class="btn btn-primary">Import</button>
+                            </div>
+                            <span>Import information about all colleges from College Scorecard</span>
+                        </div>
+                        <div>
+                            <div>
+                                <h3>Import student profile and application dataset</h3>
+                                <button class="btn btn-primary">Import</button>
+                            </div>                            
+                            <span>Import previously collected student profile and application dataset </span>
+                        </div>   
+                    </div>
+                    <div class="delete" style="display: none;">
+                        <div>
+                            <h3>Are you sure you want to delete all student profiles?</h3>
+                            <button class="btn btn-danger">Yes, Delete ALL</button>
+                        </div>
+                    </div>
+                    <div class="review" style="display: none;">
+                        <div>
+                            <button class="btn btn-danger">Still Questionable</button>
+                            <button class="btn btn-primary">Acceptable</button>
+                        </div>
+                        <div class="list-group" id="questionable-list">
+                            <div class="list-group-item list-group-item-action">
+                                <div class="wrap-questionable-checkbox">
+                                    <!-- student's username should be mentioned as a value of "value" attribute so that frontend can easily recognize which students were chosen.  -->
+                                    <input type="checkbox" class="questionable-checkbox" value="username1">
+                                </div>
+                                <!-- student's username should be included inside h5 tag -->
+                                <h5 class="username">username1<br>
+                                    <!-- accpeted: badge-success | denied: badge-danger | rest: badge-warning -->
+                                    <!-- college name should be included in the second span tag -->
+                                    <span class="badge badge-success">Accepted</span> by <span>Stony Brook University</span>
+                                </h5>
+                                <!-- high school name should be one the left side of br tag
+                                    high school city  should be combined with high school state by comma and this combination should be on the right side of br tag and inside h5 tag -->
                                 <h5 class="high-school">Stony Brook High School<br>Stony Brook, NY</h5>
-                            </button>
+                            </div>
+                            <!-- "div" tag's "id" property value should be the student's username-->
                             <div id="username1" class="carousel slide" >
                                 <ol class="carousel-indicators">
                                     <!-- every "li" tags' "data-target" property values should be the student's username-->
@@ -117,30 +183,59 @@
                                 </a>
                             </div>
                             <button class="list-group-item list-group-item-action">
-                                <h5 class="username">username2</h5>
+                                <div class="wrap-questionable-checkbox">
+                                    <input type="checkbox" class="questionable-checkbox" value="username2">
+                                </div>
+                                <h5 class="username">username2<br>
+                                    <span class="badge badge-danger">Denied</span> by <span>Stony Brook University</span>
+                                </h5>
                                 <h5 class="high-school">Stony Brook High School<br>Stony Brook, NY</h5>
                             </button>
                             <button class="list-group-item list-group-item-action">
-                                <h5 class="username">username3</h5>
+                                <div class="wrap-questionable-checkbox">
+                                    <input type="checkbox" class="questionable-checkbox" value="username3">
+                                </div>
+                                <h5 class="username">username3<br>
+                                    <span class="badge badge-warning">Wait-listed</span> by <span>Stony Brook University</span>
+                                </h5>
                                 <h5 class="high-school">Stony Brook High School<br>Stony Brook, NY</h5>
                             </button>
-                        </div>
-                        <nav>
-                            <!-- Initially, there should be no tags inside the tag below. -->
-                            <ul class="pagination" id="pagination">
-                                <!-- "active" class below means the current active page button  -->
-                                <!-- first page button must be active in default after completing search -->
-                                <li class="page-item"><button class="page-link shadow-none active">1</button></li>
-                                <li class="page-item"><button class="page-link shadow-none">2</button></li>
-                                <li class="page-item"><button class="page-link shadow-none">3</button></li>
-                            </ul>
-                        </nav>
-                    </div>
-                        
-                    
-                    <div id="admission-decision-list">
-                        <div>
-                            <span class="result-text">Admission Decision List</span>
+                            <button class="list-group-item list-group-item-action">
+                                <div class="wrap-questionable-checkbox">
+                                    <input type="checkbox" class="questionable-checkbox" value="username2">
+                                </div>
+                                <h5 class="username">username2<br>
+                                    <span class="badge badge-danger">Denied</span> by <span>Stony Brook University</span>
+                                </h5>
+                                <h5 class="high-school">Stony Brook High School<br>Stony Brook, NY</h5>
+                            </button>
+                            <button class="list-group-item list-group-item-action">
+                                <div class="wrap-questionable-checkbox">
+                                    <input type="checkbox" class="questionable-checkbox" value="username3">
+                                </div>
+                                <h5 class="username">username3<br>
+                                    <span class="badge badge-warning">Wait-listed</span> by <span>Stony Brook University</span>
+                                </h5>
+                                <h5 class="high-school">Stony Brook High School<br>Stony Brook, NY</h5>
+                            </button>
+                            <button class="list-group-item list-group-item-action">
+                                <div class="wrap-questionable-checkbox">
+                                    <input type="checkbox" class="questionable-checkbox" value="username2">
+                                </div>
+                                <h5 class="username">username2<br>
+                                    <span class="badge badge-danger">Denied</span> by <span>Stony Brook University</span>
+                                </h5>
+                                <h5 class="high-school">Stony Brook High School<br>Stony Brook, NY</h5>
+                            </button>
+                            <button class="list-group-item list-group-item-action">
+                                <div class="wrap-questionable-checkbox">
+                                    <input type="checkbox" class="questionable-checkbox" value="username3">
+                                </div>
+                                <h5 class="username">username3<br>
+                                    <span class="badge badge-warning">Wait-listed</span> by <span>Stony Brook University</span>
+                                </h5>
+                                <h5 class="high-school">Stony Brook High School<br>Stony Brook, NY</h5>
+                            </button>
                         </div>
                     </div>
                 </div>
