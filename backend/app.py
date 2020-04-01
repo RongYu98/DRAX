@@ -827,7 +827,20 @@ def delete_all_students():
 def get_questionable_decisions():
     if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Invalid User")
-    data = Application.objects(verification='Pending')
+    apps = Application.objects(verification='Pending')
+    # apps = Application.objects(status='Pending')
+    data = []
+    for app in apps:
+        profile = app.student
+        s_data = {"name":profile.student.username}
+        s_data.update(profile.grades)
+        coll = app.college
+        c_data = dict(coll.to_mongo())
+        print(type(c_data))
+        del c_data['_id']
+        # print(c_data)
+        d = {'student':s_data, 'college':c_data}
+        data.append(d)
     return jsonify(status=200, result=data)
 
 
