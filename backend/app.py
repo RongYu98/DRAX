@@ -182,7 +182,7 @@ def get_admission_decision():
             admission = {
                 'college': application.college.name,
                 'status': application.status,
-                'is_verified': application.is_verified,
+                'verification': application.verification,
                 }
             admission_decisions.append(admission)
         return jsonify(status=200, result="OK", admission_decisions=admission_decisions)
@@ -211,12 +211,19 @@ def submit_admission_decision():
                 return jsonify(status=400, result="College Not Found")
             try:
                 application = Application.objects.get(Q(student=student) & Q(college=college))
+                verification = "Approved"
+                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
+                    verification = "Pending"
                 application.update(set__status=status)
-                return jsonify(status=200, result="OK")
+                application.update(set__verification=verification)
+                return jsonify(status=200, result="OK", verification=verification)
             except:
                 ID = hash_utils.sha_hash(username+"+=+"+college_name)
-                Application(ID=ID, student=student, college=college, status=status).save()
-                return jsonify(status=200, result="OK")
+                verification = "Approved"
+                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
+                    verification = "Pending"
+                Application(ID=ID, student=student, college=college, status=status, verification=verification).save()
+                return jsonify(status=200, result="OK", verification=verification)
         except:
             return jsonify(status=400, result="Submission Failed")
     return jsonify(status=400, result="Missing Fields")
@@ -332,7 +339,6 @@ def track_applications_list():
 
         def get_status(p):
             return p['application_status']
-
 
         profiles.sort(key=get_status)
         return jsonify(status=200, result="OK", profiles=profiles, summary=summary)
@@ -720,34 +726,45 @@ def find_similar_highschools():
     if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
     student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
-    if (student.high_school_name is None or 
+    if (student.high_school_name is None or
         student.high_school_city is None or
         student.high_school_state is None):
-        return  jsonify(status=400, result="High School Data Not Present")
+        return jsonify(status=400, result="Profile High School Data Not Present!")
     try:
-        hs = HighSchools.objects.get(name=student.high_school_name,
-                                     city=student.city,
-                                     state=student.state)
-    except:
+        hs = HighSchool.objects.get(name=student.high_school_name,
+                                    city=student.high_school_city,
+                                    state=student.high_school_state)
+    except Exception as e:
+        print(e)
         # this should not happen, because app confirms data being present
         # first before assigning values. But just in case.
         return jsonify(status=400, result="High School Data Not Present")
 
-    hs_students = Students.objects(high_school_name=student.high_school_name,
-                                  high_school_city=student.high_school_city,
-                                  high_school_state=student.high_school_state)
+    hs_students = StudentProfile.objects(high_school_name=student.high_school_name,
+                                         high_school_city=student.high_school_city,
+                                         high_school_state=student.high_school_state)
     sorting = []  # a list of lists, each containing a score and HS
-    for h in HighSchools.objects:
-        h_students = Students.objects(high_school_nane=h.name,
-                                      high_school_city=h.city,
-                                      high_school_state=h.state) 
-        score = algorithm.compare_highschool(hs, h, hs_students, h_students)
+    for h in HighSchool.objects:
+        if h == hs:
+            continue
+        h_students = StudentProfile.objects(high_school_name=h.name,
+                                            high_school_city=h.city,
+                                            high_school_state=h.state)
+        score = algorithms.compare_highschool(hs, h, hs_students, h_students)
         sorting.append([score, h])
     sorting.sort(key=lambda x: x[0])  # by the first element
     response = []
+    print("SCORES")
     for s in sorting[:]:  # to what length?
         print(s[0])  # the score
-    return        
+        data = {'name': s[1].name, 'city': s[1].city,
+                'state': s[1].state, 'reading_prof': s[1].reading_prof,
+                'math_prof': s[1].math_prof, 'grad_rate': s[1].grad_rate,
+                'avg_sat': s[1].avg_sat, 'avg_act': s[1].avg_act,
+                'ap_enroll': s[1].ap_enroll, 'dissimilarity': s[0]}
+        response.append(data)
+        # response.append(s[1].name)
+    return jsonify(status=200, data=response)
 
 
 @app.route('/api/all_majors')
