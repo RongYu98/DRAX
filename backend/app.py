@@ -797,12 +797,45 @@ def import_student_profile_applications():
     return jsonify(status=200, result="OK")
 
 
-@app.route('/delete_all_students')
+@app.route('/api/delete_all_students')
 def delete_all_students():
     if 'username' not in session or session['username'] != "admin":
         return jsonify(status=400, result="Invalid User")
     scraper.delete_student_data()
     return jsonify(status=200, result="OK")
+
+
+@app.route('/api/get_questionable_decisions')
+def get_questionable_decisions():
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Invalid User")
+    data = Application.objects(verification='Pending')
+    return jsonify(status=200, result=data)
+
+
+@app.route('/api/decide_admission_decision', methods=['POST'])
+def decide_admission_decision():
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Invalid User")
+    info = request.json
+    if info is None:
+        info = request.form
+    if 'college_name' not in info:
+        return jsonify(status=400, result="Missing College Name")
+    if 'status' not in info:
+        return jsonify(status=400, result="Missing Response")
+    if info['status'] != 'Approved' and info['status'] != 'Denied':
+        return jsonify(status=400, result="Unknown Response")
+    prof = StudentProfile(student=Account.objects.get(username=session['username']))
+    coll = College.objects.get(name=info['college_name'])
+    try:
+        app = Application.objects.get(student=prof, college=coll)
+    except:
+        return jsonify(status=400, result="Application Does Not Exist")
+    if app.verification != 'Pending':
+        return jsonify(status=400, result="Application already approved")
+    app.update(set__verification=info['status'])
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9000, debug=True)
