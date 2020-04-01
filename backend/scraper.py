@@ -335,4 +335,6 @@ def update_highschool_data(name, city, state):
 # update_college_ranking()
 # print(get_highschool_info("Stuyvesant High School", 'New York', "NY"))
 # print(update_highschool_data("Stuyvesant High School", 'New York', "NY"))
+# print(update_highschool_data('Academic Magnet High School', 'North Charleston', 'SC'))
+print(update_highschool_data('Ward Melville Senior High School', 'East Setauket', 'NY'))
 # update_all_colleges()
