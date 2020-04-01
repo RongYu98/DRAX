@@ -836,8 +836,8 @@ def get_questionable_decisions():
         s_data.update(profile.grades)
         coll = app.college
         c_data = dict(coll.to_mongo())
-        print(type(c_data))
         del c_data['_id']
+        del c_data['majors']
         # print(c_data)
         d = {'student':s_data, 'college':c_data}
         data.append(d)
@@ -851,22 +851,25 @@ def decide_admission_decision():
     info = request.json
     if info is None:
         info = request.form
+    if 'student_name' not in info:
+        return jsonify(status=400, result="Missing Student Name")
     if 'college_name' not in info:
         return jsonify(status=400, result="Missing College Name")
     if 'status' not in info:
         return jsonify(status=400, result="Missing Response")
     if info['status'] != 'Approved' and info['status'] != 'Denied':
         return jsonify(status=400, result="Unknown Response")
-    prof = StudentProfile(student=Account.objects.get(username=session['username']))
+    prof = StudentProfile.objects.get(student=Account.objects.get(username=info['student_name']))
     coll = College.objects.get(name=info['college_name'])
     try:
-        app = Application.objects.get(student=prof, college=coll)
-    except:
+        appl = Application.objects.get(student=prof, college=coll)
+    except Exception as e:
+        print(e)
         return jsonify(status=400, result="Application Does Not Exist")
-    if app.verification != 'Pending':
-        return jsonify(status=400, result="Application already approved")
-    app.update(set__verification=info['status'])
-
+    if appl.verification != 'Pending':
+        return jsonify(status=400, result="Application already decided")
+    appl.update(set__verification=info['status'])
+    return jsonify(status=200, result="OK")
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9000, debug=True)
