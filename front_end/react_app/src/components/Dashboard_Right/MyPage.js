@@ -65,6 +65,23 @@ class MyPage extends React.Component{
         this.fetch_admissions = this.fetch_admissions.bind(this);
         this.get_page_buttons = this.get_page_buttons.bind(this);
         this.is_whole_number = this.is_whole_number.bind(this);
+        this.get_admission_decisions = this.get_admission_decisions.bind(this);
+    }
+
+    get_admission_decisions(){
+        let admissions = this.state.admission_decisions.map((element)=>{
+            return (<tr>
+                <td className="wrap-admin-check">
+                    <img src={RejectedImg}
+                         className="admin-check"
+                         data-toggle="tooltip" data-placement="top"
+                         title="Decision marked as questionable"
+                    />
+                </td>
+                <td className="college">Harvard University</td>
+                <td className="status">Declined</td>
+            </tr>);
+        })
     }
 
     show_high_school_modal(){
@@ -215,6 +232,7 @@ class MyPage extends React.Component{
     async post_save(){
         try{
             let body = this.get_profile_body();
+            if(body.password == null) body.password = undefined;
             console.log(body);
             let response = await fetch(
                 SERVER_URL + SAVE_PROFILE_ENDPOINT,
