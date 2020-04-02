@@ -107,7 +107,7 @@ def detect_questionable_acceptance(college, student):
 
 
 def calc_academic_similarity(college, student):
-    return 0  # TODO: use function from testing.py
+    return -1  # TODO: use function from testing.py
 
 
 def compute_recommendation_score(college, student):
@@ -133,7 +133,7 @@ def compute_recommendation_score(college, student):
         non_academic_factors.append(int(salary)/50000)
     completion_rate = college.completion_rate
     if completion_rate is not None:
-        non_academic_factors.append(float(completion_rate))
+        non_academic_factors.append(float(completion_rate/100))
     non_academic_suitability = 0
     if non_academic_factors != []:
         non_academic_suitability = max(1, sum(non_academic_factors) /
@@ -151,7 +151,7 @@ def compute_recommendation_score(college, student):
     if non_academic_suitability > 0:
         score += non_academic_suitability*0.2
     if denominator != 0:
-        return score/denominator
+        return round(score/denominator, 2)
     return 0
 
 
