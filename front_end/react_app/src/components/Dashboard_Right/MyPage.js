@@ -9,6 +9,8 @@ import {SERVER_URL} from "../../common/Constants";
 
 const SIMILAR_HIGH_SCHOOLS_ENDPOINT = "/find_similar_highschools";
 const GET_PROFILE_ENDPOINT = "/get_profile";
+const SAVE_PROFILE_ENDPOINT = "/save_profile";
+const MAJOR_ENDPOINT = "/all_majors";
 
 class MyPage extends React.Component{
 
@@ -23,34 +25,40 @@ class MyPage extends React.Component{
                 high_school_name: "-",
                 high_school_city: "-",
                 high_school_state: "-",
-                gpa: "-",
+                gpa: "",
                 college_class: "",
                 major_1: "-",
                 major_2: "-",
-                sat_math: "-",
-                sat_ebrw: "-",
-                act_english: "-",
-                act_math: "-",
-                act_reading: "-",
-                act_science: "-",
-                act_composite: "-",
-                sat_lit: "-",
-                sat_us: "-",
-                sat_world: "-",
-                sat_math_1: "-",
-                sat_math_2: "-",
-                sat_eco_bio: "-",
-                sat_mol_bio: "-",
-                sat_chem: "-",
-                sat_physics: "-",
-                ap_passed: "-",
+                sat_math: "",
+                sat_ebrw: "",
+                act_english: "",
+                act_math: "",
+                act_reading: "",
+                act_science: "",
+                act_composite: "",
+                sat_lit: "",
+                sat_us: "",
+                sat_world: "",
+                sat_math_1: "",
+                sat_math_2: "",
+                sat_eco_bio: "",
+                sat_mol_bio: "",
+                sat_chem: "",
+                sat_physics: "",
+                ap_passed: 0,
                 password: ""
-            }
+            },
+            majors_list: []
         }
 
         this.show_high_school_modal = this.show_high_school_modal.bind(this);
         this.fetch_similar_high_schools = this.fetch_similar_high_schools.bind(this);
         this.fetch_profile = this.fetch_profile.bind(this);
+        this.set_exam_scores = this.set_exam_scores.bind(this);
+        this.post_save = this.post_save.bind(this);
+        this.get_profile_body = this.get_profile_body.bind(this);
+        this.fetch_majors = this.fetch_majors.bind(this);
+        this.get_majors = this.get_majors.bind(this);
     }
 
     show_high_school_modal(){
@@ -109,11 +117,94 @@ class MyPage extends React.Component{
     }
     
     async componentDidMount() {
+        await this.fetch_majors();
         await this.fetch_profile();
     }
 
+    async fetch_majors(){
+        try{
+            let response = await fetch(SERVER_URL + MAJOR_ENDPOINT);
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            this.setState({majors_list: response_json.majors});
+        } catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
+    }
+
+    get_majors(){
+        let list = [];
+        this.state.majors_list.forEach(element=>{
+            list.push(
+                <option key={element} value={element}>{element}</option>
+            );
+        });
+        return list;
+    }
+
+    set_exam_scores(score_key, new_score){
+        let new_profile = {...this.state.profile};
+        new_profile[score_key] = new_score
+        this.setState({profile: new_profile});
+    }
+
+    get_profile_body(){
+        let body = {};
+        for(let key in this.state.profile){
+            if(this.state.profile[key] === "" || this.state.profile[key] === ""){
+                body[key] = null;
+                continue;
+            }
+
+            if (key.includes("sat")) {
+                if(this.state.profile[key] < 200 || this.state.profile[key] > 800) throw new Error("All sat scores should be 200-800");
+            }
+
+            if(key.includes("act")){
+                if(this.state.profile[key] < 1 || this.state.profile[key] > 36) throw new Error("All act scores should be 1-36");
+            }
+
+            if(key.includes("gpa")){
+                 if(this.state.profile[key] < 0 || this.state.profile[key] > 4.0) throw new Error("GPA should be 0-4.0");
+            }
+
+            if(key.includes("password")){
+                let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g;
+                if(!this.state.profile[key].match(regex)) throw new Error('Password not meet the requirement');
+            }
+
+            body[key] = this.state.profile[key];
+        }
+        return body;
+    }
+
+    async post_save(){
+        try{
+            let body = this.get_profile_body();
+            console.log(body);
+            let response = await fetch(
+                SERVER_URL + SAVE_PROFILE_ENDPOINT,
+                {
+                    method: "POST",
+                    credentials: 'include',
+                    headers:{
+                        "Accept": "application/json",
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
+        }catch (err) {
+           console.log(err.stack);
+           alert(`Failed to save: ${err.message}`);
+        }
+    }
 
     render() {
+        let majors = this.get_majors();
         return (
             <React.Fragment>
                 <div className="right-content overflow-hidden">
@@ -121,7 +212,14 @@ class MyPage extends React.Component{
                         <div id="profile">
                             <div>
                                 <span className="result-text">Profile</span>
-                                <button type="button" id="save-btn" className="btn btn-primary shadow-none">Save
+                                <button
+                                    type="button"
+                                    id="save-btn"
+                                    className="btn btn-primary shadow-none"
+                                    onClick={async (event)=>{
+                                        await this.post_save();
+                                    }}
+                                >Save
                                 </button>
                             </div>
                             <div>
@@ -145,7 +243,12 @@ class MyPage extends React.Component{
                                     <tr>
                                         <td><b>Password</b></td>
                                         <td><input type="password" className="form-control shadow-none"
-                                                   id="profile-password" minLength={8} maxLength={128} /></td>
+                                                   id="profile-password" minLength={8} maxLength={128}
+                                                   value={this.state.profile.password}
+                                                   onChange={(event)=>{
+                                                       this.setState({profile: {...this.state.profile, password: event.target.value}})
+                                                   }}
+                                        /></td>
                                     </tr>
                                     <tr style={{marginBottom: '10px'}}>
                                         <td><b>Residence state</b></td>
@@ -212,13 +315,29 @@ class MyPage extends React.Component{
                                     <tr>
                                         <td rowSpan={3} style={{verticalAlign: 'baseline'}}><b>High school</b></td>
                                         <td><input type="text" className="form-control shadow-none"
-                                                   id="profile-high-scool-name" placeholder="Name" minLength={11}/></td>
+                                                   id="profile-high-scool-name" placeholder="Name" minLength={11}
+                                                   value={this.state.profile.high_school_name}
+                                                   onChange={(event)=>{
+                                                       this.setState({profile: {...this.state.profile, high_school_name: event.target.value}})
+                                                   }}
+                                        /></td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <input type="text" className="form-control shadow-none"
-                                                   id="profile-high-scool-city" placeholder="City" minLength={5}/>
-                                            <select id="profile-high-school-state">
+                                                   id="profile-high-scool-city" placeholder="City" minLength={5}
+                                                    value={this.state.profile.high_school_city}
+                                                   onChange={(event)=>{
+                                                       this.setState({profile: {...this.state.profile, high_school_city: event.target.value}})
+                                                   }}
+                                            />
+                                            <select
+                                                id="profile-high-school-state"
+                                                value={this.state.profile.high_school_state}
+                                                onChange={(event)=>{
+                                                     this.setState({profile: {...this.state.profile, high_school_state: event.target.value}})
+                                                }}
+                                            >
                                                 {/* - means no choice */}
                                                 <option value="-">-</option>
                                                 <option value="AL">AL</option>
@@ -287,20 +406,36 @@ class MyPage extends React.Component{
                                     <tr>
                                         <td><b>Major 1</b></td>
                                         <td>
-                                            <select id="profile-major1">
+                                            <select
+                                                id="profile-major1"
+                                                value={this.state.profile.major_1}
+                                                onChange={(event)=>{
+                                                    this.setState({profile: {...this.state.profile, major_1: event.target.value}})
+                                                }}
+                                            >
                                                 {/* - means no choice */}
                                                 <option value="-">-</option>
-                                                {/* Frontend should add option tags with the major names from here */}
+                                                {
+                                                    majors
+                                                }
                                             </select>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><b>Major 2</b></td>
                                         <td>
-                                            <select id="profile-major1">
+                                            <select
+                                                id="profile-major1"
+                                                value={this.state.profile.major_2}
+                                                onChange={(event)=>{
+                                                    this.setState({profile: {...this.state.profile, major_2: event.target.value}})
+                                                }}
+                                            >
                                                 {/* - means no choice */}
                                                 <option value="-">-</option>
-                                                {/* Frontend should add option tags with the major names from here */}
+                                                {
+                                                     majors
+                                                }
                                             </select>
                                         </td>
                                     </tr>
@@ -309,7 +444,12 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-ap-passed" min={0}/>
+                                                   id="profile-ap-passed" min={0}
+                                                   value={this.state.profile.ap_passed}
+                                                   onChange={(event)=>{
+                                                       this.setState({profile: {...this.state.profile, ap_passed: event.target.value}})
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     <tr>
@@ -317,7 +457,12 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number" placeholder="< 4.0"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-gpa" max={4} step="0.01"/>
+                                                   id="profile-gpa" max={4} step="0.01"
+                                                    value={this.state.profile.gpa}
+                                                   onChange={(event)=>{
+                                                       this.setState({profile: {...this.state.profile, gpa: event.target.value}})
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     </tbody>
@@ -332,13 +477,23 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat-math" min={200} max={800}/>
+                                                   id="profile-sat-math" min={200} max={800}
+                                                   value={this.state.profile.sat_math}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_math", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                         <td>SAT EBRW</td>
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat-ebrw" min={200} max={800}/>
+                                                   id="profile-sat-ebrw" min={200} max={800}
+                                                   value={this.state.profile.sat_ebrw}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_ebrw", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     <tr>
@@ -346,13 +501,23 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number" placeholder="1 - 36"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-act-composite" min={1} max={36}/>
+                                                   id="profile-act-composite" min={1} max={36}
+                                                   value={this.state.profile.act_composite}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("act_composite", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                         <td>ACT English</td>
                                         <td>
                                             <input type="number" placeholder="1 - 36"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-act-english" min={1} max={36}/>
+                                                   id="profile-act-english" min={1} max={36}
+                                                   value={this.state.profile.act_english}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("act_english", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     <tr>
@@ -360,13 +525,23 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number" placeholder="1 - 36"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-act-math" min={1} max={36}/>
+                                                   id="profile-act-math" min={1} max={36}
+                                                   value={this.state.profile.act_math}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("act_math", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                         <td>ACT Reading</td>
                                         <td>
                                             <input type="number" placeholder="1 - 36"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-act-reading" min={1} max={36}/>
+                                                   id="profile-act-reading" min={1} max={36}
+                                                   value={this.state.profile.act_reading}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("act_reading", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     <tr>
@@ -374,13 +549,23 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number" placeholder="1 - 36"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-act-science" min={1} max={36}/>
+                                                   id="profile-act-science" min={1} max={36}
+                                                   value={this.state.profile.act_science}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("act_science", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                         <td>SAT2 Chemistry</td>
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat2-chemistry" min={200} max={800}/>
+                                                   id="profile-sat2-chemistry" min={200} max={800}
+                                                   value={this.state.profile.sat_chem}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_chem", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     <tr>
@@ -388,13 +573,23 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat2-eco-bio" min={200} max={800}/>
+                                                   id="profile-sat2-eco-bio" min={200} max={800}
+                                                   value={this.state.profile.sat_eco_bio}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_eco_bio", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                         <td>SAT2 Literature</td>
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat2-literature" min={200} max={800}/>
+                                                   id="profile-sat2-literature" min={200} max={800}
+                                                   value={this.state.profile.sat_lit}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_lit", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     <tr>
@@ -402,13 +597,23 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat2-math1" min={200} max={800}/>
+                                                   id="profile-sat2-math1" min={200} max={800}
+                                                   value={this.state.profile.sat_math_1}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_math_1", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                         <td>SAT2 Math II</td>
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat2-math2" min={200} max={800}/>
+                                                   id="profile-sat2-math2" min={200} max={800}
+                                                   value={this.state.profile.sat_math_2}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_math_2", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     <tr>
@@ -416,13 +621,23 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat2-mol-bio" min={200} max={800}/>
+                                                   id="profile-sat2-mol-bio" min={200} max={800}
+                                                   value={this.state.profile.sat_mol_bio}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_mol_bio", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                         <td>SAT2 Physics</td>
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat2-physics" min={200} max={800}/>
+                                                   id="profile-sat2-physics" min={200} max={800}
+                                                   value={this.state.profile.sat_physics}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_physics", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     <tr>
@@ -430,13 +645,23 @@ class MyPage extends React.Component{
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat2-us-history" min={200} max={800}/>
+                                                   id="profile-sat2-us-history" min={200} max={800}
+                                                   value={this.state.profile.us_history}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("us_history", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                         <td>SAT2 World History</td>
                                         <td>
                                             <input type="number" placeholder="200 - 800"
                                                    className="form-control shadow-none profile-number-input"
-                                                   id="profile-sat2-world-history" min={200} max={800}/>
+                                                   id="profile-sat2-world-history" min={200} max={800}
+                                                   value={this.state.profile.sat_world}
+                                                   onChange={(event)=>{
+                                                       this.set_exam_scores("sat_world", event.target.value);
+                                                   }}
+                                            />
                                         </td>
                                     </tr>
                                     </tbody>
