@@ -256,13 +256,13 @@ class Track extends React.Component{
                 result.push(this.state.high_schools.slice(i, i+3));
             }
 
-            result = result.map((tr_array, index) => {
+            result = result.map((tr_array, index_tr) => {
                 return(
-                    <tr key={`tr-key-${index}`}>
+                    <tr key={index_tr}>
                         {
-                            tr_array.map((element)=>{
+                            tr_array.map((element, index)=>{
                                 return(
-                                    <td key={element}>
+                                    <td key={index}>
                                         <div className="custom-control custom-checkbox">
                                             {/* IMPORTANT! "input" tag's "id" property value and "label" tag's "for" property value should be matched */}
                                             <input type="checkbox"
