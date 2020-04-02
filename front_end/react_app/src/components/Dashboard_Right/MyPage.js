@@ -174,6 +174,10 @@ class MyPage extends React.Component{
                 if(!this.state.profile[key].match(regex)) throw new Error('Password not meet the requirement');
             }
 
+            if(key.includes("class")){
+                if(this.state.profile[key] > 2027 || this.state.profile[key] < 0) throw new Error("College class show be < 2027")
+            }
+
             body[key] = this.state.profile[key];
         }
         return body;
