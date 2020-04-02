@@ -214,13 +214,13 @@ class MyPage extends React.Component{
             let response = await fetch(
                 SERVER_URL + SAVE_PROFILE_ENDPOINT,
                 {
-                    method: "POST",
+                    method: 'POST',
                     credentials: 'include',
-                    headers:{
-                        "Accept": "application/json",
+                    headers: {
+                        'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body : JSON.stringify(body)
+                    body: JSON.stringify(body)
                 }
             );
             if(response.status !== 200) throw new Error(response.statusText);
