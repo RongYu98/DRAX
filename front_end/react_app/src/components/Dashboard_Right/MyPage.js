@@ -50,11 +50,18 @@ class MyPage extends React.Component{
                 ap_passed: 0,
                 password: ""
             },
+            admission_input_data: {
+                college_name: "-",
+                status: "-"
+            },
             majors_list: [],
             admission_decisions: [],
-            current_page_num: 1
+            current_page_num: 1,
+            mounted: false
         }
         this.button_list = [];
+        this.old_admission_input_data = JSON.parse(JSON.stringify(this.state.admission_input_data));
+        this.filter_admission_list = [];
         this.show_high_school_modal = this.show_high_school_modal.bind(this);
         this.fetch_similar_high_schools = this.fetch_similar_high_schools.bind(this);
         this.fetch_profile = this.fetch_profile.bind(this);
@@ -67,31 +74,42 @@ class MyPage extends React.Component{
         this.get_page_buttons = this.get_page_buttons.bind(this);
         this.is_whole_number = this.is_whole_number.bind(this);
         this.get_admission_decisions = this.get_admission_decisions.bind(this);
+        this.get_admission_colleges = this.get_admission_colleges.bind(this);
+        this.filter_acceptances = this.filter_acceptances.bind(this);
     }
 
 
     get_admission_decisions(){
         if(this.state.admission_decisions.length === 0){
-            return (<h1 style={SearchCollege.not_found_style}>No results found</h1>);
+            return (<tr><td>No result found</td></tr>);
         }
 
+        let filtered_list = this.filter_acceptances();
         let list = [];
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
         let end_index = beginning + 10;
 
-        for(let i = beginning; (i < this.state.admission_decisions.length) && (i < end_index); i++){
-            let admission = this.state.admission_decisions[i];
+        for(let i = beginning; (i < filtered_list.length) && (i < end_index); i++){
+            let admission = filtered_list[i];
+            let image = null;
+            if(admission.status === "Accepted"){
+                image = ConfirmImg;
+            }else if(admission.status === "Denied"){
+                image = RejectedImg;
+            }else{
+                image = QuestionImg;
+            }
             list.push(
-               <tr>
+               <tr key={admission.college}>
                     <td className="wrap-admin-check">
-                    <img src={RejectedImg}
+                    <img src={image}
                          className="admin-check"
                          data-toggle="tooltip" data-placement="top"
                          title="Decision marked as questionable"
                     />
                     </td>
-                    <td className="college">Harvard University</td>
-                    <td className="status">Declined</td>
+                    <td className="college">{admission.college}</td>
+                    <td className="status">{admission.status}</td>
                 </tr>
             )
         }
@@ -146,7 +164,7 @@ class MyPage extends React.Component{
                 response_json.profile[key] = (response_json.profile[key] == null) ? "-" : response_json.profile[key];
             }
             response_json.profile.username = response_json.username;
-            this.setState({profile: {...this.state.profile, ...response_json.profile}});
+            this.setState({mounted: true, profile: {...this.state.profile, ...response_json.profile}});
         }catch (err) {
             console.log(err.stack);
             alert(err.message);
@@ -178,7 +196,6 @@ class MyPage extends React.Component{
         await this.fetch_majors();
         await this.fetch_admissions();
         await this.fetch_profile();
-        console.log(this.state);
     }
 
     async fetch_majors(){
@@ -263,6 +280,7 @@ class MyPage extends React.Component{
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.result);
+            alert("success!");
         }catch (err) {
            console.log(err.stack);
            alert(`Failed to save: ${err.message}`);
@@ -272,14 +290,14 @@ class MyPage extends React.Component{
     get_page_buttons(){
         let page_list = [];
         let new_button_list = [];
-        let max_pages = this.state.admission_decisions.length / 10;
+        let max_pages = this.filter_admission_list.length / 10;
         if(!this.is_whole_number(max_pages)) {
             max_pages = Math.floor(max_pages) + 1;
         }
         let next_ten_pages = this.state.current_page_num + 9;
         let old_beginning = this.button_list[0];
         let old_end = this.button_list[this.button_list.length - 1];
-        if(this.state.admission_decisions.length <= 10) {
+        if(this.filter_admission_list.length <= 10) {
             max_pages = 1;
         }
 
@@ -322,7 +340,7 @@ class MyPage extends React.Component{
                 )
             }
         }
-        if(this.state.admission_decisions.length === 0){
+        if(this.filter_admission_list.length === 0){
             this.button_list = [];
             return [];
         }
@@ -339,9 +357,39 @@ class MyPage extends React.Component{
             return true;
     }
 
+    get_admission_colleges(){
+        let colleges = this.state.admission_decisions.map((element)=>{
+             return(
+                <option key={element.college} value={element.college}>{element.college}</option>
+             );
+        });
+
+        return colleges;
+    }
+
+    filter_acceptances(){
+        let acceptances = this.state.admission_decisions;
+        if(this.old_admission_input_data.college_name !== "-"){
+            acceptances = acceptances.filter((element)=>{
+               return(element.college === this.old_admission_input_data.college_name)
+            });
+        }
+
+        if(this.old_admission_input_data.status !== "-"){
+            acceptances = acceptances.filter((element)=>{
+               return(element.status.toLowerCase().includes(this.old_admission_input_data.status.toLowerCase()));
+            });
+        }
+        this.filter_admission_list = JSON.parse(JSON.stringify(acceptances));
+        return acceptances;
+    }
+
     render() {
         let majors = this.get_majors();
-        let page_buttons = this.get_page_buttons()
+        let admission_colleges = this.get_admission_colleges();
+        let acceptances = this.get_admission_decisions();
+        let page_buttons = this.get_page_buttons();
+        if(!this.state.mounted)return null;
         return (
             <React.Fragment>
                 <div className="right-content overflow-hidden">
@@ -815,22 +863,43 @@ class MyPage extends React.Component{
                                     <tr>
                                         <td><b>College</b></td>
                                         <td>
-                                            <select id="college" required>
+                                            <select
+                                                onChange={(event)=>{
+                                                    this.setState({admission_input_data: {...this.state.admission_input_data, college_name: event.target.value}})
+                                                }}
+                                                value={this.state.admission_input_data.college_name}
+                                                id="college"
+                                                required
+                                            >
                                                 {/* - means no choice */}
                                                 <option value="-">-</option>
-                                                {/* Frontend should add option tags with the major names from here */}
+                                                {
+                                                    admission_colleges
+                                                }
                                             </select>
                                         </td>
                                         <td rowSpan={2}>
                                             <button type="button" id="register-btn"
-                                                    className="btn btn-primary shadow-none">Submit
+                                                    className="btn btn-primary shadow-none"
+                                                    onClick={(event)=>{
+                                                        this.old_admission_input_data = JSON.parse(JSON.stringify(this.state.admission_input_data));
+                                                        this.forceUpdate();
+                                                    }}
+                                            >Submit
                                             </button>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><b>Status</b></td>
                                         <td>
-                                            <select id="status" required>
+                                            <select
+                                                onChange={(event)=>{
+                                                    this.setState({admission_input_data: {...this.state.admission_input_data, status: event.target.value}})
+                                                }}
+                                                value={this.state.admission_input_data.status}
+                                                id="status"
+                                                required
+                                            >
                                                 {/* - means no choice */}
                                                 <option value="-">-</option>
                                                 <option value="Accepted">Accepted</option>
@@ -848,32 +917,7 @@ class MyPage extends React.Component{
                             <div>
                                 <table className="PageTable">
                                     <tbody>
-                                    <tr>
-                                        <td className="wrap-admin-check"><img src={RejectedImg}
-                                                                              className="admin-check"
-                                                                              data-toggle="tooltip" data-placement="top"
-                                                                              title="Decision marked as questionable"/>
-                                        </td>
-                                        <td className="college">Harvard University</td>
-                                        <td className="status">Declined</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="wrap-admin-check"><img src={ConfirmImg}
-                                                                              className="admin-check"
-                                                                              data-toggle="tooltip" data-placement="top"
-                                                                              title="Decision successfully processed"/>
-                                        </td>
-                                        <td className="college">State University of New York, Albany</td>
-                                        <td className="status">Accepted</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="wrap-admin-check"><img src={QuestionImg}
-                                                                              className="admin-check"
-                                                                              data-toggle="tooltip" data-placement="top"
-                                                                              title="Decision under review"/></td>
-                                        <td className="college">Massachusetts Institute of Technology</td>
-                                        <td className="status">Wait-listed</td>
-                                    </tr>
+                                    {acceptances}
                                     </tbody>
                                 </table>
                             </div>
