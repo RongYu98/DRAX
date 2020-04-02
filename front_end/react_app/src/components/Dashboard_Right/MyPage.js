@@ -178,7 +178,7 @@ class MyPage extends React.Component{
     get_profile_body(){
         let body = {};
         for(let key in this.state.profile){
-            if(this.state.profile[key] === "" || this.state.profile[key] === ""){
+            if(this.state.profile[key] === "" || this.state.profile[key] === "-"){
                 body[key] = null;
                 continue;
             }
