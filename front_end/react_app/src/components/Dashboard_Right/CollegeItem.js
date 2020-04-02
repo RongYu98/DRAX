@@ -24,7 +24,7 @@ class CollegeItem extends React.Component{
     }
 
     render() {
-        let {college_id, state, name, institution, admission_rate, tuition, debt, completion, ranking, size} = this.props.data;
+        let {recommendation, college_id, state, name, institution, admission_rate, tuition, debt, completion, ranking, size} = this.props.data;
         let current_sort = this.props.current_sort;
         return(
             <React.Fragment>
@@ -48,7 +48,7 @@ class CollegeItem extends React.Component{
                             <td><b>{institution}</b><br/><label>Institution</label></td>
                             <td><b>{admission_rate + "%"}</b><br/><label>Admission rate</label></td>
                             <td><b>{completion +"%"}</b><br/><label>Completion rate</label></td>
-                            <td/>
+                            <td><b>{recommendation}</b><br/><label>Recommendation Score</label></td>
                         </tr>
                         <tr>
                             <td><b>{`$${tuition}`}</b><br/><label>Cost of attendance</label></td>

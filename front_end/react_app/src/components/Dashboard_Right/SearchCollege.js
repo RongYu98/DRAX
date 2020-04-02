@@ -327,7 +327,8 @@ class SearchCollege extends React.Component{
                        completion: (college.completion_rate == null) ? "-" : college.completion_rate,
                        ranking: (college.ranking == null) ? "-": college.ranking,
                        size: (college.size == null) ? "-" : college.size,
-                       college_id: (college.college_id == null) ? "-" : college.college_id
+                       college_id: (college.college_id == null) ? "-" : college.college_id,
+                       recommendation : (college.recommendation == null) ? "-": college.recommendation
                     }
                }
                show_collage_modal={this.show_collage_modal}
