@@ -11,6 +11,7 @@ const SIMILAR_HIGH_SCHOOLS_ENDPOINT = "/find_similar_highschools";
 const GET_PROFILE_ENDPOINT = "/get_profile";
 const SAVE_PROFILE_ENDPOINT = "/save_profile";
 const MAJOR_ENDPOINT = "/all_majors";
+const ADMISSION_DECISION_ENDPOINT = "/get_admission_decision";
 
 class MyPage extends React.Component{
 
@@ -48,7 +49,8 @@ class MyPage extends React.Component{
                 ap_passed: 0,
                 password: ""
             },
-            majors_list: []
+            majors_list: [],
+            admission_decisions: []
         }
 
         this.show_high_school_modal = this.show_high_school_modal.bind(this);
@@ -59,6 +61,7 @@ class MyPage extends React.Component{
         this.get_profile_body = this.get_profile_body.bind(this);
         this.fetch_majors = this.fetch_majors.bind(this);
         this.get_majors = this.get_majors.bind(this);
+        this.fetch_admissions = this.fetch_admissions.bind(this);
     }
 
     show_high_school_modal(){
@@ -115,6 +118,27 @@ class MyPage extends React.Component{
             alert(err.message);
         }
     }
+
+    async fetch_admissions(){
+        try{
+            let response = await fetch(
+                SERVER_URL + ADMISSION_DECISION_ENDPOINT,
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers:{
+                         'Accept': 'application/json'
+                    }
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            this.state.admission_decisions = response_json.admission_decisions;
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
+    }
     
     async componentDidMount() {
         await this.fetch_majors();
@@ -126,7 +150,7 @@ class MyPage extends React.Component{
             let response = await fetch(SERVER_URL + MAJOR_ENDPOINT);
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
-            this.setState({majors_list: response_json.majors});
+            this.state.majors_list = response_json.majors;
         } catch (err) {
             console.log(err.stack);
             alert(err.message);
@@ -195,7 +219,8 @@ class MyPage extends React.Component{
                     headers:{
                         "Accept": "application/json",
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body : JSON.stringify(body)
                 }
             );
             if(response.status !== 200) throw new Error(response.statusText);
