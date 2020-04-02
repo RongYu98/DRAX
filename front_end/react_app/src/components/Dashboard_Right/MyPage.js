@@ -6,6 +6,7 @@ import ConfirmImg from '../../gui/img/confirmed.png';
 import QuestionImg from '../../gui/img/question.png';
 import FindSimilarHighSchoolsModal from "./FindSimilarHighSchoolsModal";
 import {SERVER_URL} from "../../common/Constants";
+import SearchCollege from "./SearchCollege";
 
 const SIMILAR_HIGH_SCHOOLS_ENDPOINT = "/find_similar_highschools";
 const GET_PROFILE_ENDPOINT = "/get_profile";
@@ -68,20 +69,33 @@ class MyPage extends React.Component{
         this.get_admission_decisions = this.get_admission_decisions.bind(this);
     }
 
+
     get_admission_decisions(){
-        let admissions = this.state.admission_decisions.map((element)=>{
-            return (<tr>
-                <td className="wrap-admin-check">
+        if(this.state.admission_decisions.length === 0){
+            return (<h1 style={SearchCollege.not_found_style}>No results found</h1>);
+        }
+
+        let list = [];
+        let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
+        let end_index = beginning + 10;
+
+        for(let i = beginning; (i < this.state.admission_decisions.length) && (i < end_index); i++){
+            let admission = this.state.admission_decisions[i];
+            list.push(
+               <tr>
+                    <td className="wrap-admin-check">
                     <img src={RejectedImg}
                          className="admin-check"
                          data-toggle="tooltip" data-placement="top"
                          title="Decision marked as questionable"
                     />
-                </td>
-                <td className="college">Harvard University</td>
-                <td className="status">Declined</td>
-            </tr>);
-        })
+                    </td>
+                    <td className="college">Harvard University</td>
+                    <td className="status">Declined</td>
+                </tr>
+            )
+        }
+        return list;
     }
 
     show_high_school_modal(){
