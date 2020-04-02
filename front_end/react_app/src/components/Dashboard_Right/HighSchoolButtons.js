@@ -31,20 +31,20 @@ class HighSchoolButtons extends React.Component{
 
     render() {
         this.sanitized_list();
-        let {location} = this.props.data;
+        let {location, math_prof, name, reading_prof, ap_enroll, avg_act, avg_sat, dissimilarity, grad_rate} = this.props.data;
 
         return (
             <React.Fragment>
-                <button onClick={this.clicked} className="list-group-item list-group-item-action similar-applicant-name">{"Test"}</button>
+                <button onClick={this.clicked} className="list-group-item list-group-item-action similar-applicant-name">{name}</button>
                   <div style={{display: this.state.display}} className="similar-applicant-info item-info">
                     <ul>
-                      <li>{`Location: ${"Test"}`}</li>
-                      <li>{`Average graduation rate: ${"Test"}%`}</li>
-                      <li>{`Average SAT: ${"Test"}`}</li>
-                      <li> {`Average ACT: ${"Test"}`}</li>
-                      <li>{`AP enrollment: ${"Test"}%`}</li>
-                      <li>{`Percent proficient - Reading: ${"Test"}%`}</li>
-                      <li>{`Percent proficient - Math: ${"Test"}%`}</li>
+                      <li>{`Location: ${location}`}</li>
+                      <li>{`Average graduation rate: ${grad_rate}%`}</li>
+                      <li>{`Average SAT: ${avg_sat}`}</li>
+                      <li> {`Average ACT: ${avg_act}`}</li>
+                      <li>{`AP enrollment: ${ap_enroll}%`}</li>
+                      <li>{`Percent proficient - Reading: ${reading_prof}%`}</li>
+                      <li>{`Percent proficient - Math: ${math_prof}%`}</li>
                     </ul>
                   </div>
             </React.Fragment>
