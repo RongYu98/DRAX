@@ -101,11 +101,13 @@ def alive():
 @app.route('/api/get_profile', methods=['POST'])
 def get_profile():
     # Check if logged in
+    username = None
     if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
+    username = session['username']
     # Get student profile
     try:
-        student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+        student = StudentProfile.objects.get(student=Account.objects.get(username=username))
         profile = {
             'residence_state': student.residence_state,
             'high_school_name': student.high_school_name,
@@ -117,7 +119,7 @@ def get_profile():
         grades = student.grades
         for field in grades:
             profile[field] = grades[field]
-        return jsonify(status=200, result="OK", profile=profile)
+        return jsonify(status=200, result="OK", username=username, profile=profile)
     except:
         return jsonify(status=400, result="Get Profile Failed")
 
@@ -872,4 +874,9 @@ def decide_admission_decision():
     return jsonify(status=200, result="OK")
 
 if __name__ == "__main__":
+    profile = StudentProfile.objects.get(student=Account.objects.get(username="test"))
+    profile.high_school_name = "Academic Magnet High School"
+    profile.high_school_city = "North Charleston"
+    profile.high_school_state = "SC"
+    profile.save()
     app.run(host='0.0.0.0', port=9000, debug=True)
