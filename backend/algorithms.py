@@ -225,12 +225,13 @@ def compare_students(s1, s2):
         s2_avg_act = sum(s2_act) / 1.0 / len(s2_act)
         act_num = min(len(s1_act), len(s2_act))
 
+    print(gpa_num, sat_num, act_num)
     gpa_weight, sat_weight, act_weight = None, None, None
-    if gpa_num is None:
+    if gpa_num is not None:
         gpa_weight = ((s1_avg_gpa - s2_avg_gpa) * 100/4.0 * gpa_num / 100)**2
-    if sat_num is None:
+    if sat_num is not None:
         sat_weight = ((s1_avg_sat - s2_avg_sat) * 100/1600. * sat_num / 100)**2
-    if act_num is None:
+    if act_num is not None:
         act_weight = ((s1_avg_act - s2_avg_act) * 100/36. * act_num / 100)**2
 
     print(gpa_weight, sat_weight, act_weight)
