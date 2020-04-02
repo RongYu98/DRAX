@@ -142,7 +142,9 @@ class MyPage extends React.Component{
     
     async componentDidMount() {
         await this.fetch_majors();
+        await this.fetch_admissions();
         await this.fetch_profile();
+        console.log(this.state);
     }
 
     async fetch_majors(){
@@ -224,7 +226,7 @@ class MyPage extends React.Component{
                 }
             );
             if(response.status !== 200) throw new Error(response.statusText);
-            let response_json = response.json();
+            let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.result);
         }catch (err) {
            console.log(err.stack);
