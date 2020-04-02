@@ -50,9 +50,10 @@ class MyPage extends React.Component{
                 password: ""
             },
             majors_list: [],
-            admission_decisions: []
+            admission_decisions: [],
+            current_page_num: 1
         }
-
+        this.button_list = [];
         this.show_high_school_modal = this.show_high_school_modal.bind(this);
         this.fetch_similar_high_schools = this.fetch_similar_high_schools.bind(this);
         this.fetch_profile = this.fetch_profile.bind(this);
@@ -62,6 +63,8 @@ class MyPage extends React.Component{
         this.fetch_majors = this.fetch_majors.bind(this);
         this.get_majors = this.get_majors.bind(this);
         this.fetch_admissions = this.fetch_admissions.bind(this);
+        this.get_page_buttons = this.get_page_buttons.bind(this);
+        this.is_whole_number = this.is_whole_number.bind(this);
     }
 
     show_high_school_modal(){
@@ -234,8 +237,79 @@ class MyPage extends React.Component{
         }
     }
 
+    get_page_buttons(){
+        let page_list = [];
+        let new_button_list = [];
+        let max_pages = this.state.admission_decisions.length / 10;
+        if(!this.is_whole_number(max_pages)) {
+            max_pages = Math.floor(max_pages) + 1;
+        }
+        let next_ten_pages = this.state.current_page_num + 9;
+        let old_beginning = this.button_list[0];
+        let old_end = this.button_list[this.button_list.length - 1];
+        if(this.state.admission_decisions.length <= 10) {
+            max_pages = 1;
+        }
+
+        if(this.state.current_page_num === 1){
+            for(let i = 1 ; i <= max_pages && i <= next_ten_pages; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if(this.state.current_page_num === old_end && !(this.button_list.length < 10) && (this.state.current_page_num !== max_pages)){
+            for(let i = old_end; i <= max_pages && i <= next_ten_pages; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if(this.state.current_page_num === old_beginning){
+            let previous_ten = this.state.current_page_num - 9;
+            if(previous_ten < 1) previous_ten = 1;
+            for(let i = previous_ten ; i <= max_pages && i <= old_beginning; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if((this.button_list.includes(this.state.current_page_num)) || (this.button_list.length < 10)){
+            for(let i = old_beginning ; i <= old_end; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }
+        if(this.state.admission_decisions.length === 0){
+            this.button_list = [];
+            return [];
+        }
+        this.button_list = new_button_list;
+        return page_list;
+    }
+
+    is_whole_number(n) {
+        let result = (n - Math.floor(n)) !== 0;
+
+        if (result)
+            return false;
+        else
+            return true;
+    }
+
     render() {
         let majors = this.get_majors();
+        let page_buttons = this.get_page_buttons()
         return (
             <React.Fragment>
                 <div className="right-content overflow-hidden">
@@ -776,15 +850,7 @@ class MyPage extends React.Component{
                                 <ul className="pagination" id="pagination">
                                     {/* "active" class below means the current active page button  */}
                                     {/* first page button must be active in default after completing search */}
-                                    <li className="page-item">
-                                        <button className="page-link shadow-none active">1</button>
-                                    </li>
-                                    <li className="page-item">
-                                        <button className="page-link shadow-none">2</button>
-                                    </li>
-                                    <li className="page-item">
-                                        <button className="page-link shadow-none">3</button>
-                                    </li>
+                                    {page_buttons}
                                 </ul>
                             </nav>
                         </div>
