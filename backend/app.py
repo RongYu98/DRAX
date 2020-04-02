@@ -135,7 +135,7 @@ def save_profile():
         # Get student profile
         student = StudentProfile.objects.get(student=account)
     except:
-        return jsonify(status=400, result="Save Failed")
+        return jsonify(status=400, result="Profile Not Found")
     info = request.json
     if info is None:
         info = request.form
@@ -148,7 +148,7 @@ def save_profile():
             digest = hash_utils.hmac_hash(info["password"], account.salt)
             account.update(set__hashed_password=digest)
         elif field == 'residence_state':
-            student.update(set__residence_state=info["residence_state"])
+            residence_state = info["residence_state"]
         elif field == 'high_school_name':
             name = info["high_school_name"]
         elif field == 'high_school_city':
@@ -156,18 +156,24 @@ def save_profile():
         elif field == 'high_school_state':
             state = info["high_school_state"]
         elif field == 'gpa':
-            student.update(set__gpa=info["gpa"])
+            gpa = info["gpa"]
         else:
             grades[field] = info[field]
-    student.update(set__grades=grades)
     if (name not in {None, ""} and
         city not in {None, ""} and
         state not in {None, ""} and
         highschool_exists(name, city, state)):
-        student.update(set__high_school_name=name)
-        student.update(set__high_school_city=city)
-        student.update(set__high_school_state=state)
-    return jsonify(status=200, result="OK")
+        try:
+            student.update(set__residence_state=residence_state,
+                            set__gpa=gpa,
+                            set__high_school_name=name,
+                            set__high_school_city=city,
+                            set__high_school_state=state,
+                            set__grades=grades)
+            return jsonify(status=200, result="OK")
+        except:
+            return jsonify(status=400, result="Save Failed")
+    return jsonify(status=400, result="High School Not Found")
 
 
 @app.route('/api/get_admission_decision', methods=['POST'])
