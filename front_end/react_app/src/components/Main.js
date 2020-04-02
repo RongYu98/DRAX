@@ -2,14 +2,14 @@ import React from "react";
 import Logo from '../gui/img/logo.png';
 import College from '../gui/img/college.png';
 import Application from '../gui/img/application.png';
-import MyPage from '../gui/img/mypage.png';
+import PageImage from '../gui/img/mypage.png';
 import Logout from '../gui/img/logout.png';
 import SearchCollege from "./Dashboard_Right/SearchCollege";
 import Authenticator from "../common/Authenticator";
 import Track from "./Dashboard_Right/Track";
 import {BrowserRouter, Route, Switch, Redirect, Link} from "react-router-dom";
-import style from '../gui/css/center.module.css';
 import {NotFound} from "./NotFound";
+import MyPage from "./Dashboard_Right/MyPage";
 
 class Main extends React.Component{
     static tab_enum =  {
@@ -73,7 +73,7 @@ class Main extends React.Component{
                         </button>
                         <button chosen={`${(this.state.current_tab === Main.tab_enum.MY_PAGE)}`}
                                 onClick={() => this.tab_button_clicked(Main.tab_enum.MY_PAGE)} >
-                            <div className="wrap-icon"><img src={MyPage} alt="mypage"/></div>
+                            <div className="wrap-icon"><img src={PageImage} alt="mypage"/></div>
                             <div>My Page</div>
                         </button>
                         <button onClick={this.logout_clicked} >
@@ -85,7 +85,7 @@ class Main extends React.Component{
                 <Switch>
                     <Route path='/main/search'  component={SearchCollege} />
                     <Route path='/main/track/'  render={props => <Track {...props} update_active_tab={this.update_active_tab}/> } />
-                    <Route path='/main/my_page/' render={props => <h1 className={style.center_container}>Yet to be implemented</h1>} />
+                    <Route path='/main/my_page/' component={MyPage} />
                     <Route  component={NotFound}/>
                 </Switch>
 

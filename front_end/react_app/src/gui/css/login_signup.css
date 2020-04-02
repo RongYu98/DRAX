@@ -52,7 +52,7 @@ input[name="password"], input[name="username"]{
     height: 100%;
     width: 100%;
     position: fixed;
-    background-size: cover;    
+    background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

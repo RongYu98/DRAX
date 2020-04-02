@@ -51,26 +51,26 @@ class ProfileButtons extends React.Component{
                       <li>{`College class: ${college_class}`}</li>
                       <li>{`Residence state: ${residence_state}`}</li>
                       <li>{`High School: ${high_school_name}, ${high_school_city}, ${high_school_state}`}</li>
-                      <li> {`Major 1: Theology Religious Vocation`}</li>
-                      <li>{`Major 2: ${"-"}`}</li>
-                      <li>{`APs Passed: ${"-"}`}</li>
+                      <li> {`Major 1: ${major_1}`}</li>
+                      <li>{`Major 2: ${major_2}`}</li>
+                      <li>{`APs Passed: ${ap_passed}`}</li>
                       <li>{`GPA: ${3.8}`}</li>
                       <li>{`SAT Math: ${sat_math}`}</li>
                       <li>{`SAT EBRW: ${sat_ebrw}`}</li>
-                      <li>{`ACT Composite: ${"-"}`}</li>
-                      <li>{`ACT English: ${"-"}`}</li>
-                      <li>{`ACT Math: ${"-"}`}</li>
-                      <li>{`ACT Reading: ${"-"}`}</li>
-                      <li>{`ACT Science: ${"-"}`}</li>
-                      <li>{`SAT2 Chemistry: ${"-"}`}</li>
-                      <li>{`SAT2 Eco-Bio: ${"-"}`}</li>
-                      <li>{`SAT2 Literature: ${"-"}`}</li>
-                      <li>{`SAT2 Math I: ${"-"}`}</li>
-                      <li>{`SAT2 Math II: ${"-"}`}</li>
-                      <li>{`SAT2 Mol-Bio: ${"-"}`}</li>
-                      <li>{`SAT2 Physics: ${"-"}`}</li>
-                      <li>{`SAT2 US History: ${"-"}`}</li>
-                      <li>{`SAT2 World History: ${"-"}`}</li>
+                      <li>{`ACT Composite: ${act_composite}`}</li>
+                      <li>{`ACT English: ${act_english}`}</li>
+                      <li>{`ACT Math: ${act_math}`}</li>
+                      <li>{`ACT Reading: ${act_reading}`}</li>
+                      <li>{`ACT Science: ${act_science}`}</li>
+                      <li>{`SAT2 Chemistry: ${sat_chem}`}</li>
+                      <li>{`SAT2 Eco-Bio: ${sat_eco_bio}`}</li>
+                      <li>{`SAT2 Literature: ${sat_lit}`}</li>
+                      <li>{`SAT2 Math I: ${sat_math_1}`}</li>
+                      <li>{`SAT2 Math II: ${sat_math_2}`}</li>
+                      <li>{`SAT2 Mol-Bio: ${sat_mol_bio}`}</li>
+                      <li>{`SAT2 Physics: ${sat_physics}`}</li>
+                      <li>{`SAT2 US History: ${sat_us}`}</li>
+                      <li>{`SAT2 World History: ${sat_world}`}</li>
                     </ul>
                   </div>
             </React.Fragment>
