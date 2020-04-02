@@ -8,6 +8,7 @@ import FindSimilarHighSchoolsModal from "./FindSimilarHighSchoolsModal";
 import {SERVER_URL} from "../../common/Constants";
 
 const SIMILAR_HIGH_SCHOOLS_ENDPOINT = "/find_similar_highschools";
+const GET_PROFILE_ENDPOINT = "/get_profile";
 
 class MyPage extends React.Component{
 
@@ -15,11 +16,41 @@ class MyPage extends React.Component{
         super(props);
         this.state={
             show_high_school_modal: false,
-            current_modal_high_schools: []
+            current_modal_high_schools: [],
+            profile: {
+                username: "-",
+                residence_state: "-",
+                high_school_name: "-",
+                high_school_city: "-",
+                high_school_state: "-",
+                gpa: "-",
+                college_class: "",
+                major_1: "-",
+                major_2: "-",
+                sat_math: "-",
+                sat_ebrw: "-",
+                act_english: "-",
+                act_math: "-",
+                act_reading: "-",
+                act_science: "-",
+                act_composite: "-",
+                sat_lit: "-",
+                sat_us: "-",
+                sat_world: "-",
+                sat_math_1: "-",
+                sat_math_2: "-",
+                sat_eco_bio: "-",
+                sat_mol_bio: "-",
+                sat_chem: "-",
+                sat_physics: "-",
+                ap_passed: "-",
+                password: ""
+            }
         }
 
         this.show_high_school_modal = this.show_high_school_modal.bind(this);
         this.fetch_similar_high_schools = this.fetch_similar_high_schools.bind(this);
+        this.fetch_profile = this.fetch_profile.bind(this);
     }
 
     show_high_school_modal(){
@@ -51,13 +82,33 @@ class MyPage extends React.Component{
             throw new Error(err.message);
         }
     }
+
+    async fetch_profile(){
+        try{
+            let response = await fetch(
+                SERVER_URL + GET_PROFILE_ENDPOINT,
+                {
+                    method: "POST",
+                    credentials: 'include',
+                    headers:{
+                        "Accept": "application/json"
+                    }
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            for (let key in response_json.profile) {
+                response_json.profile[key] = (response_json.profile[key] == null) ? "-" : response_json.profile[key];
+            }
+            this.setState({profile: {...this.state.profile, ...response_json.profile}});
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
+    }
     
     async componentDidMount() {
-        try{
-            
-        }catch (err) {
-            
-        }
+        await this.fetch_profile();
     }
 
 
@@ -80,11 +131,13 @@ class MyPage extends React.Component{
                                         <td rowSpan={2} className="wrap-student-icon"><img className="student-icon"
                                                                                            src={StudentImg}/></td>
                                         {/* put student's username inside b tag below */}
-                                        <td className="profile-username"><h5><b>DRAX</b></h5></td>
+                                        <td className="profile-username"><h5><b>{this.state.profile.username}</b></h5></td>
                                     </tr>
                                     <tr>
                                         <td className="flex"><b>Class of</b><input type="number" placeholder="< 2027"
                                                                                    className="form-control shadow-none profile-number-input"
+                                                                                   value={this.state.profile.college_class}
+                                                                                   onChange={(event)=>{this.setState({profile: {...this.state.profile, college_class: event.target.value}})}}
                                                                                    id="profile-college-class"
                                                                                    max={2027}/></td>
                                     </tr>
@@ -96,7 +149,10 @@ class MyPage extends React.Component{
                                     <tr style={{marginBottom: '10px'}}>
                                         <td><b>Residence state</b></td>
                                         <td>
-                                            <select id="profile-residence-state">
+                                            <select id="profile-residence-state"
+                                                    value={this.state.profile.residence_state}
+                                                    onChange={event => {this.setState({profile: {...this.state.profile, residence_state: event.target.value}})}}
+                                            >
                                                 {/* - means no choice */}
                                                 <option value="-">-</option>
                                                 <option value="AL">AL</option>
