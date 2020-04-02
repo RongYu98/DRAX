@@ -100,6 +100,7 @@ class MyPage extends React.Component{
             for (let key in response_json.profile) {
                 response_json.profile[key] = (response_json.profile[key] == null) ? "-" : response_json.profile[key];
             }
+            response_json.profile.username = response_json.username;
             this.setState({profile: {...this.state.profile, ...response_json.profile}});
         }catch (err) {
             console.log(err.stack);
