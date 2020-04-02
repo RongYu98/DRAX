@@ -62,11 +62,11 @@ class Application(Document):
     student = ReferenceField(StudentProfile, required=True,
                              reverse_delete_rule=CASCADE)
     # unique with cannot work with reference fields
-    college = ReferenceField(College, required=True)
+    college = ReferenceField(College, required=True,
+                             reverse_delete_rule=CASCADE)
     status = StringField(choices=('Pending', 'Accepted', 'Denied', 'Deferred',
                                   'Wait-listed', 'Withdrawn'), required=True)
-    application_id = StringField()  # not sure if this is needed.
-    is_verified = BooleanField()  # make this required later?
+    verification = StringField(choices=('Approved', 'Pending', 'Denied'), required=True)
 
 
 class HighSchool(Document):

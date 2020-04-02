@@ -182,7 +182,7 @@ def get_admission_decision():
             admission = {
                 'college': application.college.name,
                 'status': application.status,
-                'is_verified': application.is_verified,
+                'verification': application.verification,
                 }
             admission_decisions.append(admission)
         return jsonify(status=200, result="OK", admission_decisions=admission_decisions)
@@ -211,12 +211,19 @@ def submit_admission_decision():
                 return jsonify(status=400, result="College Not Found")
             try:
                 application = Application.objects.get(Q(student=student) & Q(college=college))
+                verification = "Approved"
+                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
+                    verification = "Pending"
                 application.update(set__status=status)
-                return jsonify(status=200, result="OK")
+                application.update(set__verification=verification)
+                return jsonify(status=200, result="OK", verification=verification)
             except:
                 ID = hash_utils.sha_hash(username+"+=+"+college_name)
-                Application(ID=ID, student=student, college=college, status=status).save()
-                return jsonify(status=200, result="OK")
+                verification = "Approved"
+                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
+                    verification = "Pending"
+                Application(ID=ID, student=student, college=college, status=status, verification=verification).save()
+                return jsonify(status=200, result="OK", verification=verification)
         except:
             return jsonify(status=400, result="Submission Failed")
     return jsonify(status=400, result="Missing Fields")
@@ -332,7 +339,6 @@ def track_applications_list():
 
         def get_status(p):
             return p['application_status']
-
 
         profiles.sort(key=get_status)
         return jsonify(status=200, result="OK", profiles=profiles, summary=summary)
@@ -714,6 +720,54 @@ def get_similar_profiles():
     return jsonify(status=400, result="Missing Fields")
 
 
+@app.route('/api/find_similar_highschools')
+def find_similar_highschools():
+    # OUTPUT: This API should return the list of similar high schools with their info.
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
+    student = StudentProfile.objects.get(student=Account.objects.get(username=session['username']))
+    if (student.high_school_name is None or
+        student.high_school_city is None or
+        student.high_school_state is None):
+        return jsonify(status=400, result="Profile High School Data Not Present!")
+    try:
+        hs = HighSchool.objects.get(name=student.high_school_name,
+                                    city=student.high_school_city,
+                                    state=student.high_school_state)
+    except Exception as e:
+        print(e)
+        # this should not happen, because app confirms data being present
+        # first before assigning values. But just in case.
+        return jsonify(status=400, result="High School Data Not Present")
+
+    hs_students = StudentProfile.objects(high_school_name=student.high_school_name,
+                                         high_school_city=student.high_school_city,
+                                         high_school_state=student.high_school_state)
+    sorting = []  # a list of lists, each containing a score and HS
+    for h in HighSchool.objects:
+        # if h == hs:  # do we mind sending the high school as well?
+        #     continue
+        h_students = StudentProfile.objects(high_school_name=h.name,
+                                            high_school_city=h.city,
+                                            high_school_state=h.state)
+        score = algorithms.compare_highschool(hs, h, hs_students, h_students)
+        sorting.append([score, h])
+    sorting.sort(key=lambda x: x[0])  # by the first element
+    response = []
+    print("SCORES")
+    for s in sorting[:]:  # to what length?
+        print(s[0])  # the score
+        data = {'name': s[1].name,  # 'city': s[1].city,
+                'location': s[1].city+', '+s[1].state,  # 'state': s[1].state,
+                'reading_prof': s[1].reading_prof,
+                'math_prof': s[1].math_prof, 'grad_rate': s[1].grad_rate,
+                'avg_sat': s[1].avg_sat, 'avg_act': s[1].avg_act,
+                'ap_enroll': s[1].ap_enroll, 'dissimilarity': s[0]}
+        response.append(data)
+        # response.append(s[1].name)
+    return jsonify(status=200, data=response)
+
+
 @app.route('/api/all_majors')
 def get_majors():
     import script  # we may hardcode the list, so this will change...
@@ -761,11 +815,60 @@ def import_student_profile_applications():
     return jsonify(status=200, result="OK")
 
 
-@app.route('/delete_all_students')
+@app.route('/api/delete_all_students')
 def delete_all_students():
     if 'username' not in session or session['username'] != "admin":
         return jsonify(status=400, result="Invalid User")
     scraper.delete_student_data()
+    return jsonify(status=200, result="OK")
+
+
+@app.route('/api/get_questionable_decisions')
+def get_questionable_decisions():
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Invalid User")
+    apps = Application.objects(verification='Pending')
+    # apps = Application.objects(status='Pending')
+    data = []
+    for app in apps:
+        profile = app.student
+        s_data = {"name":profile.student.username}
+        s_data.update(profile.grades)
+        coll = app.college
+        c_data = dict(coll.to_mongo())
+        del c_data['_id']
+        del c_data['majors']
+        # print(c_data)
+        d = {'student':s_data, 'college':c_data}
+        data.append(d)
+    return jsonify(status=200, result=data)
+
+
+@app.route('/api/decide_admission_decision', methods=['POST'])
+def decide_admission_decision():
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Invalid User")
+    info = request.json
+    if info is None:
+        info = request.form
+    if 'student_name' not in info:
+        return jsonify(status=400, result="Missing Student Name")
+    if 'college_name' not in info:
+        return jsonify(status=400, result="Missing College Name")
+    if 'status' not in info:
+        return jsonify(status=400, result="Missing Response")
+    if info['status'] != 'Approved' and info['status'] != 'Denied':
+        return jsonify(status=400, result="Unknown Response")
+    prof = StudentProfile.objects.get(student=Account.objects.get(username=info['student_name']))
+    coll = College.objects.get(name=info['college_name'])
+    try:
+        appl = Application.objects.get(student=prof, college=coll)
+    except Exception as e:
+        print(e)
+        return jsonify(status=400, result="Application Does Not Exist")
+    if appl.verification != 'Pending':
+        return jsonify(status=400, result="Application already decided")
+    appl.update(set__verification=info['status'])
     return jsonify(status=200, result="OK")
 
 if __name__ == "__main__":
