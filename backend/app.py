@@ -160,15 +160,28 @@ def save_profile():
         else:
             grades[field] = info[field]
     if (name not in {None, ""} and
-        city not in {None, ""} and
-        state not in {None, ""} and
-        highschool_exists(name, city, state)):
+            city not in {None, ""} and
+            state not in {None, ""} and
+            highschool_exists(name, city, state)):
         try:
             student.update(set__residence_state=residence_state,
                             set__gpa=gpa,
                             set__high_school_name=name,
                             set__high_school_city=city,
                             set__high_school_state=state,
+                            set__grades=grades)
+            return jsonify(status=200, result="OK")
+        except:
+            return jsonify(status=400, result="Save Failed")
+    elif (name in {None, ""} and
+            city in {None, ""} and
+            state in {None, ""}):
+        try:
+            student.update(set__residence_state=residence_state,
+                            set__gpa=gpa,
+                            set__high_school_name=None,
+                            set__high_school_city=None,
+                            set__high_school_state=None,
                             set__grades=grades)
             return jsonify(status=200, result="OK")
         except:
