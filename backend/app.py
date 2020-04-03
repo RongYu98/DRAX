@@ -236,7 +236,7 @@ def submit_admission_decision():
             except:
                 print("Application Not Found")
             verification = "Approved"
-            if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
+            if status == "Accepted" and algorithms.detect_questionable_acceptance(college, student) < 50:
                 verification = "Pending"
             if application is not None:
                 application.update(set__status=status)
