@@ -157,12 +157,28 @@ def compute_recommendation_score(college, student):
 
 def compare_highschool_grades(h1, h2):
     # function compares the students according for high school similarity algo
-    diff = (h1.reading_prof - h2.reading_prof)**2
-    diff += (h1.math_prof - h2.math_prof)**2
-    diff += (h1.grad_rate - h2.grad_rate)**2
-    diff += (h1.ap_enroll - h2.ap_enroll)**2
-    diff += ((h1.avg_sat - h2.avg_sat)*100/1600.)**2
-    diff += ((h1.avg_act - h2.avg_act)*100/36)**2
+    data = 6
+    diff = 0
+    if (h1.reading_prof is not None and h2.reading_prof is not None):
+        diff = (h1.reading_prof - h2.reading_prof)**2
+        data -= 1
+    if (h1.math_prof is not None and h2.math_prof is not None):
+        diff += (h1.math_prof - h2.math_prof)**2
+        data -= 1
+    if (h1.grad_rate is not None and h2.grad_rate is not None):
+        diff += (h1.grad_rate - h2.grad_rate)**2
+        data -=	1
+    if (h1.ap_enroll is not None and h2.ap_enroll is not None):
+        diff += (h1.ap_enroll - h2.ap_enroll)**2
+        data -=	1
+    if (h1.avg_sat is not None and h2.avg_sat is not None):
+        diff += ((h1.avg_sat - h2.avg_sat)*100/1600.)**2
+        data -=	1
+    if (h1.avg_act is not None and h2.avg_act is not None):
+        diff += ((h1.avg_act - h2.avg_act)*100/36)**2
+        data -=	1
+    if data > 0:
+        diff = diff / ((6.0-data)/6.0) if data != 6 else None
     return diff
 
 
@@ -251,8 +267,12 @@ def compare_highschool(h1, h2, s1, s2):
     if student_dissimilarity is None:
         student_dissimilarity = 0
         number_student_data = 0  # don't use the data
+        if hs_dissimilarity is None:
+            return None
 
     hs_data_rate = 1 - min(0.35, number_student_data/100.0)
+    if hs_dissimilarity is None:
+        return student_dissimilarity # no high schools, so just take this
     score = (hs_dissimilarity*hs_data_rate +
              (1-hs_data_rate)*student_dissimilarity)
     return score
