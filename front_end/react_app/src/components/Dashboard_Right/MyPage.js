@@ -47,7 +47,7 @@ class MyPage extends React.Component{
                 sat_mol_bio: "",
                 sat_chem: "",
                 sat_physics: "",
-                ap_passed: 0,
+                ap_passed: '',
                 password: ""
             },
             admission_input_data: {
@@ -60,8 +60,6 @@ class MyPage extends React.Component{
             mounted: false
         }
         this.button_list = [];
-        this.old_admission_input_data = JSON.parse(JSON.stringify(this.state.admission_input_data));
-        this.filter_admission_list = [];
         this.show_high_school_modal = this.show_high_school_modal.bind(this);
         this.fetch_similar_high_schools = this.fetch_similar_high_schools.bind(this);
         this.fetch_profile = this.fetch_profile.bind(this);
@@ -81,16 +79,15 @@ class MyPage extends React.Component{
 
     get_admission_decisions(){
         if(this.state.admission_decisions.length === 0){
-            return (<tr><td>No result found</td></tr>);
+            return null;
         }
 
-        let filtered_list = this.filter_acceptances();
         let list = [];
         let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
         let end_index = beginning + 10;
 
-        for(let i = beginning; (i < filtered_list.length) && (i < end_index); i++){
-            let admission = filtered_list[i];
+        for(let i = beginning; (i < this.state.admission_decisions.length) && (i < end_index); i++){
+            let admission = this.state.admission_decisions[i];
             let image = null;
             if(admission.status === "Accepted"){
                 image = ConfirmImg;
@@ -290,14 +287,14 @@ class MyPage extends React.Component{
     get_page_buttons(){
         let page_list = [];
         let new_button_list = [];
-        let max_pages = this.filter_admission_list.length / 10;
+        let max_pages = this.state.admission_decisions.length / 10;
         if(!this.is_whole_number(max_pages)) {
             max_pages = Math.floor(max_pages) + 1;
         }
         let next_ten_pages = this.state.current_page_num + 9;
         let old_beginning = this.button_list[0];
         let old_end = this.button_list[this.button_list.length - 1];
-        if(this.filter_admission_list.length <= 10) {
+        if(this.state.admission_decisions.length <= 10) {
             max_pages = 1;
         }
 
@@ -340,7 +337,7 @@ class MyPage extends React.Component{
                 )
             }
         }
-        if(this.filter_admission_list.length === 0){
+        if(this.state.admission_decisions.length === 0){
             this.button_list = [];
             return [];
         }
@@ -369,18 +366,17 @@ class MyPage extends React.Component{
 
     filter_acceptances(){
         let acceptances = this.state.admission_decisions;
-        if(this.old_admission_input_data.college_name !== "-"){
+        if(this.admission_decisions.college_name !== "-"){
             acceptances = acceptances.filter((element)=>{
-               return(element.college === this.old_admission_input_data.college_name)
+               return(element.college === this.admission_decisions.college_name)
             });
         }
 
-        if(this.old_admission_input_data.status !== "-"){
+        if(this.admission_decisions.status !== "-"){
             acceptances = acceptances.filter((element)=>{
-               return(element.status.toLowerCase().includes(this.old_admission_input_data.status.toLowerCase()));
+               return(element.status.toLowerCase().includes(this.admission_decisions.status.toLowerCase()));
             });
         }
-        this.filter_admission_list = JSON.parse(JSON.stringify(acceptances));
         return acceptances;
     }
 
@@ -882,8 +878,7 @@ class MyPage extends React.Component{
                                             <button type="button" id="register-btn"
                                                     className="btn btn-primary shadow-none"
                                                     onClick={(event)=>{
-                                                        this.old_admission_input_data = JSON.parse(JSON.stringify(this.state.admission_input_data));
-                                                        this.forceUpdate();
+                                                        console.log("dummy");
                                                     }}
                                             >Submit
                                             </button>
