@@ -789,7 +789,7 @@ def find_similar_highschools():
                 'ap_enroll': s[1].ap_enroll, 'dissimilarity': s[0]}
         response.append(data)
         # response.append(s[1].name)
-    return jsonify(status=200, data=response)
+    return jsonify(status=200, data=response, school=student.high_school_name)
 
 
 @app.route('/api/all_majors')
