@@ -13,6 +13,8 @@ const GET_PROFILE_ENDPOINT = "/get_profile";
 const SAVE_PROFILE_ENDPOINT = "/save_profile";
 const MAJOR_ENDPOINT = "/all_majors";
 const ADMISSION_DECISION_ENDPOINT = "/get_admission_decision";
+const RECOMMENDED_COLLEGE_ENDPOINT = "/get_college_list";
+const SUBMIT_COLLEGE_DECISION = "/submit_admission_decision";
 
 class MyPage extends React.Component{
 
@@ -24,8 +26,8 @@ class MyPage extends React.Component{
             profile: {
                 username: "-",
                 residence_state: "-",
-                high_school_name: "-",
-                high_school_city: "-",
+                high_school_name: "",
+                high_school_city: "",
                 high_school_state: "-",
                 gpa: "",
                 college_class: "",
@@ -57,7 +59,8 @@ class MyPage extends React.Component{
             majors_list: [],
             admission_decisions: [],
             current_page_num: 1,
-            mounted: false
+            mounted: false,
+            colleges: []
         }
         this.button_list = [];
         this.show_high_school_modal = this.show_high_school_modal.bind(this);
@@ -74,6 +77,8 @@ class MyPage extends React.Component{
         this.get_admission_decisions = this.get_admission_decisions.bind(this);
         this.get_admission_colleges = this.get_admission_colleges.bind(this);
         this.filter_acceptances = this.filter_acceptances.bind(this);
+        this.fetch_colleges = this.fetch_colleges.bind(this);
+        this.on_submit = this.on_submit.bind(this);
     }
 
 
@@ -158,7 +163,7 @@ class MyPage extends React.Component{
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
             for (let key in response_json.profile) {
-                response_json.profile[key] = (response_json.profile[key] == null) ? "-" : response_json.profile[key];
+                response_json.profile[key] = (response_json.profile[key] == null) ? "" : response_json.profile[key];
             }
             response_json.profile.username = response_json.username;
             this.setState({mounted: true, profile: {...this.state.profile, ...response_json.profile}});
@@ -192,6 +197,7 @@ class MyPage extends React.Component{
     async componentDidMount() {
         await this.fetch_majors();
         await this.fetch_admissions();
+        await this.fetch_colleges();
         await this.fetch_profile();
     }
 
@@ -354,10 +360,50 @@ class MyPage extends React.Component{
             return true;
     }
 
+    async fetch_colleges(){
+        try{
+            let filter_data = {
+                name: null,
+                admission_rate: {min: null, max: null},
+                location: null,
+                sat_ebrw: {min: null, max: null},
+                max_ranking: null,
+                size: null,
+                sat_math: {min: null, max: null},
+                major: {left: null, right: null},
+                max_tuition: null,
+                act: {min: null, max: null},
+                policy: "strict",
+                sort: SearchCollege.sort_enum.NAME
+            };
+            let response = await fetch(
+                SERVER_URL + RECOMMENDED_COLLEGE_ENDPOINT,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(filter_data)
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            let result = response_json.colleges.map((element)=>{
+                return element.name;
+            });
+            this.state.colleges = result;
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
+    }
+
     get_admission_colleges(){
-        let colleges = this.state.admission_decisions.map((element)=>{
+        let colleges = this.state.colleges.map((element)=>{
              return(
-                <option key={element.college} value={element.college}>{element.college}</option>
+                <option key={element} value={element}>{element}</option>
              );
         });
 
@@ -378,6 +424,33 @@ class MyPage extends React.Component{
             });
         }
         return acceptances;
+    }
+
+    async on_submit(event){
+        try{
+            let body = this.state.admission_input_data;
+            console.log(body);
+            let response = await fetch(
+                SERVER_URL + SUBMIT_COLLEGE_DECISION,
+                {
+                    method: "POST",
+                    credentials : "include",
+                    headers:{
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: body
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
+            await this.fetch_admissions();
+            this.forceUpdate();
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
     }
 
     render() {
@@ -877,9 +950,7 @@ class MyPage extends React.Component{
                                         <td rowSpan={2}>
                                             <button type="button" id="register-btn"
                                                     className="btn btn-primary shadow-none"
-                                                    onClick={(event)=>{
-                                                        console.log("dummy");
-                                                    }}
+                                                    onClick={this.on_submit}
                                             >Submit
                                             </button>
                                         </td>
