@@ -60,7 +60,8 @@ class MyPage extends React.Component{
             admission_decisions: [],
             current_page_num: 1,
             mounted: false,
-            colleges: []
+            colleges: [],
+            find_high_school_disable: false
         }
         this.button_list = [];
         this.show_high_school_modal = this.show_high_school_modal.bind(this);
@@ -572,6 +573,7 @@ class MyPage extends React.Component{
                                                    id="profile-high-scool-name" placeholder="Name" minLength={11}
                                                    value={this.state.profile.high_school_name}
                                                    onChange={(event)=>{
+                                                        this.state.find_high_school_disable = true;
                                                        this.setState({profile: {...this.state.profile, high_school_name: event.target.value}})
                                                    }}
                                         /></td>
@@ -652,6 +654,7 @@ class MyPage extends React.Component{
                                             <button type="button" id="find-similar-high-schools-btn"
                                                     className="btn btn-danger shadow-none" data-toggle="modal"
                                                     data-target="#find-similar-high-schools-modal"
+                                                    disabled={this.state.find_high_school_disable}
                                                     onClick={this.show_high_school_modal}
                                             >Find similar high schools
                                             </button>
