@@ -442,7 +442,7 @@ class MyPage extends React.Component{
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: body
+                    body: JSON.stringify(body)
                 }
             );
             if(response.status !== 200) throw new Error(response.statusText);

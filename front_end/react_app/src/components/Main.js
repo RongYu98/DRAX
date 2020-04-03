@@ -4,12 +4,12 @@ import College from '../gui/img/college.png';
 import Application from '../gui/img/application.png';
 import PageImage from '../gui/img/mypage.png';
 import Logout from '../gui/img/logout.png';
-import SearchCollege from "./Dashboard_Right/SearchCollege";
+import SearchCollege from "./Main_Dashboards/SearchCollege";
 import Authenticator from "../common/Authenticator";
-import Track from "./Dashboard_Right/Track";
+import Track from "./Main_Dashboards/Track";
 import {BrowserRouter, Route, Switch, Redirect, Link} from "react-router-dom";
 import {NotFound} from "./NotFound";
-import MyPage from "./Dashboard_Right/MyPage";
+import MyPage from "./Main_Dashboards/MyPage";
 
 class Main extends React.Component{
     static tab_enum =  {
@@ -84,8 +84,8 @@ class Main extends React.Component{
                 </div>
                 <Switch>
                     <Route path='/main/search'  component={SearchCollege} />
-                    <Route path='/main/track/'  render={props => <Track {...props} update_active_tab={this.update_active_tab}/> } />
-                    <Route path='/main/my_page/' component={MyPage} />
+                    <Route path='/main/track'  render={props => <Track {...props} update_active_tab={this.update_active_tab}/> } />
+                    <Route path='/main/my_page' component={MyPage} />
                     <Route  component={NotFound}/>
                 </Switch>
 
