@@ -311,7 +311,7 @@ def update_highschool_data(name, city, state):
         print(e)
         print("High School Not in DB: "+name)
         c = HighSchool(name=name, city=city, state=state)
-        c.save()
+        # c.save()
     try:
         data = get_highschool_info(name, city, state)
     except Exception as e:
