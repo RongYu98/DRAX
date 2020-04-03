@@ -759,6 +759,8 @@ def find_similar_highschools():
                                             high_school_city=h.city,
                                             high_school_state=h.state)
         score = algorithms.compare_highschool(hs, h, hs_students, h_students)
+        if score is None:
+            continue
         sorting.append([score, h])
     sorting.sort(key=lambda x: x[0])  # by the first element
     response = []
