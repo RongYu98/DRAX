@@ -79,7 +79,7 @@ class MyPage extends React.Component{
         this.get_admission_colleges = this.get_admission_colleges.bind(this);
         this.filter_acceptances = this.filter_acceptances.bind(this);
         this.fetch_colleges = this.fetch_colleges.bind(this);
-        this.on_submit = this.on_submit.bind(this);
+        this.on_admission_submit = this.on_admission_submit.bind(this);
     }
 
 
@@ -427,9 +427,11 @@ class MyPage extends React.Component{
         return acceptances;
     }
 
-    async on_submit(event){
+    async on_admission_submit(event){
         try{
             let body = this.state.admission_input_data;
+            if(body.college_name === "-") throw new Error("choose a college");
+            if(body.status === "-") throw new Error("choose a status");
             console.log(body);
             let response = await fetch(
                 SERVER_URL + SUBMIT_COLLEGE_DECISION,
@@ -953,7 +955,7 @@ class MyPage extends React.Component{
                                         <td rowSpan={2}>
                                             <button type="button" id="register-btn"
                                                     className="btn btn-primary shadow-none"
-                                                    onClick={this.on_submit}
+                                                    onClick={this.on_admission_submit}
                                             >Submit
                                             </button>
                                         </td>
