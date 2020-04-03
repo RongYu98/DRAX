@@ -9,6 +9,7 @@ import {ProtectedRoute} from "../common/ProtectedRoute";
 import {IfAuthenticatedRoute} from "../common/IfAuthenticatedRoute";
 import {NotFound} from "./NotFound";
 import Authenticator from "../common/Authenticator";
+import Admin from "./Admin";
 
 class Root extends React.Component{
     constructor(props) {
@@ -31,7 +32,7 @@ class Root extends React.Component{
                 <BrowserRouter>
                     {/*redirects to /main/search if landed on / */}
                     <Switch>
-                        <Route exact path='/'  component={(props) =>{
+                        <Route exact path='/'  render={(props) =>{
                             return(<Redirect {...props} to={
                                 {
                                     pathname: "/main/search",
@@ -42,7 +43,7 @@ class Root extends React.Component{
                             }/>);
                         }}
                         />
-                        <Route exact path='/main'  component={(props) =>{
+                        <Route exact path='/main'  render={(props) =>{
                             return(<Redirect {...props} to={
                                 {
                                     pathname: "/main/search",
@@ -58,6 +59,7 @@ class Root extends React.Component{
                         <IfAuthenticatedRoute session={this.state.valid_initial_session} path="/signup" component={Signup}/>
                         {/*/main will redirect to login if not authenticated else serve the main content*/}
                         <ProtectedRoute session={this.state.valid_initial_session} path="/main" component={Main}/>
+                        <Route exact path="/admin" component={Admin}/>
                         <Route component={NotFound}/>
                     </Switch>
                 </BrowserRouter>
