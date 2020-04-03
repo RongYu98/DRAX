@@ -95,7 +95,8 @@ def logout():
 def alive():
     if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
-    return jsonify(status=200, result="OK")
+    account = Account.objects.get(username=session['username']).type
+    return jsonify(status=200, result="OK", account=account)
 
 
 @app.route('/api/get_profile', methods=['POST'])
