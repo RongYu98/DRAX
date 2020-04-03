@@ -230,19 +230,20 @@ def submit_admission_decision():
                 college = College.objects.get(name=college_name)
             except:
                 return jsonify(status=400, result="College Not Found")
+            application = None
             try:
                 application = Application.objects.get(Q(student=student) & Q(college=college))
-                verification = "Approved"
-                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
-                    verification = "Pending"
+            except:
+                print("Application Not Found")
+            verification = "Approved"
+            if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
+                verification = "Pending"
+            if application is not None:
                 application.update(set__status=status)
                 application.update(set__verification=verification)
                 return jsonify(status=200, result="OK", verification=verification)
-            except:
+            else:
                 ID = hash_utils.sha_hash(username+"+=+"+college_name)
-                verification = "Approved"
-                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
-                    verification = "Pending"
                 Application(ID=ID, student=student, college=college, status=status, verification=verification).save()
                 return jsonify(status=200, result="OK", verification=verification)
         except:
