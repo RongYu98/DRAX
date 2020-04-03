@@ -78,7 +78,7 @@ def login():
     digest = hash_utils.hmac_hash(password, account.salt)
     if digest == account.hashed_password:
         session['username'] = username
-        return jsonify(status=200, result="OK")
+        return jsonify(status=200, result="OK", account=account.type)
     else:
         return jsonify(status=400, result="Invalid Login")
 
