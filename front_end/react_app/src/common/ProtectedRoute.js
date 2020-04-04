@@ -5,10 +5,7 @@ import authenticator from "./Authenticator";
 export const ProtectedRoute = ({session, path, component: Component, ...rest}) => {
     let authenticated = authenticator.isAuthenticated();
     if(session === null){
-        return (
-            // show blank page until check alive resolves
-            <div/>
-        )
+        return null;
     }
 
     else{

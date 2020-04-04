@@ -3,6 +3,11 @@ import "../gui/css/admin.css";
 import LogoImg from "../gui/img/logo.png";
 import LogoutImg from "../gui/img/logout.png";
 import Authenticator from "../common/Authenticator";
+import {Redirect} from "react-router-dom";
+import {account_enum} from "../common/Authenticator";
+import SearchCollege from "./Main_Dashboards/SearchCollege";
+import Application from "./Main_Dashboards/Application";
+import Reviews from "./Admin_Dashboards/Reviews";
 
 class Admin extends React.Component{
     static admin_tab_enum={
@@ -18,6 +23,7 @@ class Admin extends React.Component{
             current_tab: Admin.admin_tab_enum.SCRAPE_DATA
         }
         this.on_logout = this.on_logout.bind(this);
+        this.get_reviews = this.get_reviews.bind(this);
     }
 
     async on_logout(){
@@ -29,7 +35,113 @@ class Admin extends React.Component{
                 });
     }
 
+    get_reviews(){
+        // if(this.state.not_found){
+        //     return (<h1 style={SearchCollege.not_found_style}>No profiles found</h1>);
+        // }
+        // let applications = [];
+        // let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
+        // let end_index = beginning + 10;
+        // let displayItems = this.state.applications.slice(beginning, end_index);
+        // displayItems.forEach((element, index)=>{
+        //     let {application_status, username, residence_state, high_school_name, high_school_city, high_school_state, gpa, college_class } = element;
+        //     let {major_1, major_2, sat_math, sat_ebrw, act_english, act_math, act_reading, act_science, act_composite, sat_lit, sat_us, sat_world, sat_math_1, sat_math_2, sat_eco_bio, sat_mol_bio, sat_chem, sat_physics, ap_passed} = element;
+        //     applications.push(
+        //         <Application
+        //             key={index}
+        //             btn_info={{
+        //                 username: (username == null) ? "-" : username,
+        //                 acceptance: (application_status == null) ? "-" : application_status,
+        //                 high_school: (high_school_name == null) ? "-" : high_school_name,
+        //                 high_school_location: (high_school_state == null || high_school_city == null) ? "-" : `${high_school_city}, ${high_school_state}`
+        //             }}
+        //             personal={{
+        //                 state: (residence_state == null) ? "-" : residence_state,
+        //                 math: (sat_math == null) ? "-" : sat_math,
+        //                 ap: (ap_passed == null) ? "-" : ap_passed,
+        //                 majors1: (major_1 == null) ? "-" : major_1,
+        //                 class: (college_class == null) ? "-"  : college_class,
+        //                 ebrw: (sat_ebrw == null) ? "-" : sat_ebrw,
+        //                 gpa: (gpa == null) ? "-" : gpa,
+        //                 majors2: (major_2 == null) ? "-" : major_2
+        //             }}
+        //             sat2={{
+        //                 chemistry: (sat_chem == null) ? "-" : sat_chem,
+        //                 eco_bio: (sat_eco_bio == null) ? "-" : sat_eco_bio,
+        //                 literature: (sat_lit == null) ? "-" : sat_lit,
+        //                 mol_bio: (sat_mol_bio == null) ? "-" : sat_mol_bio,
+        //                 math_I: (sat_math_1 == null) ? "-" : sat_math_1,
+        //                 math_II: (sat_math_2 == null) ? "-" : sat_math_2,
+        //                 physics: (sat_physics == null) ? "-" : sat_physics,
+        //                 us_history: (sat_us == null) ? "-" : sat_us,
+        //                 world_history: (sat_world == null) ? "-" : sat_world
+        //             }}
+        //             act={{
+        //                 english: (act_english == null) ? "-" : act_english,
+        //                 math: (act_math == null) ? "-" : act_math,
+        //                 reading: (act_reading == null) ? "-" : act_reading,
+        //                 science: (act_science == null) ? "-" : act_science,
+        //                 composite: (act_composite == null) ? "-" : act_composite
+        //             }}
+        //         />
+        //     );
+        // });
+        return (
+                <Reviews
+                    key={"test"}
+                    btn_info={{
+                        username: "test",
+                        acceptance: "wait",
+                        high_school: "test",
+                        high_school_location: "test"
+                    }}
+                    personal={{
+                        state: "test",
+                        math: "test",
+                        ap: "test",
+                        majors1: "test",
+                        class:"test",
+                        ebrw: "test",
+                        gpa: "test",
+                        majors2: "test"
+                    }}
+                    sat2={{
+                        chemistry: "test",
+                        eco_bio: "test",
+                        literature: "test",
+                        mol_bio: "test",
+                        math_I: "test",
+                        math_II: "test",
+                        physics: "test",
+                        us_history: "test",
+                        world_history: "test"
+                    }}
+                    act={{
+                        english: "test",
+                        math: "test",
+                        reading: "test",
+                        science: "test",
+                        composite: "test"
+                    }}
+                />);
+    }
+
+
+
     render() {
+        let from = this.props.location;
+        if(Authenticator.getAccountType() === account_enum.STUDENT){
+            return (<Redirect to={
+                        {
+                            pathname: "/main",
+                            state: {
+                                from: from
+                            }
+                        }
+                    }/>);
+        }
+
+        let reviews = this.get_reviews();
         return (
             <div className="wrap-dashboard">
                 <div className="left-menu">
@@ -48,18 +160,42 @@ class Admin extends React.Component{
                             <li className="nav-item">
                                 <button
                                     className={`nav-link ${(this.state.current_tab === Admin.admin_tab_enum.SCRAPE_DATA) ? "active" : ""} scrape`}
+                                    onClick={()=>{
+                                        this.setState({current_tab: Admin.admin_tab_enum.SCRAPE_DATA});
+                                    }}
                                 >
                                     Scrape Data
                                 </button>
                             </li>
                             <li className="nav-item">
-                                <button className={`nav-link ${(this.state.current_tab === Admin.admin_tab_enum.IMPORT_DATA) ? "active" : ""} import`}>Import Data</button>
+                                <button
+                                    className={`nav-link ${(this.state.current_tab === Admin.admin_tab_enum.IMPORT_DATA) ? "active" : ""} import`}
+                                    onClick={()=>{
+                                        this.setState({current_tab: Admin.admin_tab_enum.IMPORT_DATA});
+                                    }}
+                                >
+                                    Import Data
+                                </button>
                             </li>
                             <li className="nav-item">
-                                <button className={`nav-link ${(this.state.current_tab === Admin.admin_tab_enum.DELETE_ALL) ? "active" : ""} delete`}>Delete all student profiles</button>
+                                <button
+                                    className={`nav-link ${(this.state.current_tab === Admin.admin_tab_enum.DELETE_ALL) ? "active" : ""} delete`}
+                                    onClick={()=>{
+                                        this.setState({current_tab: Admin.admin_tab_enum.DELETE_ALL});
+                                    }}
+                                >
+                                    Delete all student profiles
+                                </button>
                             </li>
                             <li className="nav-item">
-                                <button className={`nav-link ${(this.state.current_tab === Admin.admin_tab_enum.REVIEW) ? "active" : ""} review`}>Review questionable acceptance decisions</button>
+                                <button
+                                    className={`nav-link ${(this.state.current_tab === Admin.admin_tab_enum.REVIEW) ? "active" : ""} review`}
+                                    onClick={()=>{
+                                        this.setState({current_tab: Admin.admin_tab_enum.REVIEW});
+                                    }}
+                                >
+                                    Review questionable acceptance decisions
+                                </button>
                             </li>
                         </ul>
                     </div>
@@ -121,167 +257,9 @@ class Admin extends React.Component{
                                 <button className="btn btn-primary">Acceptable</button>
                             </div>
                             <div className="list-group" id="questionable-list">
-                                <div className="list-group-item list-group-item-action">
-                                    <div className="wrap-questionable-checkbox">
-                                        {/* student's username should be mentioned as a value of "value" attribute so that frontend can easily recognize which students were chosen.  */}
-                                        <input type="checkbox" className="questionable-checkbox"
-                                               defaultValue="username1"/>
-                                    </div>
-                                    {/* student's username should be included inside h5 tag */}
-                                    <h5 className="username">username1<br/>
-                                        {/* accpeted: badge-success | denied: badge-danger | rest: badge-warning */}
-                                        {/* college name should be included in the second span tag */}
-                                        <span className="badge badge-success">Accepted</span> by <span>Stony Brook University</span>
-                                    </h5>
-                                    {/* high school name should be one the left side of br tag
-                                    high school city  should be combined with high school state by comma and this combination should be on the right side of br tag and inside h5 tag */}
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </div>
-                                {/* "div" tag's "id" property value should be the student's username*/}
-                                <div id="username1" className="carousel slide">
-                                    <ol className="carousel-indicators">
-                                        {/* every "li" tags' "data-target" property values should be the student's username*/}
-                                        <li data-target="#username1" data-slide-to={0} className="active"/>
-                                        <li data-target="#username1" data-slide-to={1}/>
-                                        <li data-target="#username1" data-slide-to={2}/>
-                                    </ol>
-                                    <div className="carousel-inner">
-                                        <div className="carousel-item personal active">
-                                            <table>
-                                                <tbody>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>NY</b><br/><label>Residence state</label></td>
-                                                    <td><b>800</b><br/><label>SAT Math</label></td>
-                                                    <td><b>5</b><br/><label>APs Passed</label></td>
-                                                    <td><b>Theology Religious Vocation</b><br/><label>Major 1</label>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>2023</b><br/><label>College class</label></td>
-                                                    <td><b>800</b><br/><label>SAT EBRW</label></td>
-                                                    <td><b>3.8</b><br/><label>GPA</label></td>
-                                                    <td><b>Public Administration Social Service</b><br/><label>Major
-                                                        2</label></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div className="carousel-item sat2">
-                                            <table>
-                                                <tbody>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>800</b><br/><label>SAT2 Chemistry</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Eco-Bio</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Literature</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Mol-Bio</label></td>
-                                                </tr>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>-</b><br/><label>SAT2 Math I</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Math II</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 Physics</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 US History</label></td>
-                                                    <td><b>800</b><br/><label>SAT2 World History</label></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div className="carousel-item act">
-                                            <table>
-                                                <tbody>
-                                                <tr>
-                                                    {/* add data in b tags */}
-                                                    {/* if there is no data, add dash in b tags */}
-                                                    <td><b>-</b><br/><label>ACT English</label></td>
-                                                    <td><b>60</b><br/><label>ACT Math</label></td>
-                                                    <td><b>40</b><br/><label>ACT Reading</label></td>
-                                                    <td><b>40</b><br/><label>ACT Science</label></td>
-                                                    <td><b>36</b><br/><label>ACT Composite</label></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    {/* "a" tag's "href" property value should be "#" + student's username*/}
-                                    <a className="carousel-control-prev" href="#username1" role="button"
-                                       data-slide="prev">
-                                        <span className="carousel-control-prev-icon" aria-hidden="true"/>
-                                        <span className="sr-only">Previous</span>
-                                    </a>
-                                    {/* "a" tag's "href" property value should be "#" + student's username*/}
-                                    <a className="carousel-control-next" href="#username1" role="button"
-                                       data-slide="next">
-                                        <span className="carousel-control-next-icon" aria-hidden="true"/>
-                                        <span className="sr-only">Next</span>
-                                    </a>
-                                </div>
-                                <button className="list-group-item list-group-item-action">
-                                    <div className="wrap-questionable-checkbox">
-                                        <input type="checkbox" className="questionable-checkbox"
-                                               defaultValue="username2"/>
-                                    </div>
-                                    <h5 className="username">username2<br/>
-                                        <span className="badge badge-danger">Denied</span> by <span>Stony Brook University</span>
-                                    </h5>
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </button>
-                                <button className="list-group-item list-group-item-action">
-                                    <div className="wrap-questionable-checkbox">
-                                        <input type="checkbox" className="questionable-checkbox"
-                                               defaultValue="username3"/>
-                                    </div>
-                                    <h5 className="username">username3<br/>
-                                        <span className="badge badge-warning">Wait-listed</span> by <span>Stony Brook University</span>
-                                    </h5>
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </button>
-                                <button className="list-group-item list-group-item-action">
-                                    <div className="wrap-questionable-checkbox">
-                                        <input type="checkbox" className="questionable-checkbox"
-                                               defaultValue="username2"/>
-                                    </div>
-                                    <h5 className="username">username2<br/>
-                                        <span className="badge badge-danger">Denied</span> by <span>Stony Brook University</span>
-                                    </h5>
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </button>
-                                <button className="list-group-item list-group-item-action">
-                                    <div className="wrap-questionable-checkbox">
-                                        <input type="checkbox" className="questionable-checkbox"
-                                               defaultValue="username3"/>
-                                    </div>
-                                    <h5 className="username">username3<br/>
-                                        <span className="badge badge-warning">Wait-listed</span> by <span>Stony Brook University</span>
-                                    </h5>
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </button>
-                                <button className="list-group-item list-group-item-action">
-                                    <div className="wrap-questionable-checkbox">
-                                        <input type="checkbox" className="questionable-checkbox"
-                                               defaultValue="username2"/>
-                                    </div>
-                                    <h5 className="username">username2<br/>
-                                        <span className="badge badge-danger">Denied</span> by <span>Stony Brook University</span>
-                                    </h5>
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </button>
-                                <button className="list-group-item list-group-item-action">
-                                    <div className="wrap-questionable-checkbox">
-                                        <input type="checkbox" className="questionable-checkbox"
-                                               defaultValue="username3"/>
-                                    </div>
-                                    <h5 className="username">username3<br/>
-                                        <span className="badge badge-warning">Wait-listed</span> by <span>Stony Brook University</span>
-                                    </h5>
-                                    <h5 className="high-school">Stony Brook High School<br/>Stony Brook, NY</h5>
-                                </button>
+
+                                {reviews}
+
                             </div>
                         </div>
                     </div>

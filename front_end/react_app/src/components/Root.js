@@ -59,7 +59,7 @@ class Root extends React.Component{
                         <IfAuthenticatedRoute session={this.state.valid_initial_session} path="/signup" component={Signup}/>
                         {/*/main will redirect to login if not authenticated else serve the main content*/}
                         <ProtectedRoute session={this.state.valid_initial_session} path="/main" component={Main}/>
-                        <Route exact path="/admin" component={Admin}/>
+                        <ProtectedRoute session={this.state.valid_initial_session} exact path="/admin" component={Admin}/>
                         <Route component={NotFound}/>
                     </Switch>
                 </BrowserRouter>
