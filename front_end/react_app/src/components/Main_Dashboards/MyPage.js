@@ -18,6 +18,7 @@ const SUBMIT_COLLEGE_DECISION = "/submit_admission_decision";
 
 class MyPage extends React.Component{
 
+
     constructor(props) {
         super(props);
         this.state={
@@ -95,12 +96,16 @@ class MyPage extends React.Component{
         for(let i = beginning; (i < this.state.admission_decisions.length) && (i < end_index); i++){
             let admission = this.state.admission_decisions[i];
             let image = null;
+            let toolbox = "";
             if(admission.verification === "Approved"){
                 image = ConfirmImg;
+                toolbox = "Decision successfully processed";
             }else if(admission.verification === "Pending"){
                 image = QuestionImg;
+                toolbox = "Decision under review";
             }else{
                 image = RejectedImg;
+                toolbox = "Decision marked as questionable";
             }
             list.push(
                <tr key={admission.college}>
@@ -108,7 +113,7 @@ class MyPage extends React.Component{
                     <img src={image}
                          className="admin-check"
                          data-toggle="tooltip" data-placement="top"
-                         title="Decision marked as questionable"
+                         title={toolbox}
                     />
                     </td>
                     <td className="college">{admission.college}</td>
