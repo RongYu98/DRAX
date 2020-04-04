@@ -48,7 +48,7 @@ class CollegeItem extends React.Component{
                             <td><b>{institution}</b><br/><label>Institution</label></td>
                             <td><b>{admission_rate + "%"}</b><br/><label>Admission rate</label></td>
                             <td><b>{completion +"%"}</b><br/><label>Completion rate</label></td>
-                            <td><b>{recommendation}</b><br/><label>Recommendation Score</label></td>
+                            <td><b style={{color: "white"}}>{recommendation}</b><br/><label style={{color: "white"}}>Recommendation Score</label></td>
                         </tr>
                         <tr>
                             <td><b>{`$${tuition}`}</b><br/><label>Cost of attendance</label></td>
