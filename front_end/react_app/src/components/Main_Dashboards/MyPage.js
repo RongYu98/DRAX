@@ -95,12 +95,12 @@ class MyPage extends React.Component{
         for(let i = beginning; (i < this.state.admission_decisions.length) && (i < end_index); i++){
             let admission = this.state.admission_decisions[i];
             let image = null;
-            if(admission.status === "Accepted"){
+            if(admission.verification === "Approved"){
                 image = ConfirmImg;
-            }else if(admission.status === "Denied"){
-                image = RejectedImg;
-            }else{
+            }else if(admission.verification === "Questionable"){
                 image = QuestionImg;
+            }else{
+                image = RejectedImg;
             }
             list.push(
                <tr key={admission.college}>
