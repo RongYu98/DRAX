@@ -264,6 +264,10 @@ class MyPage extends React.Component{
                  body[key] = parseInt(this.state.profile[key]);
             }
 
+            else if(key.includes("ap")){
+                body[key] = parseInt(this.state.profile[key]);
+            }
+
             else{
                 body[key] = this.state.profile[key];
             }
