@@ -9,6 +9,7 @@ import Reviews from "./Admin_Dashboards/Reviews";
 import {SERVER_URL} from "../common/Constants";
 
 const DELETE_ALL_STUDENT_ENDPOINT = "/delete_all_students";
+const DECIDE_ENDPOINT =  "/decide_admission_decision";
 
 class Admin extends React.Component{
     static admin_tab_enum={
@@ -21,11 +22,14 @@ class Admin extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            current_tab: Admin.admin_tab_enum.SCRAPE_DATA
+            current_tab: Admin.admin_tab_enum.SCRAPE_DATA,
+            decisions: []
         }
         this.on_logout = this.on_logout.bind(this);
         this.get_reviews = this.get_reviews.bind(this);
         this.on_delete_all_click = this.on_delete_all_click.bind(this);
+        this.post_questionable_decisions = this.post_questionable_decisions.bind(this);
+        this.on_still_questionable = this.on_still_questionable.bind(this);
     }
 
     async on_logout(){
@@ -35,6 +39,34 @@ class Admin extends React.Component{
                     pathname: '/login',
                     state: { username:username }
                 });
+    }
+
+    async post_questionable_decisions(body){
+        try{
+
+            let response = await fetch(
+                SERVER_URL + DECIDE_ENDPOINT,
+                {
+                    method: 'POST',
+                    credentials: "include",
+                    headers: {
+                        "Accept" : "application/json",
+                        "Content-Type" : "application/json"
+                    },
+                    body: JSON.stringify(body)
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(`Recieved ${response_json.result} for {${body.student_name}, ${body.college_name}, ${body.status}`);
+            return null;
+        }catch (err) {
+            return err;
+        }
+    }
+
+    async on_still_questionable(event){
+
     }
 
     get_reviews(){
