@@ -25,6 +25,7 @@ class Admin extends React.Component{
         }
         this.on_logout = this.on_logout.bind(this);
         this.get_reviews = this.get_reviews.bind(this);
+        this.on_delete_all_click = this.on_delete_all_click.bind(this);
     }
 
     async on_logout(){
@@ -128,8 +129,26 @@ class Admin extends React.Component{
     }
 
 
-    async on_delete_click(){
-
+    async on_delete_all_click(){
+        try{
+            let response = await fetch(
+                SERVER_URL + DELETE_ALL_STUDENT_ENDPOINT,
+                {
+                    method : "GET",
+                    credentials: "include",
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
+            alert("Success!");
+        }catch (err) {
+            console.log(err.stack);
+            alert(err);
+        }
     }
 
     render() {
@@ -249,7 +268,12 @@ class Admin extends React.Component{
                             }}>
                             <div>
                                 <h3>Are you sure you want to delete all student profiles?</h3>
-                                <button className="btn btn-danger">Yes, Delete ALL</button>
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={this.on_delete_all_click}
+                                >
+                                    Yes, Delete ALL
+                                </button>
                             </div>
                         </div>
                         <div className="review" style={
