@@ -714,7 +714,7 @@ def get_similar_profiles():
             if ('sat_math' in grades and
                 'sat_math' in s_grades and
                 grades['sat_math'] is not None and
-                s_grades['sat_math' is not None]):
+                s_grades['sat_math'] is not None):
                 diff = abs(int(grades['sat_math'])-int(s_grades['sat_math']))
                 score += (100-diff/2) * .15
             if ('sat_ebrw' in grades and
