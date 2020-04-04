@@ -41,7 +41,7 @@ def detect_questionable_acceptance(college, student):
                                                            sat_math_25,
                                                            sat_math_75,
                                                            SAT_MAX,
-                                                           student_sat_math)
+                                                           int(student_sat_math))
             # Mark as questionable if below 1st percentile
             if sat_math_percentile < 1:
                 return 0
@@ -57,7 +57,7 @@ def detect_questionable_acceptance(college, student):
                                                            sat_ebrw_25,
                                                            sat_ebrw_75,
                                                            SAT_MAX,
-                                                           student_sat_ebrw)
+                                                           int(student_sat_ebrw))
             # Mark as questionable if below 1st percentile
             if sat_ebrw_percentile < 1:
                 return 0
@@ -72,7 +72,8 @@ def detect_questionable_acceptance(college, student):
             act_percentile = estimate_exam_percentile(ACT_MIN,
                                                       act_composite_25,
                                                       act_composite_75,
-                                                      ACT_MAX, student_act)
+                                                      ACT_MAX,
+                                                      int(student_act))
             # Mark as questionable if below 1st percentile
             if act_percentile < 1:
                 return 0
@@ -84,7 +85,8 @@ def detect_questionable_acceptance(college, student):
         avg_gpa = college.avg_gpa
         if avg_gpa is not None:
             gpa_percentile = estimate_gpa_percentile(avg_gpa*0.8,
-                                                     avg_gpa, student_gpa)
+                                                     avg_gpa,
+                                                     float(student_gpa))
 
     # Calculate final score
     score = 0
