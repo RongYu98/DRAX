@@ -238,28 +238,37 @@ class MyPage extends React.Component{
                 continue;
             }
 
-            if (key.includes("sat")) {
+            else if (key.includes("sat")) {
                 if(this.state.profile[key] < 200 || this.state.profile[key] > 800) throw new Error("All sat scores should be 200-800");
+                body[key] = parseInt(this.state.profile[key]);
             }
 
-            if(key.includes("act")){
+            else if(key.includes("act")){
                 if(this.state.profile[key] < 1 || this.state.profile[key] > 36) throw new Error("All act scores should be 1-36");
+                body[key] = parseInt(this.state.profile[key]);
             }
 
-            if(key.includes("gpa")){
+            else if(key.includes("gpa")){
                  if(this.state.profile[key] < 0 || this.state.profile[key] > 4.0) throw new Error("GPA should be 0-4.0");
+                 body[key] = parseFloat(this.state.profile[key]);
             }
 
-            if(key.includes("password")){
+            else if(key.includes("password")){
                 let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g;
                 if(!this.state.profile[key].match(regex)) throw new Error('Password not meet the requirement');
+                body[key] = this.state.profile[key];
             }
 
-            if(key.includes("class")){
+            else if(key.includes("class")){
                 if(this.state.profile[key] > 2027 || this.state.profile[key] < 0) throw new Error("College class show be < 2027")
+                 body[key] = parseInt(this.state.profile[key]);
             }
 
-            body[key] = this.state.profile[key];
+            else{
+                body[key] = this.state.profile[key];
+            }
+
+
         }
         return body;
     }
