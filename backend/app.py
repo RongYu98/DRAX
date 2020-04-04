@@ -709,16 +709,25 @@ def get_similar_profiles():
             s_grades = s.grades
             score = 0
             if student.gpa not in {None, ''} and s.gpa not in {None, ''}:
-                diff = abs(student.gpa-s.gpa)
+                diff = abs(float(student.gpa)-float(s.gpa))
                 score += (100-diff*75) * .3
-            if 'sat_math' in grades and 'sat_math' in s_grades:
-                diff = abs(grades['sat_math']-s_grades['sat_math'])
+            if ('sat_math' in grades and
+                'sat_math' in s_grades and
+                grades['sat_math'] is not None and
+                s_grades['sat_math' is not None]):
+                diff = abs(int(grades['sat_math'])-int(s_grades['sat_math']))
                 score += (100-diff/2) * .15
-            if 'sat_ebrw' in grades and 'sat_ebrw' in s_grades:
-                diff = abs(grades['sat_ebrw']-s_grades['sat_ebrw'])
+            if ('sat_ebrw' in grades and
+                'sat_ebrw' in s_grades and
+                grades['sat_ebrw'] is not None and
+                s_grades['sat_ebrw'] is not None):
+                diff = abs(int(grades['sat_ebrw'])-int(s_grades['sat_ebrw']))
                 score += (100-diff/2) * .15
-            if 'act_composite' in grades and 'act_composite' in grades:
-                diff = abs(grades['act_composite']-s_grades['act_composite'])
+            if ('act_composite' in grades and
+                'act_composite' in grades and
+                grades['act_composite'] is not None and
+                s_grades['act_composite'] is not None):
+                diff = abs(int(grades['act_composite'])-int(s_grades['act_composite']))
                 score += (100-diff*(60/7)) * .30
             return score
 
