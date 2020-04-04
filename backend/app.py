@@ -78,7 +78,7 @@ def login():
     digest = hash_utils.hmac_hash(password, account.salt)
     if digest == account.hashed_password:
         session['username'] = username
-        return jsonify(status=200, result="OK")
+        return jsonify(status=200, result="OK", account=account.type)
     else:
         return jsonify(status=400, result="Invalid Login")
 
@@ -95,7 +95,8 @@ def logout():
 def alive():
     if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
-    return jsonify(status=200, result="OK")
+    account = Account.objects.get(username=session['username']).type
+    return jsonify(status=200, result="OK", account=account)
 
 
 @app.route('/api/get_profile', methods=['POST'])
@@ -230,19 +231,20 @@ def submit_admission_decision():
                 college = College.objects.get(name=college_name)
             except:
                 return jsonify(status=400, result="College Not Found")
+            application = None
             try:
                 application = Application.objects.get(Q(student=student) & Q(college=college))
-                verification = "Approved"
-                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
-                    verification = "Pending"
+            except:
+                print("Application Not Found")
+            verification = "Approved"
+            if status == "Accepted" and algorithms.detect_questionable_acceptance(college, student) < 50:
+                verification = "Pending"
+            if application is not None:
                 application.update(set__status=status)
                 application.update(set__verification=verification)
                 return jsonify(status=200, result="OK", verification=verification)
-            except:
+            else:
                 ID = hash_utils.sha_hash(username+"+=+"+college_name)
-                verification = "Approved"
-                if status == "Accepted" and detect_questionable_acceptance(college, student) < 50:
-                    verification = "Pending"
                 Application(ID=ID, student=student, college=college, status=status, verification=verification).save()
                 return jsonify(status=200, result="OK", verification=verification)
         except:
@@ -788,7 +790,7 @@ def find_similar_highschools():
                 'ap_enroll': s[1].ap_enroll, 'dissimilarity': s[0]}
         response.append(data)
         # response.append(s[1].name)
-    return jsonify(status=200, data=response)
+    return jsonify(status=200, data=response, school=student.high_school_name)
 
 
 @app.route('/api/all_majors')
