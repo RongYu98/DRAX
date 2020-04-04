@@ -5,9 +5,10 @@ import LogoutImg from "../gui/img/logout.png";
 import Authenticator from "../common/Authenticator";
 import {Redirect} from "react-router-dom";
 import {account_enum} from "../common/Authenticator";
-import SearchCollege from "./Main_Dashboards/SearchCollege";
-import Application from "./Main_Dashboards/Application";
 import Reviews from "./Admin_Dashboards/Reviews";
+import {SERVER_URL} from "../common/Constants";
+
+const DELETE_ALL_STUDENT_ENDPOINT = "/delete_all_students";
 
 class Admin extends React.Component{
     static admin_tab_enum={
@@ -127,6 +128,9 @@ class Admin extends React.Component{
     }
 
 
+    async on_delete_click(){
+
+    }
 
     render() {
         let from = this.props.location;

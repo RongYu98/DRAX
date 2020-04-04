@@ -97,7 +97,7 @@ class MyPage extends React.Component{
             let image = null;
             if(admission.verification === "Approved"){
                 image = ConfirmImg;
-            }else if(admission.verification === "Questionable"){
+            }else if(admission.verification === "Pending"){
                 image = QuestionImg;
             }else{
                 image = RejectedImg;
