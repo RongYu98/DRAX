@@ -4,11 +4,17 @@ const LOGIN_ENDPOINT = '/login';
 const ALIVE_ENDPOITN = '/alive';
 const LOGOUT_ENDPOINT = '/logout';
 
+let account_enum = {
+        STUDENT: "Student",
+        ADMIN: "Admin"
+    }
+
 class Authenticator{
 
     constructor() {
         this.authenticated = (DEBUGGING) ? true : false;
         this.userID = "";
+        this.account = "";
     }
 
 
@@ -25,7 +31,7 @@ class Authenticator{
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({username: username , password: password})
+                    body: JSON.stringify(body)
                 }
             );
             if(!response.ok) throw new Error(response.statusText);
@@ -33,6 +39,7 @@ class Authenticator{
             if(response_json.status !== 200) throw new Error(response_json.result);
             this.authenticated = true;
             this.userID = username;
+            this.account = response_json.account;
         } catch (err) {
             return err.message;
         }
@@ -80,6 +87,7 @@ class Authenticator{
             if(response.status !== STATUS_OK) throw new Error(response.statusText);
             let response_json = await response.json();
             this.authenticated = (response_json.status === STATUS_OK);
+            if(response_json.status === STATUS_OK) this.account = response_json.account;
         }catch (err) {
             alert(`Failed to check /api/alive, error msg: ${err.message}\nDefaulting loggined to ${this.authenticated}`);
         }
@@ -92,7 +100,12 @@ class Authenticator{
     getUserName(){
         return this.userID;
     }
+
+    getAccountType(){
+        return this.account;
+    }
 }
 
 // exporting a new instance as singleton
 export default new Authenticator();
+export {account_enum as account_enum};

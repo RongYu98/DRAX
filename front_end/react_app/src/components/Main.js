@@ -10,6 +10,7 @@ import Track from "./Main_Dashboards/Track";
 import {BrowserRouter, Route, Switch, Redirect, Link} from "react-router-dom";
 import {NotFound} from "./NotFound";
 import MyPage from "./Main_Dashboards/MyPage";
+import {account_enum} from "../common/Authenticator";
 
 class Main extends React.Component{
     static tab_enum =  {
@@ -54,6 +55,17 @@ class Main extends React.Component{
     }
 
     render() {
+        let from = this.props.location;
+        if(Authenticator.getAccountType() === account_enum.ADMIN){
+            return (<Redirect to={
+                        {
+                            pathname: "/admin",
+                            state: {
+                                from: from
+                            }
+                        }
+                    }/>);
+        }
         return(
             <div className="wrap-dashboard">
                 <div className="left-menu">

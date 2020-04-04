@@ -2,7 +2,7 @@ import React from "react";
 import '../gui/css/login_signup.css';
 import {Link} from "react-router-dom";
 import Logo from '../gui/img/logo.png';
-import authenticator from "../common/Authenticator";
+import authenticator, {account_enum} from "../common/Authenticator";
 
 class Login extends React.Component{
     constructor(props) {
@@ -25,7 +25,12 @@ class Login extends React.Component{
                 if(err){
                     this.setState({invalid_msg: err});
                 } else{
-                    this.props.history.push('/');
+                    if(authenticator.getAccountType() === account_enum.ADMIN){
+                        this.props.history.push('/admin');
+                    }else{
+                        this.props.history.push('/main/search');
+                    }
+
                 }
             }
         ).catch(err =>{
