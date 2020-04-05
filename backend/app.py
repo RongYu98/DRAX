@@ -828,16 +828,20 @@ def update_rankings():
 
 @app.route('/api/import_college_scorecard')
 def import_scorecard():
-    file_parser.import_college_scorecard("Most-Recent-Cohorts-All-Data-Elements.csv")
-    return jsonify(status=200, result="OK")
+    if 'file' not in request.files:
+        return jsonify(status=400, result="No File")
+    scorecard = request.files['file']
+    if scorecard.filename.rsplit('.', 1)[1].lower() == 'csv':
+        #file_parser.import_college_scorecard("Most-Recent-Cohorts-All-Data-Elements.csv")
+        file_parser.import_college_scorecard(scorecard)
+        return jsonify(status=200, result="OK")
+    return jsonify(status=400, result="Invalid File Type")
 
 
 @app.route('/api/update_all_college_data')
 def update_all_college_data():
     # if 'username' not in session or session['username'] != "admin":
     #    return jsonify(status=400, result="Invalid User")
-    # file_parser.import_college_scorecard("Most-Recent-Cohorts"\
-    #     "-All-Data-Elements.csv")
     scraper.update_all_colleges()
     return jsonify(status=200, result="OK")
 
