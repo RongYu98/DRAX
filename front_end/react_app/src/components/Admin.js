@@ -28,7 +28,8 @@ class Admin extends React.Component{
         this.state = {
             current_tab: Admin.admin_tab_enum.SCRAPE_DATA,
             decisions: [],
-            college_score_card_form_data: null
+            college_score_card_form_data: null,
+            scrape_college_data_disable: false
         }
         this.on_logout = this.on_logout.bind(this);
         this.get_reviews = this.get_reviews.bind(this);
@@ -81,6 +82,7 @@ class Admin extends React.Component{
     async on_scrap_college_data(event){
         try{
             alert("this may take a couple minutes so please wait patiently until you see a success popup");
+            this.setState({scrape_college_data_disable: true});
             let response = await fetch(
                 SERVER_URL + SCRAP_COLLEGE_DATA_ENDPOINT,
                 {
@@ -92,6 +94,7 @@ class Admin extends React.Component{
             let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.result);
             alert("Success!")
+            this.setState({scrape_college_data_disable: false});
         }catch (err) {
             console.log(err.stack);
             alert(err.message);
@@ -339,7 +342,7 @@ class Admin extends React.Component{
                             <div>
                                 <div>
                                     <h3>Scrape CollegeData.com</h3>
-                                    <button onClick={this.on_scrap_college_data} className="btn btn-primary">Scrape</button>
+                                    <button disabled={this.state.scrape_college_data_disable} onClick={this.on_scrap_college_data} className="btn btn-primary">Scrape</button>
                                 </div>
                                 <span>Scrape information about all colleges from CollegeData.com</span>
                             </div>
