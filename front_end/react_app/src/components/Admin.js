@@ -7,9 +7,13 @@ import {Redirect} from "react-router-dom";
 import {account_enum} from "../common/Authenticator";
 import Reviews from "./Admin_Dashboards/Reviews";
 import {SERVER_URL} from "../common/Constants";
+import axios, { post } from 'axios';
 
 const DELETE_ALL_STUDENT_ENDPOINT = "/delete_all_students";
 const DECIDE_ENDPOINT =  "/decide_admission_decision";
+const IMPORT_SCORE_CARD_ENDPOINT = "/import_college_scorecard";
+const SCRAP_COLLEGE_DATA_ENDPOINT = "/update_all_college_data";
+const UPDATE_RANKING_ENDPOINT = "/update_rankings";
 
 class Admin extends React.Component{
     static admin_tab_enum={
@@ -23,13 +27,18 @@ class Admin extends React.Component{
         super(props);
         this.state = {
             current_tab: Admin.admin_tab_enum.SCRAPE_DATA,
-            decisions: []
+            decisions: [],
+            college_score_card_form_data: null
         }
         this.on_logout = this.on_logout.bind(this);
         this.get_reviews = this.get_reviews.bind(this);
         this.on_delete_all_click = this.on_delete_all_click.bind(this);
         this.post_questionable_decisions = this.post_questionable_decisions.bind(this);
         this.on_still_questionable = this.on_still_questionable.bind(this);
+        this.on_scrap_college_ranking = this.on_scrap_college_ranking.bind(this);
+        this.on_scrap_college_data = this.on_scrap_college_data.bind(this);
+        this.on_submit_score_card_file = this.on_submit_score_card_file.bind(this);
+        this.on_import_college_score_card = this.on_import_college_score_card.bind(this);
     }
 
     async on_logout(){
@@ -67,6 +76,45 @@ class Admin extends React.Component{
 
     async on_still_questionable(event){
 
+    }
+
+    async on_scrap_college_data(event){
+        try{
+            alert("this may take a couple minutes so please wait patiently until you see a success popup");
+            let response = await fetch(
+                SERVER_URL + SCRAP_COLLEGE_DATA_ENDPOINT,
+                {
+                    method: "GET",
+                    credentials: "include"
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
+            alert("Success!")
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
+    }
+
+    async on_scrap_college_ranking(event){
+        try{
+            let response = await fetch(
+                SERVER_URL + UPDATE_RANKING_ENDPOINT,
+                {
+                    method: "GET",
+                    credentials: "include"
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
+            alert("Success!")
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
     }
 
     get_reviews(){
@@ -160,6 +208,16 @@ class Admin extends React.Component{
                 />);
     }
 
+    on_submit_score_card_file(event){
+        let files = event.target.files;
+        let reader = new FileReader();
+        reader.readAsDataURL(files[0]);
+        reader.onload = (e)=>{
+            console.warn("file data ", e.target.result);
+            let form_data = {file: e.target.result};
+            this.state.college_score_card_form_data = form_data;
+        }
+    }
 
     async on_delete_all_click(){
         try{
@@ -180,6 +238,17 @@ class Admin extends React.Component{
         }catch (err) {
             console.log(err.stack);
             alert(err);
+        }
+    }
+
+    async on_import_college_score_card(event){
+        try{
+            if(this.state.college_score_card_form_data == null) throw new Error("Choose a score card to import")
+            let response = await post(SERVER_URL + IMPORT_SCORE_CARD_ENDPOINT, this.state.college_score_card_form_data);
+            if(response.status !== 200) throw new Error("Failed, server returned: " + response.result);
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
         }
     }
 
@@ -263,14 +332,14 @@ class Admin extends React.Component{
                             <div>
                                 <div>
                                     <h3>Scrape college rankings</h3>
-                                    <button className="btn btn-primary">Scrape</button>
+                                    <button onClick={this.on_scrap_college_ranking} className="btn btn-primary">Scrape</button>
                                 </div>
                                 <span>Scrape WSJ/THE 2020 rankings of all colleges</span>
                             </div>
                             <div>
                                 <div>
                                     <h3>Scrape CollegeData.com</h3>
-                                    <button className="btn btn-primary">Scrape</button>
+                                    <button onClick={this.on_scrap_college_data} className="btn btn-primary">Scrape</button>
                                 </div>
                                 <span>Scrape information about all colleges from CollegeData.com</span>
                             </div>
@@ -282,14 +351,16 @@ class Admin extends React.Component{
                             <div>
                                 <div>
                                     <h3>Import College Scorecard data file</h3>
-                                    <button className="btn btn-primary">Import</button>
+                                     <input type="file" onChange={this.on_submit_score_card_file} name="file"/>
+                                     <button id={"submit_college_score_card_btn"} onClick={this.on_import_college_score_card} className="btn btn-primary">Import</button>
                                 </div>
                                 <span>Import information about all colleges from College Scorecard</span>
                             </div>
+
                             <div>
                                 <div>
                                     <h3>Import student profile and application dataset</h3>
-                                    <button className="btn btn-primary">Import</button>
+                                    <button  className="btn btn-primary">Import</button>
                                 </div>
                                 <span>Import previously collected student profile and application dataset </span>
                             </div>
