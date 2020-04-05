@@ -40,7 +40,6 @@ class Admin extends React.Component{
         this.get_reviews = this.get_reviews.bind(this);
         this.on_delete_all_click = this.on_delete_all_click.bind(this);
         this.post_questionable_decisions = this.post_questionable_decisions.bind(this);
-        this.on_still_questionable = this.on_still_questionable.bind(this);
         this.on_scrap_college_ranking = this.on_scrap_college_ranking.bind(this);
         this.on_scrap_college_data = this.on_scrap_college_data.bind(this);
         this.on_submit_score_card_file = this.on_submit_score_card_file.bind(this);
@@ -49,14 +48,82 @@ class Admin extends React.Component{
         this.on_student_profile_import = this.on_student_profile_import.bind(this);
         this.append_decision = this.append_decision.bind(this);
         this.remove_decision = this.remove_decision.bind(this);
+        this.on_acceptable = this.on_acceptable.bind(this);
+        this.on_still_questionable = this.on_still_questionable.bind(this);
+    }
+
+    async on_acceptable(event){
+        try{
+            let body = [];
+            for(let key in this.state.questionable_decisions){
+                let element = this.state.questionable_decisions[key];
+                element.status = "Approved";
+                body.push({...element});
+            }
+            console.log(body);
+            if(body.length === 0) throw new Error("tick a questionable decision first");
+            let response = await fetch(
+                SERVER_URL + DECIDE_ENDPOINT,
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers:{
+                        "Accept": "application/json",
+                        "Content-Type" : "application/json"
+                    },
+                    body: JSON.stringify(body)
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
+            await this.fetch_questionables();
+            this.forceUpdate();
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
+    }
+
+    async on_still_questionable(event){
+         try{
+            let body = [];
+            for(let key in this.state.questionable_decisions){
+                let element = this.state.questionable_decisions[key];
+                element.status = "Denied";
+                body.push({...element});
+            }
+            console.log(body);
+            if(body.length === 0) throw new Error("tick a questionable decision first");
+            let response = await fetch(
+                SERVER_URL + DECIDE_ENDPOINT,
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers:{
+                        "Accept": "application/json",
+                        "Content-Type" : "application/json"
+                    },
+                    body: JSON.stringify(body)
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
+            await this.fetch_questionables();
+            this.forceUpdate();
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
     }
 
     append_decision(decision){
-        this.state.questionable_decisions[decision.student_name] = decision;
+        this.state.questionable_decisions[decision.key] = decision;
     }
 
     remove_decision(decision){
-        delete this.state.questionable_decisions[decision.student_name];
+        delete this.state.questionable_decisions[decision.key];
     }
 
 
@@ -93,9 +160,6 @@ class Admin extends React.Component{
         }
     }
 
-    async on_still_questionable(event){
-
-    }
 
     async on_scrap_college_data(event){
         try{
@@ -173,6 +237,7 @@ class Admin extends React.Component{
             questionables.push(
                 <Reviews
                     key={index}
+                    questionable_key={index}
                     btn_info={{
                         username: (student_name == null) ? "-" : student_name,
                         acceptance: "Accepted",
@@ -443,8 +508,8 @@ class Admin extends React.Component{
                                 "" : "None"
                             }}>
                             <div>
-                                <button className="btn btn-danger">Still Questionable</button>
-                                <button className="btn btn-primary">Acceptable</button>
+                                <button onClick={this.on_still_questionable} className="btn btn-danger">Still Questionable</button>
+                                <button onClick={this.on_acceptable} className="btn btn-primary">Acceptable</button>
                             </div>
                             <div className="list-group" id="questionable-list">
 
