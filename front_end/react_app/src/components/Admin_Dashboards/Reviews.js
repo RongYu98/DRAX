@@ -21,7 +21,6 @@ class Reviews extends React.Component{
     }
 
     toggle_carousel(event){
-        console.log(event.target);
         if(event.target.id === "review_checkbox") return;
         if(this.state.carousel_display.display === "none"){
             this.setState({carousel_display: {display: "flex"}});
@@ -79,7 +78,7 @@ class Reviews extends React.Component{
                                             className="questionable-checkbox"
                                             defaultValue={btn_info.username}
                                             onChange={(event)=>{
-                                                let decision = {student_name: btn_info.username, college_name: btn_info.college_name, status: null}
+                                                let decision = {key: this.props.questionable_key, student_name: btn_info.username, college_name: btn_info.college_name, status: null}
                                                 let check = event.target.checked;
                                                 if(check){
                                                     append_decision(decision);
