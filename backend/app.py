@@ -826,8 +826,10 @@ def update_rankings():
     return jsonify(status=200, result="OK")
 
 
-@app.route('/api/import_college_scorecard')
+@app.route('/api/import_college_scorecard', methods=['POST'])
 def import_scorecard():
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
     if 'file' not in request.files:
         return jsonify(status=400, result="No File")
     scorecard = request.files['file']
