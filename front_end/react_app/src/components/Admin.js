@@ -7,7 +7,7 @@ import {Redirect} from "react-router-dom";
 import {account_enum} from "../common/Authenticator";
 import Reviews from "./Admin_Dashboards/Reviews";
 import {SERVER_URL} from "../common/Constants";
-import axios, { post } from 'axios';
+import {AdminProvider} from "../common/GlobalContext";
 
 const DELETE_ALL_STUDENT_ENDPOINT = "/delete_all_students";
 const DECIDE_ENDPOINT =  "/decide_admission_decision";
@@ -15,6 +15,7 @@ const IMPORT_SCORE_CARD_ENDPOINT = "/import_college_scorecard";
 const SCRAP_COLLEGE_DATA_ENDPOINT = "/update_all_college_data";
 const UPDATE_RANKING_ENDPOINT = "/update_rankings";
 const GET_QUESTIONABLE_ENDPOINT = "/get_questionable_decisions";
+const IMPORT_STUDENT_PROFILE_ENDPOINT = "/import_student_profile_applications";
 
 class Admin extends React.Component{
     static admin_tab_enum={
@@ -31,7 +32,9 @@ class Admin extends React.Component{
             decisions: [],
             // college_score_card_form_data: null,
             scrape_college_data_disable: false,
-            questionables: []
+            questionables: [],
+            import_data_score_card_disable: false,
+            questionable_decisions : {}
         }
         this.on_logout = this.on_logout.bind(this);
         this.get_reviews = this.get_reviews.bind(this);
@@ -43,7 +46,19 @@ class Admin extends React.Component{
         this.on_submit_score_card_file = this.on_submit_score_card_file.bind(this);
         this.on_import_college_score_card = this.on_import_college_score_card.bind(this);
         this.fetch_questionables = this.fetch_questionables.bind(this);
+        this.on_student_profile_import = this.on_student_profile_import.bind(this);
+        this.append_decision = this.append_decision.bind(this);
+        this.remove_decision = this.remove_decision.bind(this);
     }
+
+    append_decision(decision){
+        this.state.questionable_decisions[decision.student_name] = decision;
+    }
+
+    remove_decision(decision){
+        delete this.state.questionable_decisions[decision.student_name];
+    }
+
 
     async on_logout(){
         let username = Authenticator.getUserName();
@@ -101,6 +116,7 @@ class Admin extends React.Component{
         }catch (err) {
             console.log(err.stack);
             alert(err.message);
+            this.setState({scrape_college_data_disable: false});
         }
     }
 
@@ -146,14 +162,13 @@ class Admin extends React.Component{
                 out_cost, ranking, region, salary, sat_ebrw_25, sat_ebrw_75, sat_math_25, sat_math_75, size, state
             } = college;
             let {act_composite, act_english, act_math, act_reading, act_science, ap_passed, college_class, major_1, major_2,
-                    sat_chem, sat_ebrw, sat_eco_bio, sat_lit, sat_math, sat_math_1, sat_math_2, sat_mol_bio, sat_physics, sat_us, sat_world, username
+                    gpa, sat_chem, sat_ebrw, sat_eco_bio, sat_lit, sat_math, sat_math_1, sat_math_2, sat_mol_bio, sat_physics, sat_us, sat_world, username
             } = student;
             let student_name = student.name;
             let college_name = college.name;
-            let high_school_name = "-";
-            let high_school_state = "-";
-            let residence_state = "-";
-            let gpa = "-";
+            let high_school_name = student.hs_name;
+            let high_school_state = student.hs_state;
+            let residence_state = student.residence;
             let high_school_city = "-";
             questionables.push(
                 <Reviews
@@ -162,7 +177,8 @@ class Admin extends React.Component{
                         username: (student_name == null) ? "-" : student_name,
                         acceptance: "Accepted",
                         high_school: (high_school_name == null) ? "-" : high_school_name,
-                        high_school_location: (high_school_state == null || high_school_city == null) ? "-" : `${high_school_city}, ${high_school_state}`
+                        high_school_location: (high_school_state == null || high_school_city == null) ? "-" : `${high_school_city}, ${high_school_state}`,
+                        college_name: (college_name == null) ? "-" : college_name
                     }}
                     personal={{
                         state: (residence_state == null) ? "-" : residence_state,
@@ -245,6 +261,8 @@ class Admin extends React.Component{
 
     async on_import_college_score_card(event){
         try{
+            alert("this may take a couple minutes so please wait patiently until you see a success popup");
+            this.setState({import_data_score_card_disable: true});
             let response = await fetch(
                 SERVER_URL + IMPORT_SCORE_CARD_ENDPOINT,
                 {
@@ -258,6 +276,31 @@ class Admin extends React.Component{
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.status);
+            alert("success");
+            this.setState({import_data_score_card_disable: false});
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+            this.setState({scrape_college_data_disable: false});
+        }
+    }
+
+    async on_student_profile_import(event){
+        try{
+            let response = await fetch(
+                SERVER_URL + IMPORT_STUDENT_PROFILE_ENDPOINT,
+                {
+                    credentials: "include",
+                    method: "GET",
+                    headers:{
+                        "Accept" : "application/json"
+                    }
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
+            alert("success!");
         }catch (err) {
             console.log(err.stack);
             alert(err.message);
@@ -280,7 +323,8 @@ class Admin extends React.Component{
 
         let reviews = this.get_reviews();
         return (
-            <div className="wrap-dashboard">
+            <AdminProvider value={{append_decision: this.append_decision, remove_decision: this.remove_decision}}>
+                <div className="wrap-dashboard">
                 <div className="left-menu">
                     <div className="wrap-logo"><img className="logo" src={LogoImg} alt="logo"/></div>
                     <div>
@@ -367,7 +411,7 @@ class Admin extends React.Component{
                                 <div>
                                     <h3>Import College Scorecard data file</h3>
                                      {/*<input type="file" onChange={this.on_submit_score_card_file} name="file"/>*/}
-                                     <button id={"submit_college_score_card_btn"} onClick={this.on_import_college_score_card} className="btn btn-primary">Import</button>
+                                     <button disabled={this.state.import_data_score_card_disable} id={"submit_college_score_card_btn"} onClick={this.on_import_college_score_card} className="btn btn-primary">Import</button>
                                 </div>
                                 <span>Import information about all colleges from College Scorecard</span>
                             </div>
@@ -375,7 +419,7 @@ class Admin extends React.Component{
                             <div>
                                 <div>
                                     <h3>Import student profile and application dataset</h3>
-                                    <button  className="btn btn-primary">Import</button>
+                                    <button onClick={this.on_student_profile_import} className="btn btn-primary">Import</button>
                                 </div>
                                 <span>Import previously collected student profile and application dataset </span>
                             </div>
@@ -410,7 +454,8 @@ class Admin extends React.Component{
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
+            </AdminProvider>
         );
     }
 }

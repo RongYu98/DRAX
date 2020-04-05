@@ -1,4 +1,5 @@
 import React from "react";
+import {AdminConsumer} from "../../common/GlobalContext";
 
 class Reviews extends React.Component{
 
@@ -17,7 +18,6 @@ class Reviews extends React.Component{
         this.toggle_carousel = this.toggle_carousel.bind(this);
         this.next_carousel = this.next_carousel.bind(this);
         this.previous_carousel = this.previous_carousel.bind(this);
-        this.on_checked = this.on_checked.bind(this);
     }
 
     toggle_carousel(event){
@@ -55,10 +55,6 @@ class Reviews extends React.Component{
         if(acceptance.toLowerCase().includes("pending")) return Reviews.badge_enum.WARNING;
     }
 
-    on_checked(event){
-        console.log(event.target);
-    }
-
 
 
     render() {
@@ -73,16 +69,33 @@ class Reviews extends React.Component{
                     id={"review_button"}
                 >
                     <div className="wrap-questionable-checkbox">
-                        <input
-                            type="checkbox"
-                            className="questionable-checkbox"
-                            defaultValue={btn_info.username}
-                            onChange={this.on_checked}
-                            id={"review_checkbox"}
-                        />
+                        <AdminConsumer>
+                            {
+                                (value)=> {
+                                    let {append_decision, remove_decision} = value;
+                                    return(
+                                        <input
+                                            type="checkbox"
+                                            className="questionable-checkbox"
+                                            defaultValue={btn_info.username}
+                                            onChange={(event)=>{
+                                                let decision = {student_name: btn_info.username, college_name: btn_info.college_name, status: null}
+                                                let check = event.target.checked;
+                                                if(check){
+                                                    append_decision(decision);
+                                                }else{
+                                                    remove_decision(decision);
+                                                }
+                                            }}
+                                            id={"review_checkbox"}
+                                        />
+                                    );
+                                }
+                            }
+                        </AdminConsumer>
                     </div>
                     <h5 className="username">{btn_info.username}<br/>
-                        <span className={style}>{btn_info.acceptance}</span> by <span>Stony Brook University</span>
+                        <span className={style}>{btn_info.acceptance}</span> by <span>{btn_info.college_name}</span>
                     </h5>
                     <h5 className="high-school">{btn_info.high_school}<br/>{btn_info.high_school_location}</h5>
                 </button>
