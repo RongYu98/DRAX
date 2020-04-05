@@ -318,12 +318,30 @@ def update_highschool_data(name, city, state):
         print(e)
         return False  # can't get college info
     # [:-1] is to remove percent sign in string
-    c.reading_prof = int(data["reading"][:-1])
-    c.math_prof = int(data["math"][:-1])
-    c.grad_rate = int(data["grad rate"][:-1])
-    c.avg_sat = int(data["sat"])
-    c.avg_act = int(data["act"])
-    c.ap_enroll = int(data["ap"][:-1])
+    try:
+        c.reading_prof = int(data["reading"][:-1])
+    except:
+        pass
+    try:
+        c.math_prof = int(data["math"][:-1])
+    except:
+        pass
+    try:
+        c.grad_rate = int(data["grad rate"][:-1])
+    except:
+        pass
+    try:
+        c.avg_sat = int(data["sat"])
+    except:
+        pass
+    try:
+        c.avg_act = int(data["act"])
+    except:
+        pass
+    try:
+        c.ap_enroll = int(data["ap"][:-1])
+    except:
+        pass
     c.save()
     return True
 
