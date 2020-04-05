@@ -1,6 +1,6 @@
 import csv
 import hash_utils
-import urllib2
+import requests
 from classes import Account, Application, StudentProfile, College
 
 from mongoengine import *
@@ -144,7 +144,7 @@ def get_region(region, state):
         return "Other"
 
 
-def import_college_scorecard(scorecard):
+def import_college_scorecard():
     f = open('colleges.txt', "r")
     college_list = []
     mod_list = []
@@ -155,10 +155,9 @@ def import_college_scorecard(scorecard):
             n.replace("&", "and").replace(",", "").replace("The ", "")
             )
     f.close()
-    # with open(scorecard) as sc:
     url = 'https://ed-public-download.app.cloud.gov/downloads/Most-Recent-Cohorts-All-Data-Elements.csv'
-    scorecard = urllib2.urlopen(url)
-    sc_reader = csv.reader(scorecard)
+    sc = requests.get(url).text.splitlines()
+    sc_reader = csv.reader(sc)
     header = next(sc_reader)
     for line in sc_reader:
         sc_name = line[header.index("INSTNM")]
