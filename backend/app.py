@@ -859,7 +859,9 @@ def delete_all_students():
         return jsonify(status=400, result="Not Logged In")
     if Account.objects.get(username=session['username']).type != "Admin":
         return jsonify(status=400, result="Unauthorized Access")
-    scraper.delete_student_data()
+    accounts = Account.objects(type='Student')
+    for account in accounts:
+        account.delete()
     return jsonify(status=200, result="OK")
 
 
