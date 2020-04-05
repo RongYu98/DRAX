@@ -1,6 +1,6 @@
 import csv
 import hash_utils
-import urllib
+import urllib.request
 from classes import Account, Application, StudentProfile, College
 
 from mongoengine import *
@@ -156,64 +156,65 @@ def import_college_scorecard():
             )
     f.close()
     # with open(scorecard) as sc:
+    #with urllib.request.urlopen("http://www.python.org") as url:
     url = 'https://ed-public-download.app.cloud.gov/downloads/Most-Recent-Cohorts-All-Data-Elements.csv'
-    scorecard = urllib.urlopen(url)
-    sc_reader = csv.reader(scorecard)
-    header = next(sc_reader)
-    for line in sc_reader:
-        sc_name = line[header.index("INSTNM")]
-        sc_mod_name = sc_name.replace("-", " ")
-        sc_mod_name = sc_mod_name.replace("The ", "")
-        sc_mod_name = sc_mod_name.replace("Saint", "St")
-        name = ""
-        if sc_name in college_list:
-            name = sc_name
-        elif sc_mod_name in mod_list:
-            name = college_list[mod_list.index(sc_mod_name)]
-        if name != "":
-            city = line[header.index("CITY")]
-            state = line[header.index("STABBR")]
-            region = get_region(line[header.index("REGION")], state)
-            institution = institution_type(line[header.index("CONTROL")])
-            adm_rate = line[header.index("ADM_RATE")]
-            if adm_rate != "NULL":
-                admission_rate = round(float(adm_rate)*100, 2)
-            else:
-                admission_rate = adm_rate
-            size = int(line[header.index("UGDS")])
-            median_debt = line[header.index("GRAD_DEBT_MDN")]
-            salary = line[header.index("MN_EARN_WNE_P6")]
-            try:
-                college = College.objects.get(name=name)
-                college.update(set__city=city)
-                college.update(set__state=state)
-                college.update(set__region=region)
-                college.update(set__institution=institution)
-                if admission_rate != "NULL":
-                    college.update(set__admission_rate=admission_rate)
-                college.size = size
-                college.save()
-                college.update(set__median_debt=median_debt)
-                college.update(set__salary=salary)
-            except Exception as e:
-                print(e)
-                if admission_rate != "NULL":
-                    college = College(
-                        name=name, city=city, state=state,
-                        region=region, institution=institution,
-                        admission_rate=admission_rate, size=size,
-                        median_debt=median_debt, salary=salary,
-                    )
+    with urllib.request.urlopen(url) as sc:
+        sc_reader = csv.reader(sc)
+        header = next(sc_reader)
+        for line in sc_reader:
+            sc_name = line[header.index("INSTNM")]
+            sc_mod_name = sc_name.replace("-", " ")
+            sc_mod_name = sc_mod_name.replace("The ", "")
+            sc_mod_name = sc_mod_name.replace("Saint", "St")
+            name = ""
+            if sc_name in college_list:
+                name = sc_name
+            elif sc_mod_name in mod_list:
+                name = college_list[mod_list.index(sc_mod_name)]
+            if name != "":
+                city = line[header.index("CITY")]
+                state = line[header.index("STABBR")]
+                region = get_region(line[header.index("REGION")], state)
+                institution = institution_type(line[header.index("CONTROL")])
+                adm_rate = line[header.index("ADM_RATE")]
+                if adm_rate != "NULL":
+                    admission_rate = round(float(adm_rate)*100, 2)
                 else:
-                    college = College(
-                        name=name, city=city, state=state, region=region,
-                        institution=institution, size=size,
-                        median_debt=median_debt, salary=salary,
-                    )
-                # try:
-                college.save()
-                # except:
-                #    print("Error importing college: " + name)
+                    admission_rate = adm_rate
+                size = int(line[header.index("UGDS")])
+                median_debt = line[header.index("GRAD_DEBT_MDN")]
+                salary = line[header.index("MN_EARN_WNE_P6")]
+                try:
+                    college = College.objects.get(name=name)
+                    college.update(set__city=city)
+                    college.update(set__state=state)
+                    college.update(set__region=region)
+                    college.update(set__institution=institution)
+                    if admission_rate != "NULL":
+                        college.update(set__admission_rate=admission_rate)
+                    college.size = size
+                    college.save()
+                    college.update(set__median_debt=median_debt)
+                    college.update(set__salary=salary)
+                except Exception as e:
+                    print(e)
+                    if admission_rate != "NULL":
+                        college = College(
+                            name=name, city=city, state=state,
+                            region=region, institution=institution,
+                            admission_rate=admission_rate, size=size,
+                            median_debt=median_debt, salary=salary,
+                        )
+                    else:
+                        college = College(
+                            name=name, city=city, state=state, region=region,
+                            institution=institution, size=size,
+                            median_debt=median_debt, salary=salary,
+                        )
+                    # try:
+                    college.save()
+                    # except:
+                    #    print("Error importing college: " + name)
 
 # global variable to store the file content of colleges.txt in list form
 college_list = None
