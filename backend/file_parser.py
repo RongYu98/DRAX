@@ -101,7 +101,7 @@ def import_application_data(filename):
             continue
 
         verification = "Approved"
-        if (status == Accepted and 
+        if (status == "Accepted" and 
             detect_questionable_acceptance(university, student) < 50):
             verification = "Pending"
 
