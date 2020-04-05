@@ -835,7 +835,7 @@ def import_scorecard():
         return jsonify(status=200, result="OK")
     except Exception as error:
         print(error)
-        return jsonify(status=400, result="Invalid File Type")
+        return jsonify(status=400, result="Import Failed")
 
 
 @app.route('/api/update_all_college_data')

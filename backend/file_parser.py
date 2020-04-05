@@ -144,7 +144,7 @@ def get_region(region, state):
         return "Other"
 
 
-def import_college_scorecard(scorecard):
+def import_college_scorecard():
     f = open('colleges.txt', "r")
     college_list = []
     mod_list = []
