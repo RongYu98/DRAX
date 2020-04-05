@@ -14,6 +14,7 @@ const DECIDE_ENDPOINT =  "/decide_admission_decision";
 const IMPORT_SCORE_CARD_ENDPOINT = "/import_college_scorecard";
 const SCRAP_COLLEGE_DATA_ENDPOINT = "/update_all_college_data";
 const UPDATE_RANKING_ENDPOINT = "/update_rankings";
+const GET_QUESTIONABLE_ENDPOINT = "/get_questionable_decisions";
 
 class Admin extends React.Component{
     static admin_tab_enum={
@@ -28,8 +29,9 @@ class Admin extends React.Component{
         this.state = {
             current_tab: Admin.admin_tab_enum.SCRAPE_DATA,
             decisions: [],
-            college_score_card_form_data: null,
-            scrape_college_data_disable: false
+            // college_score_card_form_data: null,
+            scrape_college_data_disable: false,
+            questionables: []
         }
         this.on_logout = this.on_logout.bind(this);
         this.get_reviews = this.get_reviews.bind(this);
@@ -40,6 +42,7 @@ class Admin extends React.Component{
         this.on_scrap_college_data = this.on_scrap_college_data.bind(this);
         this.on_submit_score_card_file = this.on_submit_score_card_file.bind(this);
         this.on_import_college_score_card = this.on_import_college_score_card.bind(this);
+        this.fetch_questionables = this.fetch_questionables.bind(this);
     }
 
     async on_logout(){
@@ -120,95 +123,80 @@ class Admin extends React.Component{
         }
     }
 
+    async fetch_questionables(event){
+        try{
+            let response = await fetch(SERVER_URL + GET_QUESTIONABLE_ENDPOINT, {credentials:"include"});
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
+            this.state.questionables = response_json.result;
+        }catch (err) {
+            console.log(err.stack);
+            alert(err.message);
+        }
+    }
+
     get_reviews(){
-        // if(this.state.not_found){
-        //     return (<h1 style={SearchCollege.not_found_style}>No profiles found</h1>);
-        // }
-        // let applications = [];
-        // let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
-        // let end_index = beginning + 10;
-        // let displayItems = this.state.applications.slice(beginning, end_index);
-        // displayItems.forEach((element, index)=>{
-        //     let {application_status, username, residence_state, high_school_name, high_school_city, high_school_state, gpa, college_class } = element;
-        //     let {major_1, major_2, sat_math, sat_ebrw, act_english, act_math, act_reading, act_science, act_composite, sat_lit, sat_us, sat_world, sat_math_1, sat_math_2, sat_eco_bio, sat_mol_bio, sat_chem, sat_physics, ap_passed} = element;
-        //     applications.push(
-        //         <Application
-        //             key={index}
-        //             btn_info={{
-        //                 username: (username == null) ? "-" : username,
-        //                 acceptance: (application_status == null) ? "-" : application_status,
-        //                 high_school: (high_school_name == null) ? "-" : high_school_name,
-        //                 high_school_location: (high_school_state == null || high_school_city == null) ? "-" : `${high_school_city}, ${high_school_state}`
-        //             }}
-        //             personal={{
-        //                 state: (residence_state == null) ? "-" : residence_state,
-        //                 math: (sat_math == null) ? "-" : sat_math,
-        //                 ap: (ap_passed == null) ? "-" : ap_passed,
-        //                 majors1: (major_1 == null) ? "-" : major_1,
-        //                 class: (college_class == null) ? "-"  : college_class,
-        //                 ebrw: (sat_ebrw == null) ? "-" : sat_ebrw,
-        //                 gpa: (gpa == null) ? "-" : gpa,
-        //                 majors2: (major_2 == null) ? "-" : major_2
-        //             }}
-        //             sat2={{
-        //                 chemistry: (sat_chem == null) ? "-" : sat_chem,
-        //                 eco_bio: (sat_eco_bio == null) ? "-" : sat_eco_bio,
-        //                 literature: (sat_lit == null) ? "-" : sat_lit,
-        //                 mol_bio: (sat_mol_bio == null) ? "-" : sat_mol_bio,
-        //                 math_I: (sat_math_1 == null) ? "-" : sat_math_1,
-        //                 math_II: (sat_math_2 == null) ? "-" : sat_math_2,
-        //                 physics: (sat_physics == null) ? "-" : sat_physics,
-        //                 us_history: (sat_us == null) ? "-" : sat_us,
-        //                 world_history: (sat_world == null) ? "-" : sat_world
-        //             }}
-        //             act={{
-        //                 english: (act_english == null) ? "-" : act_english,
-        //                 math: (act_math == null) ? "-" : act_math,
-        //                 reading: (act_reading == null) ? "-" : act_reading,
-        //                 science: (act_science == null) ? "-" : act_science,
-        //                 composite: (act_composite == null) ? "-" : act_composite
-        //             }}
-        //         />
-        //     );
-        // });
-        return (
+        if(this.state.questionables.length === 0) return null;
+        let questionables = [];
+        this.state.questionables.forEach((element, index)=>{
+            let college = element.college;
+            let student = element.student;
+            let {act_composite_25, act_composite_75, admission_rate, avg_act_composite, avg_gpa, avg_sat_ebrw, avg_sat_math, city, completion_rate, in_cost, institution, median_debt,
+                out_cost, ranking, region, salary, sat_ebrw_25, sat_ebrw_75, sat_math_25, sat_math_75, size, state
+            } = college;
+            let {act_composite, act_english, act_math, act_reading, act_science, ap_passed, college_class, major_1, major_2,
+                    sat_chem, sat_ebrw, sat_eco_bio, sat_lit, sat_math, sat_math_1, sat_math_2, sat_mol_bio, sat_physics, sat_us, sat_world, username
+            } = student;
+            let student_name = student.name;
+            let college_name = college.name;
+            let high_school_name = "-";
+            let high_school_state = "-";
+            let residence_state = "-";
+            let gpa = "-";
+            let high_school_city = "-";
+            questionables.push(
                 <Reviews
-                    key={"test"}
+                    key={index}
                     btn_info={{
-                        username: "test",
-                        acceptance: "wait",
-                        high_school: "test",
-                        high_school_location: "test"
+                        username: (student_name == null) ? "-" : student_name,
+                        acceptance: "Accepted",
+                        high_school: (high_school_name == null) ? "-" : high_school_name,
+                        high_school_location: (high_school_state == null || high_school_city == null) ? "-" : `${high_school_city}, ${high_school_state}`
                     }}
                     personal={{
-                        state: "test",
-                        math: "test",
-                        ap: "test",
-                        majors1: "test",
-                        class:"test",
-                        ebrw: "test",
-                        gpa: "test",
-                        majors2: "test"
+                        state: (residence_state == null) ? "-" : residence_state,
+                        math: (sat_math == null) ? "-" : sat_math,
+                        ap: (ap_passed == null) ? "-" : ap_passed,
+                        majors1: (major_1 == null) ? "-" : major_1,
+                        class: (college_class == null) ? "-"  : college_class,
+                        ebrw: (sat_ebrw == null) ? "-" : sat_ebrw,
+                        gpa: (gpa == null) ? "-" : gpa,
+                        majors2: (major_2 == null) ? "-" : major_2
                     }}
                     sat2={{
-                        chemistry: "test",
-                        eco_bio: "test",
-                        literature: "test",
-                        mol_bio: "test",
-                        math_I: "test",
-                        math_II: "test",
-                        physics: "test",
-                        us_history: "test",
-                        world_history: "test"
+                        chemistry: (sat_chem == null) ? "-" : sat_chem,
+                        eco_bio: (sat_eco_bio == null) ? "-" : sat_eco_bio,
+                        literature: (sat_lit == null) ? "-" : sat_lit,
+                        mol_bio: (sat_mol_bio == null) ? "-" : sat_mol_bio,
+                        math_I: (sat_math_1 == null) ? "-" : sat_math_1,
+                        math_II: (sat_math_2 == null) ? "-" : sat_math_2,
+                        physics: (sat_physics == null) ? "-" : sat_physics,
+                        us_history: (sat_us == null) ? "-" : sat_us,
+                        world_history: (sat_world == null) ? "-" : sat_world
                     }}
                     act={{
-                        english: "test",
-                        math: "test",
-                        reading: "test",
-                        science: "test",
-                        composite: "test"
+                        english: (act_english == null) ? "-" : act_english,
+                        math: (act_math == null) ? "-" : act_math,
+                        reading: (act_reading == null) ? "-" : act_reading,
+                        science: (act_science == null) ? "-" : act_science,
+                        composite: (act_composite == null) ? "-" : act_composite
                     }}
-                />);
+                />
+            );
+        });
+
+        return questionables;
     }
 
     on_submit_score_card_file(event){
@@ -244,16 +232,38 @@ class Admin extends React.Component{
         }
     }
 
+    // async on_import_college_score_card(event){
+    //     try{
+    //         if(this.state.college_score_card_form_data == null) throw new Error("Choose a score card to import")
+    //         let response = await post(SERVER_URL + IMPORT_SCORE_CARD_ENDPOINT, this.state.college_score_card_form_data);
+    //         if(response.status !== 200) throw new Error("Failed, server returned: " + response.result);
+    //     }catch (err) {
+    //         console.log(err.stack);
+    //         alert(err.message);
+    //     }
+    // }
+
     async on_import_college_score_card(event){
         try{
-            if(this.state.college_score_card_form_data == null) throw new Error("Choose a score card to import")
-            let response = await post(SERVER_URL + IMPORT_SCORE_CARD_ENDPOINT, this.state.college_score_card_form_data);
-            if(response.status !== 200) throw new Error("Failed, server returned: " + response.result);
+            let response = await fetch(
+                SERVER_URL + IMPORT_SCORE_CARD_ENDPOINT,
+                {
+                    credentials: "include",
+                    method: "POST",
+                    headers:{
+                        "Accept" : "application/json"
+                    }
+                }
+            );
+            if(response.status !== 200) throw new Error(response.statusText);
+            let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.status);
         }catch (err) {
             console.log(err.stack);
             alert(err.message);
         }
     }
+
 
     render() {
         let from = this.props.location;
@@ -318,7 +328,9 @@ class Admin extends React.Component{
                                 <button
                                     className={`nav-link ${(this.state.current_tab === Admin.admin_tab_enum.REVIEW) ? "active" : ""} review`}
                                     onClick={()=>{
-                                        this.setState({current_tab: Admin.admin_tab_enum.REVIEW});
+                                        this.fetch_questionables().then(()=>{
+                                             this.setState({current_tab: Admin.admin_tab_enum.REVIEW});
+                                        });
                                     }}
                                 >
                                     Review questionable acceptance decisions
@@ -354,7 +366,7 @@ class Admin extends React.Component{
                             <div>
                                 <div>
                                     <h3>Import College Scorecard data file</h3>
-                                     <input type="file" onChange={this.on_submit_score_card_file} name="file"/>
+                                     {/*<input type="file" onChange={this.on_submit_score_card_file} name="file"/>*/}
                                      <button id={"submit_college_score_card_btn"} onClick={this.on_import_college_score_card} className="btn btn-primary">Import</button>
                                 </div>
                                 <span>Import information about all colleges from College Scorecard</span>
