@@ -830,14 +830,12 @@ def update_rankings():
 def import_scorecard():
     if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
-    if 'file' not in request.files:
-        return jsonify(status=400, result="No File")
-    scorecard = request.files['file']
-    if scorecard.filename.rsplit('.', 1)[1].lower() == 'csv':
-        #file_parser.import_college_scorecard("Most-Recent-Cohorts-All-Data-Elements.csv")
-        file_parser.import_college_scorecard(scorecard)
+    try:
+        file_parser.import_college_scorecard()
         return jsonify(status=200, result="OK")
-    return jsonify(status=400, result="Invalid File Type")
+    except Exception as error:
+        print(error)
+        return jsonify(status=400, result="Invalid File Type")
 
 
 @app.route('/api/update_all_college_data')
