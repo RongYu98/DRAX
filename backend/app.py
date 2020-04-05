@@ -870,7 +870,6 @@ def get_questionable_decisions():
     data = []
     for app in apps:
         profile = app.student
-        stu
         s_data = {"name":profile.student.username,
                 "residence":profile.residence_state,
                 "hs_name":profile.high_school_name,
