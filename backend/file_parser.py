@@ -2,7 +2,7 @@ import csv
 import hash_utils
 import requests
 from classes import Account, Application, StudentProfile, College
-
+from algorithms import detect_questionable_acceptance
 from mongoengine import *
 connect('account', host='localhost', port=27017)
 
@@ -100,10 +100,16 @@ def import_application_data(filename):
             print("College Doesn't Exist: "+college)
             continue
 
+        verification = "Approved"
+        if (status == Accepted and 
+            detect_questionable_acceptance(university, student) < 50):
+            verification = "Pending"
+
         ID = hash_utils.sha_hash(username+"+=+"+college)
         app = Application(ID=ID, student=student,
                           college=university,
-                          status=status)
+                          status=status,
+                          verification=verification)
         try:
             app.save()
         except Exception as e:
