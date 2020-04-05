@@ -870,7 +870,13 @@ def get_questionable_decisions():
     data = []
     for app in apps:
         profile = app.student
-        s_data = {"name":profile.student.username}
+        stu
+        s_data = {"name":profile.student.username,
+                "residence":profile.residence_state,
+                "hs_name":profile.high_school_name,
+                "hs_city":profile.high_school_city,
+                "hs_state":profile.high_school_state,
+                }
         s_data.update(profile.grades)
         coll = app.college
         c_data = dict(coll.to_mongo())
