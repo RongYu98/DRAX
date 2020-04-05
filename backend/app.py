@@ -855,9 +855,13 @@ def import_student_profile_applications():
 
 @app.route('/api/delete_all_students')
 def delete_all_students():
-    if 'username' not in session or session['username'] != "admin":
-        return jsonify(status=400, result="Invalid User")
-    scraper.delete_student_data()
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
+    accounts = Account.objects(type='Student')
+    for account in accounts:
+        account.delete()
     return jsonify(status=200, result="OK")
 
 
@@ -872,6 +876,7 @@ def get_questionable_decisions():
         profile = app.student
         s_data = {"name":profile.student.username,
                 "residence":profile.residence_state,
+                "gpa":profile.gpa,
                 "hs_name":profile.high_school_name,
                 "hs_city":profile.high_school_city,
                 "hs_state":profile.high_school_state,
