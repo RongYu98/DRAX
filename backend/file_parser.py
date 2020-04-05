@@ -1,6 +1,6 @@
 import csv
 import hash_utils
-import urllib2
+import urllib
 from classes import Account, Application, StudentProfile, College
 
 from mongoengine import *
@@ -157,7 +157,7 @@ def import_college_scorecard(scorecard):
     f.close()
     # with open(scorecard) as sc:
     url = 'https://ed-public-download.app.cloud.gov/downloads/Most-Recent-Cohorts-All-Data-Elements.csv'
-    scorecard = urllib2.urlopen(url)
+    scorecard = urllib.urlopen(url)
     sc_reader = csv.reader(scorecard)
     header = next(sc_reader)
     for line in sc_reader:
