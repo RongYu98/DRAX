@@ -265,7 +265,7 @@ class MyPage extends React.Component{
             }
 
             else if(key.includes("class")){
-                if(this.state.profile[key] > 2027 || this.state.profile[key] < 0) throw new Error("College class show be < 2027")
+                if(this.state.profile[key] > 2027 || this.state.profile[key] < 0) throw new Error("College class show be <= 2027")
                  body[key] = parseInt(this.state.profile[key]);
             }
 
@@ -303,6 +303,7 @@ class MyPage extends React.Component{
             let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.result);
             alert("success!");
+            window.location.reload(false);
         }catch (err) {
            console.log(err.stack);
            alert(`Failed to save: ${err.message}`);
@@ -508,7 +509,7 @@ class MyPage extends React.Component{
                                         <td className="profile-username"><h5><b>{this.state.profile.username}</b></h5></td>
                                     </tr>
                                     <tr>
-                                        <td className="flex"><b>Class of</b><input type="number" placeholder="< 2027"
+                                        <td className="flex"><b>Class of</b><input type="number" placeholder="<= 2027"
                                                                                    className="form-control shadow-none profile-number-input"
                                                                                    value={this.state.profile.college_class}
                                                                                    onChange={(event)=>{this.setState({profile: {...this.state.profile, college_class: event.target.value}})}}
@@ -732,7 +733,7 @@ class MyPage extends React.Component{
                                     <tr>
                                         <td><b>GPA</b></td>
                                         <td>
-                                            <input type="number" placeholder="< 4.0"
+                                            <input type="number" placeholder="<= 4.0"
                                                    className="form-control shadow-none profile-number-input"
                                                    id="profile-gpa" max={4} step="0.01"
                                                     value={this.state.profile.gpa}

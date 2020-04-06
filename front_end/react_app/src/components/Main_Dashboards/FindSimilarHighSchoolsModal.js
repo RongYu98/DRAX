@@ -103,11 +103,15 @@ class FindSimilarHighSchoolsModal extends React.Component{
     render() {
       let highSchools = this.get_high_schools();
       let buttons = this.get_page_buttons();
-        return (
+      let user_high_school = "-";
+      if(this.props.current_modal_high_schools.length >= 1){
+          user_high_school = this.props.current_modal_high_schools[0].name;
+      }
+      return (
             <Modal show={this.props.show} onHide={this.props.show_high_school_modal} aria-labelledby="plot-modal-label" centered>
                 <div className="modal-content">
                     <Modal.Header closeButton>
-                        <Modal.Title>Similar high schools</Modal.Title>
+                        <Modal.Title>Similar high schools to {user_high_school}</Modal.Title>
                     </Modal.Header>
                     <div className="modal-body">
                         {/* Initially, there should be no tags inside the tag below. */}
