@@ -899,24 +899,25 @@ def decide_admission_decision():
     info = request.json
     if info is None:
         info = request.form
-    if 'student_name' not in info:
-        return jsonify(status=400, result="Missing Student Name")
-    if 'college_name' not in info:
-        return jsonify(status=400, result="Missing College Name")
-    if 'status' not in info:
-        return jsonify(status=400, result="Missing Response")
-    if info['status'] != 'Approved' and info['status'] != 'Denied':
-        return jsonify(status=400, result="Unknown Response")
-    prof = StudentProfile.objects.get(student=Account.objects.get(username=info['student_name']))
-    coll = College.objects.get(name=info['college_name'])
-    try:
-        appl = Application.objects.get(student=prof, college=coll)
-    except Exception as e:
-        print(e)
-        return jsonify(status=400, result="Application Does Not Exist")
-    if appl.verification != 'Pending':
-        return jsonify(status=400, result="Application already decided")
-    appl.update(set__verification=info['status'])
+    for decision in info:
+        if 'student_name' not in decision:
+            return jsonify(status=400, result="Missing Student Name")
+        if 'college_name' not in decision:
+            return jsonify(status=400, result="Missing College Name")
+        if 'status' not in decision:
+            return jsonify(status=400, result="Missing Response")
+        if decision['status'] != 'Approved' and decision['status'] != 'Denied':
+            return jsonify(status=400, result="Unknown Response")
+        prof = StudentProfile.objects.get(student=Account.objects.get(username=decision['student_name']))
+        coll = College.objects.get(name=decision['college_name'])
+        try:
+            appl = Application.objects.get(student=prof, college=coll)
+        except Exception as e:
+            print(e)
+            return jsonify(status=400, result="Application Does Not Exist")
+        if appl.verification != 'Pending':
+            return jsonify(status=400, result="Application already decided")
+        appl.update(set__verification=decision['status'])
     return jsonify(status=200, result="OK")
 
 if __name__ == "__main__":
