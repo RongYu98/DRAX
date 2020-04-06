@@ -13,7 +13,8 @@ class Reviews extends React.Component{
         super(props);
         this.state = {
             carousel_display: {display: "none"},
-            current_carousel_slide: 0
+            current_carousel_slide: 0,
+            checked: false
         }
         this.toggle_carousel = this.toggle_carousel.bind(this);
         this.next_carousel = this.next_carousel.bind(this);
@@ -77,14 +78,16 @@ class Reviews extends React.Component{
                                             type="checkbox"
                                             className="questionable-checkbox"
                                             defaultValue={btn_info.username}
+                                            checked={this.state.checked}
                                             onChange={(event)=>{
                                                 let decision = {key: this.props.questionable_key, student_name: btn_info.username, college_name: btn_info.college_name, status: null}
-                                                let check = event.target.checked;
+                                                let check = !this.state.checked;
                                                 if(check){
                                                     append_decision(decision);
                                                 }else{
                                                     remove_decision(decision);
                                                 }
+                                                this.state.checked = this.setState({checked: check});
                                             }}
                                             id={"review_checkbox"}
                                         />
