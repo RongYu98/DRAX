@@ -78,6 +78,7 @@ class Admin extends React.Component{
             let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.result);
             await this.fetch_questionables();
+            console.log(this.state.questionables);
             this.forceUpdate();
         }catch (err) {
             console.log(err.stack);
@@ -111,6 +112,7 @@ class Admin extends React.Component{
             let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.result);
             await this.fetch_questionables();
+            console.log(this.state.questionables);
             this.forceUpdate();
         }catch (err) {
             console.log(err.stack);
@@ -233,10 +235,10 @@ class Admin extends React.Component{
             let high_school_name = student.hs_name;
             let high_school_state = student.hs_state;
             let residence_state = student.residence;
-            let high_school_city = "-";
+            let high_school_city = student.hs_city;
             questionables.push(
                 <Reviews
-                    key={index}
+                    key={`${student_name}-${college_name}`}
                     questionable_key={index}
                     btn_info={{
                         username: (student_name == null) ? "-" : student_name,
