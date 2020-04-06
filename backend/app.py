@@ -335,13 +335,13 @@ def track_applications_list():
                 sum_gpa += student.gpa
                 count_gpa += 1
             if 'sat_ebrw' in grades and grades['sat_ebrw'] not in {None, ""}:
-                sum_sat_ebrw += grades['sat_ebrw']
+                sum_sat_ebrw += int(grades['sat_ebrw'])
                 count_sat_ebrw += 1
             if 'sat_math' in grades and grades['sat_math'] not in {None, ""}:
-                sum_sat_math += grades['sat_math']
+                sum_sat_math += int(grades['sat_math'])
                 count_sat_math += 1
             if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
-                sum_act += grades['act_composite']
+                sum_act += int(grades['act_composite'])
                 count_act += 1
         summary = {
             'avg_gpa': None,
@@ -776,7 +776,7 @@ def find_similar_highschools():
                                          high_school_city=student.high_school_city,
                                          high_school_state=student.high_school_state)
     sorting = []  # a list of lists, each containing a score and HS
-    for h in HighSchool.objects:
+    for h in HighSchool.objects(name__ne=student.high_school_name):
         # if h == hs:  # do we mind sending the high school as well?
         #     continue
         h_students = StudentProfile.objects(high_school_name=h.name,
