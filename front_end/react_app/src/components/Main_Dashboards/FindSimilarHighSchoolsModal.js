@@ -104,9 +104,6 @@ class FindSimilarHighSchoolsModal extends React.Component{
       let highSchools = this.get_high_schools();
       let buttons = this.get_page_buttons();
       let user_high_school = this.props.user_high_school;
-      if(this.props.current_modal_high_schools.length >= 1){
-          user_high_school = this.props.current_modal_high_schools[0].name;
-      }
       return (
             <Modal show={this.props.show} onHide={this.props.show_high_school_modal} aria-labelledby="plot-modal-label" centered>
                 <div className="modal-content">
