@@ -11,6 +11,7 @@ from classes import HighSchool
 
 from scraper import highschool_exists
 
+import re
 import hash_utils
 import algorithms
 import file_parser
@@ -525,14 +526,13 @@ def get_college_list():
                 query = query & size_query
     if 'major' in info:  # left and right
         major_left = info["major"]["left"]
-        majors = []
         if major_left not in {"", None}:
-            majors.append(major_left)
+            regex = re.compile(major_left+'.*')
+            query = query & Q(majors=regex)
         major_right = info["major"]["right"]
-        if major_left not in {"", None}:
-            majors.append(major_right)
-        if majors != []:
-            query = query & Q(majors__in=majors)
+        if major_right not in {"", None}:
+            regex = re.compile(major_right+'.*')
+            query = query & Q(majors=regex)
     if 'max_ranking' in info:
         max_ranking = info["max_ranking"]
         if max_ranking not in {"", None}:
