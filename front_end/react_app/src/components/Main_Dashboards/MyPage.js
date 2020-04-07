@@ -173,8 +173,7 @@ class MyPage extends React.Component{
                 response_json.profile[key] = (response_json.profile[key] == null) ? "" : response_json.profile[key];
             }
             response_json.profile.username = response_json.username;
-            this.setState({mounted: true, profile: {...this.state.profile, ...response_json.profile}});
-            this.state.unedited_user_high_school = this.state.profile.high_school_name;
+            this.setState({unedited_user_high_school:response_json.profile.high_school_name, mounted: true, profile: {...this.state.profile, ...response_json.profile}});
         }catch (err) {
             console.log(err.stack);
             alert(err.message);
