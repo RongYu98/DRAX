@@ -527,12 +527,10 @@ def get_college_list():
     if 'major' in info:  # left and right
         major_left = info["major"]["left"]
         if major_left not in {"", None}:
-            regex = re.compile(major_left+'.*')
-            query = query & Q(majors=regex)
+            query = query & Q(__raw__={'majors':{'$regex':major_left+'.*'}})
         major_right = info["major"]["right"]
         if major_right not in {"", None}:
-            regex = re.compile(major_right+'.*')
-            query = query & Q(majors=regex)
+            query = query & Q(__raw__={'majors':{'$regex':major_right+'.*'}})
     if 'max_ranking' in info:
         max_ranking = info["max_ranking"]
         if max_ranking not in {"", None}:
