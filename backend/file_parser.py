@@ -54,8 +54,8 @@ def import_student_data(filename):
             student=account,
             gpa=float(line[index.index('gpa')]),
             residence_state=line[index.index('state')],
-            high_school_name=line[index.index('high_school_name')],
-            high_school_city=line[index.index('high_school_city')],
+            high_school_name=line[index.index('high_school_name')].title(),
+            high_school_city=line[index.index('high_school_city')].title(),
             high_school_state=line[index.index('high_school_state')],
             college_class=line[index.index('college_class')])
         for x in range(index.index('major_1'), len(index)):
