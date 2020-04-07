@@ -103,7 +103,7 @@ class FindSimilarHighSchoolsModal extends React.Component{
     render() {
       let highSchools = this.get_high_schools();
       let buttons = this.get_page_buttons();
-      let user_high_school = "-";
+      let user_high_school = this.props.user_high_school;
       if(this.props.current_modal_high_schools.length >= 1){
           user_high_school = this.props.current_modal_high_schools[0].name;
       }

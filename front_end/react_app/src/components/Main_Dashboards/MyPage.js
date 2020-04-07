@@ -62,7 +62,8 @@ class MyPage extends React.Component{
             current_page_num: 1,
             mounted: false,
             colleges: [],
-            find_high_school_disable: false
+            find_high_school_disable: false,
+            unedited_user_high_school: "-"
         }
         this.button_list = [];
         this.show_high_school_modal = this.show_high_school_modal.bind(this);
@@ -173,6 +174,7 @@ class MyPage extends React.Component{
             }
             response_json.profile.username = response_json.username;
             this.setState({mounted: true, profile: {...this.state.profile, ...response_json.profile}});
+            this.state.unedited_user_high_school = this.state.profile.high_school_name;
         }catch (err) {
             console.log(err.stack);
             alert(err.message);
@@ -679,7 +681,7 @@ class MyPage extends React.Component{
                                                     onClick={this.show_high_school_modal}
                                             >Find similar high schools
                                             </button>
-                                            <FindSimilarHighSchoolsModal show={this.state.show_high_school_modal} current_modal_high_schools={this.state.current_modal_high_schools} show_high_school_modal={this.show_high_school_modal}/>                                        </td>
+                                            <FindSimilarHighSchoolsModal user_high_school={this.state.unedited_user_high_school} show={this.state.show_high_school_modal} current_modal_high_schools={this.state.current_modal_high_schools} show_high_school_modal={this.show_high_school_modal}/>                                        </td>
                                     </tr>
                                     <tr>
                                         <td><b>Major 1</b></td>
