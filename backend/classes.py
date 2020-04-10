@@ -21,6 +21,8 @@ class StudentProfile(Document):
     high_school_city = StringField()
     high_school_state = StringField(max_length=2)
     college_class = IntField(min_value=2016, max_value=3000)
+    major_1 = StringField()
+    major_2 = StringField()
 
 
 class College(Document):

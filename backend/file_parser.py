@@ -57,14 +57,17 @@ def import_student_data(filename):
             high_school_name=line[index.index('high_school_name')].title(),
             high_school_city=line[index.index('high_school_city')].title(),
             high_school_state=line[index.index('high_school_state')],
-            college_class=line[index.index('college_class')])
+            college_class=int(line[index.index('college_class')]))
         for x in range(index.index('major_1'), len(index)):
             info = index[x]
             data = line[x]
             if data != '':  # the field isn't empty
-                p.grades[info] = data
-                if data == "college_class":
-                    p.college_class = data
+                if info == "major_1":
+                    p.major_1 = data
+                elif info == "major_2":
+                    p.major_2 = data
+                else:
+                    p.grades[info] = data
 
         try:
             p.save()
