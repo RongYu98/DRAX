@@ -117,6 +117,8 @@ def get_profile():
             'high_school_state': student.high_school_state,
             'gpa': student.gpa,
             'college_class': student.college_class,
+            'major_1': student.major_1,
+            'major_2': student.major_2,
             }
         grades = student.grades
         for field in grades:
@@ -151,14 +153,20 @@ def save_profile():
             account.update(set__hashed_password=digest)
         elif field == 'residence_state':
             residence_state = info["residence_state"]
+        elif field == 'gpa':
+            gpa = info["gpa"]
         elif field == 'high_school_name':
             name = info["high_school_name"].title()
         elif field == 'high_school_city':
             city = info["high_school_city"].title()
         elif field == 'high_school_state':
             state = info["high_school_state"]
-        elif field == 'gpa':
-            gpa = info["gpa"]
+        elif field == 'college_class':
+            college_class = info["college_class"]
+        elif field == 'major_1':
+            major_1 = info["major_1"]
+        elif field == 'major_2':
+            major_2 = info["major_2"]
         else:
             grades[field] = info[field]
     if (name not in {None, ""} and
@@ -171,6 +179,9 @@ def save_profile():
                             set__high_school_name=name,
                             set__high_school_city=city,
                             set__high_school_state=state,
+                            set__college_class=college_class,
+                            set__major_1=major_1,
+                            set__major_2=major_2,
                             set__grades=grades)
             return jsonify(status=200, result="OK")
         except:
@@ -301,22 +312,18 @@ def track_applications_list():
             if (('college_class_min' in info or 'college_class_max' in info) and
                 (info['college_class_max'] is not None or
                  info['college_class_min'] is not None)):
-                college_year = None
-                try:
-                    college_year = grades['college_class']
-                except:
-                    pass
+                college_year = student.college_class
                 if policy == "strict" and college_year is None:
                     continue
                 if ('college_class_min' in info and
                     info['college_class_min'] is not None and
                     college_year is not None):
-                    if grades['college_class'] < info['college_class_min']:
+                    if college_year < info['college_class_min']:
                         continue
                 if ('college_class_max' in info and
                     info['college_class_max'] is not None and
                     college_year is not None):
-                    if grades['college_class'] > info['college_class_max']:
+                    if college_year > info['college_class_max']:
                         continue
             profile = {
                 'username': student.student.username,
@@ -325,7 +332,9 @@ def track_applications_list():
                 'high_school_city': student.high_school_city,
                 'high_school_state': student.high_school_state,
                 'gpa': student.gpa,
-                'college_class': grades['college_class'] if 'college_class' in grades else None,
+                'college_class': student.college_class,
+                'major_1': student.major_1,
+                'major_2': student.major_2,
                 'application_status': application_status,
                 }
             grades = student.grades
@@ -398,28 +407,23 @@ def track_applications_plot():
                     continue
             student = application.student
             grades = student.grades
-            college_year = None
-            try:
-                college_year = grades['college_class']
-            except:
-                pass
             if 'high_schools' in info and info['high_schools'] is not None:
                 if policy == "lax" and student.high_school_name is None:
                     pass
                 elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
                     continue
+            college_year = student.college_class
             if policy == "strict" and college_year is None:
                 continue
             if ('college_class_min' in info and
                 info['college_class_min'] is not None and
                 college_year is not None):
-                if student.college_class is None or student.college_class < info['college_class_min']:
+                if college_year < info['college_class_min']:
                     continue
             if ('college_class_max' in info and
                 info['college_class_max'] is not None and
                 college_year is not None):
-                if (student.college_class is None or
-                    student.college_class > info['college_class_max']):
+                if (college_year > info['college_class_max']):
                     continue
             test_score = None
             if test_type == "SAT":
@@ -741,6 +745,8 @@ def get_similar_profiles():
                 'high_school_state': student.high_school_state,
                 'gpa': student.gpa,
                 'college_class': student.college_class,
+                'major_1': student.major_1,
+                'major_2': student.major_2,
                 }
             grades = student.grades
             for field in grades:
