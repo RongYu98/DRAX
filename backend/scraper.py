@@ -1,5 +1,6 @@
 import urllib.request  # for connecting and getting html content
 from bs4 import BeautifulSoup  # for parsing html
+from time import sleep
 import file_parser
 from classes import College, HighSchool
 from mongoengine import *
@@ -292,26 +293,75 @@ def get_highschool_info(name, city, state):
 
 
 def highschool_exists(name, city, state):
+    existed = False
+    sleep(2)
     try:
         c = HighSchool.objects.get(name=name, city=city, state=state)
-        return True
+        # HS in DB, and is scraped, we're done
+        if (c.scraped == True):
+            return True
+        # Else HS not scraped, need to wait
+        existed = True
+        sleep(1)  # wait for the scraping to finish, get new data
+        c = HighSchool.objects.get(name=name, city=city, state=state)
+        if (c.scraped == True):
+            print("DONE SCRAPING, WORKS!")
+            return True
+        print("WHHAT?")
+        return False  # scraping failed
     except Exception as e:
         print(e)
-        # Highschool not in db
+        if existed:  # there was data that was no longer there
+            print("Disappeared!")
+            return False  # must be bad info to scrape
+        print("WE'RE GONNA SCRAPE!")
+        # reaching here means HS not in db, so add info
         try:
-            return update_highschool_data(name, city, state)
-        except Exception as e:
+            print("Saving, gonna be first")
+            c = HighSchool(name=name, city=city, state=state, scraped=False)
+            c.save()  # the atomic action? not really...
+            try:
+                c = HighSchool.objects.get(name=name, city=city, state=state, scraped=False)
+            except Exception as e: # got sniped, someone saved first
+                c.delete() # there was a problem, 2 found
+                print("Blocked on entrace")
+                print(e)  # let them scrape first, we go back to the start and wait
+                return highschool_exists(name, city, state)
+        # duplicate exception, wasn't called during testing, but just in case
+        except Exception as e:  # got sniped, someone saved first
+            print("Blocked #3 on entrance")
+            print(e)  # let them scrape first, we go back to the start and wait
+            return highschool_exists(name, city, state)
+        # we've staked our claim, we're first, now scrape!
+        try:
+            print("STARTING SCRAPING")
+            success = update_highschool_data(name, city, state)
+            if not success:  # failed scraping
+                sleep(1)
+                c.delete()
+                print("SCRAPING FAILED>>>>")
+                return False  # failed
+            return True
+        except Exception as e:  # failed somehow
             print(e)
+            print("Last error")
+            try:
+                c.delete()  # delete what we added
+            except:
+                return False
             return False
 
 def update_highschool_data(name, city, state):
+    '''  # new function purpose, would rather crash for atomicity
     try:
         c = HighSchool.objects.get(name=name, city=city, state=state)
-    except Exception as e:
+    except Exception as e:  # should never happend, but in case
         print(e)
         print("High School Not in DB: "+name)
-        c = HighSchool(name=name, city=city, state=state)
+        c = HighSchool(name=name, city=city, state=state, scraped=False)
         # c.save()
+    '''
+    c = HighSchool.objects.get(name=name, city=city, state=state) 
     try:
         data = get_highschool_info(name, city, state)
     except Exception as e:
@@ -342,6 +392,7 @@ def update_highschool_data(name, city, state):
         c.ap_enroll = int(data["ap"][:-1])
     except:
         pass
+    c.scraped = True
     c.save()
     return True
 
@@ -353,6 +404,7 @@ def update_highschool_data(name, city, state):
 # update_college_ranking()
 # print(get_highschool_info("Stuyvesant High School", 'New York', "NY"))
 # print(update_highschool_data("Stuyvesant High School", 'New York', "NY"))
+# print(highschool_exists("Stuyvesant High School1", 'New York', "NY"))
 # print(update_highschool_data('Academic Magnet High School', 'North Charleston', 'SC'))
 # print(update_highschool_data('Ward Melville Senior High School', 'East Setauket', 'NY'))
 # update_all_colleges()
