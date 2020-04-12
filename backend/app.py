@@ -156,9 +156,13 @@ def save_profile():
         elif field == 'gpa':
             gpa = info["gpa"]
         elif field == 'high_school_name':
-            name = info["high_school_name"].title().replace(".", "")
+            name = info["high_school_name"]
+            if name is not None:
+                name = name.title().replace(".", "")
         elif field == 'high_school_city':
-            city = info["high_school_city"].title()
+            city = info["high_school_city"]
+            if city is not None:
+                city = city.title()
         elif field == 'high_school_state':
             state = info["high_school_state"]
         elif field == 'college_class':
