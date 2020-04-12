@@ -36,11 +36,12 @@ def get_clean_majors():
 
 
 def calc_academic_similarity(college, student):
-    c = College.objects.get(name=college)
-    acc = Account.objects.get(username=student)
-    profile = StudentProfile.objects.get(student=acc)
-
-    applications = Application.objects(college=c)
+    # c = College.objects.get(name=college)
+    # acc = Account.objects.get(username=student)
+    # profile = StudentProfile.objects.get(student=acc)
+    profile = student  # pass in as parameter
+    
+    applications = Application.objects(college=college)
     grades = {
         'Accepted': {
             'gpa_avg': [],
@@ -170,4 +171,4 @@ def calc_academic_similarity(college, student):
     return score / 1.0 / score_weight
 
 
-print(calc_academic_similarity('Stony Brook University', 'alice'))
+# print(calc_academic_similarity('Stony Brook University', 'alice'))

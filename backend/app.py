@@ -881,8 +881,11 @@ def import_student_profile_applications():
         return jsonify(status=400, result="Not Logged In")
     if Account.objects.get(username=session['username']).type != "Admin":
         return jsonify(status=400, result="Unauthorized Access")
-    file_parser.import_student_data("students-1.csv")
+    from time import time
+    t = time()
+    # file_parser.import_student_data("students-1.csv")
     file_parser.import_application_data('applications-1.csv')
+    print(time() - t)
     return jsonify(status=200, result="OK")
 
 
@@ -964,9 +967,9 @@ def decide_admission_decision():
     return jsonify(status=200, result="OK")
 
 if __name__ == "__main__":
-    profile = StudentProfile.objects.get(student=Account.objects.get(username="test"))
-    profile.high_school_name = "Academic Magnet High School"
-    profile.high_school_city = "North Charleston"
-    profile.high_school_state = "SC"
-    profile.save()
+    # profile = StudentProfile.objects.get(student=Account.objects.get(username="test"))
+    # profile.high_school_name = "Academic Magnet High School"
+    # profile.high_school_city = "North Charleston"
+    # profile.high_school_state = "SC"
+    # profile.save()
     app.run(host='0.0.0.0', port=9000, debug=True)
