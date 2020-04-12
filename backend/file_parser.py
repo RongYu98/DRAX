@@ -3,6 +3,7 @@ import hash_utils
 import requests
 from classes import Account, Application, StudentProfile, College
 from algorithms import detect_questionable_acceptance
+from time import time
 
 from mongoengine import *
 connect('account', host='localhost', port=27017)
@@ -118,7 +119,8 @@ def import_application_data(filename):
         app = Application(ID=ID, student=student,
                           college=university,
                           status=status,
-                          verification=verification)
+                          verification=verification,
+                          timestamp=str(time()))
         try:
             app.save()
         except Exception as e:
