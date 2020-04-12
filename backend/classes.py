@@ -21,6 +21,8 @@ class StudentProfile(Document):
     high_school_city = StringField()
     high_school_state = StringField(max_length=2)
     college_class = IntField(min_value=2016, max_value=3000)
+    major_1 = StringField()
+    major_2 = StringField()
 
 
 class College(Document):
@@ -79,7 +81,7 @@ class HighSchool(Document):
     avg_sat = IntField()  # SAT might change again
     avg_act = IntField(min_value=0, max_value=36)
     ap_enroll = IntField(min_value=0, max_value=100)
-
+    scraped = BooleanField(required=True)
 
 class Student(Document):
     profile = ReferenceField(StudentProfile)
