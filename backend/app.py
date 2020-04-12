@@ -18,12 +18,59 @@ import file_parser
 import scraper
 
 connect('account', host='localhost', port=27017)
-connect('college', alias='college')
 
 app = Flask(__name__)
 app.secret_key = 'Draconian Rich Awesome Xenomorphs'
 CORS(app, supports_credentials=True)
 # may wish to disable cross origin in the cloud server for security
+
+
+# Helper functions to eliminate redundancy
+def get_profile_dict(s):
+    profile = {
+        'username': s.student.username,
+        'residence_state': s.residence_state,
+        'high_school_name': s.high_school_name,
+        'high_school_city': s.high_school_city,
+        'high_school_state': s.high_school_state,
+        'gpa': s.gpa,
+        'college_class': s.college_class,
+        'major_1': s.major_1,
+        'major_2': s.major_2,
+        }
+    grades = s.grades
+    profile.update(grades)
+    return profile
+
+
+def track_applications_filter(info, application, student):
+    if 'statuses' in info and info['statuses'] is not None:
+        if policy == "lax" and application_status is None:
+            pass
+        elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
+            return False
+    if 'high_schools' in info and info['high_schools'] is not None:
+        if policy == "lax" and student.high_school_name is None:
+            pass
+        elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
+            return False
+    if (('college_class_min' in info or 'college_class_max' in info) and
+        (info['college_class_max'] is not None or
+         info['college_class_min'] is not None)):
+        college_year = student.college_class
+        if policy == "strict" and college_year is None:
+            return False
+        if ('college_class_min' in info and
+            info['college_class_min'] is not None and
+            college_year is not None):
+            if college_year < info['college_class_min']:
+                return False
+        if ('college_class_max' in info and
+            info['college_class_max'] is not None and
+            college_year is not None):
+            if college_year > info['college_class_max']:
+                return False
+    return True
 
 
 @app.route('/api/signup', methods=['POST'])
@@ -110,19 +157,7 @@ def get_profile():
     # Get student profile
     try:
         student = StudentProfile.objects.get(student=Account.objects.get(username=username))
-        profile = {
-            'residence_state': student.residence_state,
-            'high_school_name': student.high_school_name,
-            'high_school_city': student.high_school_city,
-            'high_school_state': student.high_school_state,
-            'gpa': student.gpa,
-            'college_class': student.college_class,
-            'major_1': student.major_1,
-            'major_2': student.major_2,
-            }
-        grades = student.grades
-        for field in grades:
-            profile[field] = grades[field]
+        profile = get_profile_dict(student)
         return jsonify(status=200, result="OK", username=username, profile=profile)
     except:
         return jsonify(status=400, result="Get Profile Failed")
@@ -312,54 +347,13 @@ def track_applications_list():
         count_act = 0
         for application in applications:
             application_status = application.status
-            if 'statuses' in info and info['statuses'] is not None:
-                if policy == "lax" and application_status is None:
-                    pass
-                elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
-                    continue
             student = application.student
-            profile = application.student
-            grades = student.grades
-            for x in profile:
-                print(x)
-                print(profile[x])
-            if 'high_schools' in info and info['high_schools'] is not None:
-                if policy == "lax" and student.high_school_name is None:
-                    pass
-                elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
-                    continue
-            if (('college_class_min' in info or 'college_class_max' in info) and
-                (info['college_class_max'] is not None or
-                 info['college_class_min'] is not None)):
-                college_year = student.college_class
-                if policy == "strict" and college_year is None:
-                    continue
-                if ('college_class_min' in info and
-                    info['college_class_min'] is not None and
-                    college_year is not None):
-                    if college_year < info['college_class_min']:
-                        continue
-                if ('college_class_max' in info and
-                    info['college_class_max'] is not None and
-                    college_year is not None):
-                    if college_year > info['college_class_max']:
-                        continue
-            profile = {
-                'username': student.student.username,
-                'residence_state': student.residence_state,
-                'high_school_name': student.high_school_name,
-                'high_school_city': student.high_school_city,
-                'high_school_state': student.high_school_state,
-                'gpa': student.gpa,
-                'college_class': student.college_class,
-                'major_1': student.major_1,
-                'major_2': student.major_2,
-                'application_status': application_status,
-                }
-            grades = student.grades
-            for field in grades:
-                profile[field] = grades[field]
+            if not track_applications_filter(info, application, student):
+                continue
+            profile = get_profile_dict(student)
+            profile['application_status'] = application_status
             profiles.append(profile)
+            grades = student.grades
             if student.gpa not in {None, ""}:
                 sum_gpa += student.gpa
                 count_gpa += 1
@@ -419,31 +413,10 @@ def track_applications_plot():
         coordinates = []
         for application in applications:
             application_status = application.status
-            if 'statuses' in info and info['statuses'] is not None:
-                if policy == "lax" and application_status is None:
-                    pass
-                elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
-                    continue
             student = application.student
-            grades = student.grades
-            if 'high_schools' in info and info['high_schools'] is not None:
-                if policy == "lax" and student.high_school_name is None:
-                    pass
-                elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
-                    continue
-            college_year = student.college_class
-            if policy == "strict" and college_year is None:
+            if not track_applications_filter(info, application, student):
                 continue
-            if ('college_class_min' in info and
-                info['college_class_min'] is not None and
-                college_year is not None):
-                if college_year < info['college_class_min']:
-                    continue
-            if ('college_class_max' in info and
-                info['college_class_max'] is not None and
-                college_year is not None):
-                if (college_year > info['college_class_max']):
-                    continue
+            grades = student.grades
             test_score = None
             if test_type == "SAT":
                 if ('sat_math' in grades and grades['sat_math'] not in {None, ""} and
@@ -756,20 +729,7 @@ def get_similar_profiles():
         students = students[0:10]
         profiles = []
         for student in students:
-            profile = {
-                'username': student.student.username,
-                'residence_state': student.residence_state,
-                'high_school_name': student.high_school_name,
-                'high_school_city': student.high_school_city,
-                'high_school_state': student.high_school_state,
-                'gpa': student.gpa,
-                'college_class': student.college_class,
-                'major_1': student.major_1,
-                'major_2': student.major_2,
-                }
-            grades = student.grades
-            for field in grades:
-                profile[field] = grades[field]
+            profile = get_profile_dict(student)
             profiles.append(profile)
         return jsonify(status=200, result="OK", profiles=profiles)
     return jsonify(status=400, result="Missing Fields")
@@ -911,17 +871,7 @@ def get_questionable_decisions():
     data = []
     for app in apps:
         profile = app.student
-        s_data = {"name":profile.student.username,
-                "residence":profile.residence_state,
-                "gpa":profile.gpa,
-                "hs_name":profile.high_school_name,
-                "hs_city":profile.high_school_city,
-                "hs_state":profile.high_school_state,
-                "college_class":profile.college_class,
-                "major_1":profile.major_1,
-                "major_2":profile.major_2,
-                }
-        s_data.update(profile.grades)
+        s_data = get_profile_dict(profile)
         coll = app.college
         c_data = dict(coll.to_mongo())
         del c_data['_id']

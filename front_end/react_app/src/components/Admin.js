@@ -239,12 +239,12 @@ class Admin extends React.Component{
             let {act_composite, act_english, act_math, act_reading, act_science, ap_passed, college_class, major_1, major_2,
                     gpa, sat_chem, sat_ebrw, sat_eco_bio, sat_lit, sat_math, sat_math_1, sat_math_2, sat_mol_bio, sat_physics, sat_us, sat_world, username
             } = student;
-            let student_name = student.name;
+            let student_name = student.username;
             let college_name = college.name;
-            let high_school_name = student.hs_name;
-            let high_school_state = student.hs_state;
-            let residence_state = student.residence;
-            let high_school_city = student.hs_city;
+            let high_school_name = student.high_school_name;
+            let high_school_state = student.high_school_state;
+            let residence_state = student.residence_state;
+            let high_school_city = student.high_school_city;
             let key = new Date().getTime();
             questionables.push(
                 <Reviews
