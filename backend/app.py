@@ -156,7 +156,7 @@ def save_profile():
         elif field == 'gpa':
             gpa = info["gpa"]
         elif field == 'high_school_name':
-            name = info["high_school_name"].title()
+            name = info["high_school_name"].title().replace(".", "")
         elif field == 'high_school_city':
             city = info["high_school_city"].title()
         elif field == 'high_school_state':
@@ -183,6 +183,10 @@ def save_profile():
                             set__major_1=major_1,
                             set__major_2=major_2,
                             set__grades=grades)
+            applications = Application.objects.(Q(student=student) & Q(status='Accepted'))
+            for application in applications:
+                if algorithms.detect_questionable_acceptance(application.college, student) < 50:
+                    application.update(set__verification="Pending")
             return jsonify(status=200, result="OK")
         except:
             return jsonify(status=400, result="Save Failed")
@@ -886,6 +890,9 @@ def get_questionable_decisions():
                 "hs_name":profile.high_school_name,
                 "hs_city":profile.high_school_city,
                 "hs_state":profile.high_school_state,
+                "college_class":profile.college_class,
+                "major_1":profile.major_1,
+                "major_2":profile.major_2,
                 }
         s_data.update(profile.grades)
         coll = app.college
