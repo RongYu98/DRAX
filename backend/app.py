@@ -432,7 +432,7 @@ def track_applications_plot():
                     test_score = int(grades['sat_math']) + int(grades['sat_ebrw'])
             if test_type == "ACT":
                 if 'act_composite' in grades and grades['act_composite'] not in {None, ""}:
-                    test_score = grades['act_composite']
+                    test_score = int(grades['act_composite'])
             if test_type == "SAT_ACT":
                 test_count = 0
                 total = 0
@@ -443,7 +443,7 @@ def track_applications_plot():
                 if ('act_composite' in grades and
                     grades['act_composite'] not in {None, ""}):
                     test_count += 1
-                    adjusted = 400 + round((grades['act_composite']-1)*(240/7), -1)
+                    adjusted = 400 + round((int(grades['act_composite'])-1)*(240/7), -1)
                     total += adjusted
                 if not test_count:
                     continue

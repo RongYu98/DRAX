@@ -73,7 +73,7 @@ def import_student_data(filename):
                 elif info == "major_2":
                     p.major_2 = data
                 else:
-                    p.grades[info] = data
+                    p.grades[info] = int(data)
 
         try:
             p.save()
