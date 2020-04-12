@@ -204,6 +204,9 @@ def save_profile():
                             set__high_school_name=None,
                             set__high_school_city=None,
                             set__high_school_state=None,
+                            set__college_class=college_class,
+                            set__major_1=major_1,
+                            set__major_2=major_2,
                             set__grades=grades)
             applications = Application.objects(Q(student=student) & Q(status='Accepted'))
             for application in applications:
