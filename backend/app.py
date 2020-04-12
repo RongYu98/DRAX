@@ -466,7 +466,7 @@ def track_applications_plot():
                     if ('sat_' in field and
                         field not in {'sat_math', 'sat_ebrw'}):
                         if grades[field] not in {None, ""}:
-                            weighted_subjects += grades[field]*0.1
+                            weighted_subjects += int(grades[field])*0.1
                             remaining_weight -= 0.05
                 test_score = weighted_subjects + remainder*remaining_weight
             if test_score is None:
@@ -836,8 +836,10 @@ def get_highschool():
 
 @app.route('/api/update_rankings')
 def update_rankings():
-    # if 'username' not in session or session['username'] != "admin":
-    #    return jsonify(status=400, result="Invalid User")
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     scraper.update_college_ranking()
     return jsonify(status=200, result="OK")
 
@@ -846,6 +848,8 @@ def update_rankings():
 def import_scorecard():
     if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     try:
         file_parser.import_college_scorecard()
         return jsonify(status=200, result="OK")
@@ -856,14 +860,20 @@ def import_scorecard():
 
 @app.route('/api/update_all_college_data')
 def update_all_college_data():
-    # if 'username' not in session or session['username'] != "admin":
-    #    return jsonify(status=400, result="Invalid User")
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     scraper.update_all_colleges()
     return jsonify(status=200, result="OK")
 
 
 @app.route('/api/import_student_profile_applications')
 def import_student_profile_applications():
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     file_parser.import_student_data("students-1.csv")
     file_parser.import_application_data('applications-1.csv')
     return jsonify(status=200, result="OK")
@@ -884,9 +894,10 @@ def delete_all_students():
 @app.route('/api/get_questionable_decisions')
 def get_questionable_decisions():
     if 'username' not in session or session['username'] is None:
-        return jsonify(status=400, result="Invalid User")
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     apps = Application.objects(verification='Pending')
-    # apps = Application.objects(status='Pending')
     data = []
     for app in apps:
         profile = app.student
@@ -914,7 +925,9 @@ def get_questionable_decisions():
 @app.route('/api/decide_admission_decision', methods=['POST'])
 def decide_admission_decision():
     if 'username' not in session or session['username'] is None:
-        return jsonify(status=400, result="Invalid User")
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     info = request.json
     if info is None:
         info = request.form
