@@ -66,6 +66,7 @@ class Application(Document):
     # unique with cannot work with reference fields
     college = ReferenceField(College, required=True,
                              reverse_delete_rule=CASCADE)
+    timestamp = StringField(required=True)
     status = StringField(choices=('Pending', 'Accepted', 'Denied', 'Deferred',
                                   'Wait-listed', 'Withdrawn'), required=True)
     verification = StringField(choices=('Approved', 'Pending', 'Denied'), required=True)
