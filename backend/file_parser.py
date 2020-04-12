@@ -3,11 +3,13 @@ import hash_utils
 import requests
 from classes import Account, Application, StudentProfile, College
 from algorithms import detect_questionable_acceptance
+
 from mongoengine import *
 connect('account', host='localhost', port=27017)
 
 
 def import_student_data(filename):
+    from scraper import highschool_exists
     lines = []
     with open(filename) as f:
         reader = csv.reader(f)
@@ -49,22 +51,29 @@ def import_student_data(filename):
         # Make student profile class
         # TODO: Decide on what attributes are optional
         # TODO: Add checks for if this data is not pressent?
-
+        hs_name = line[index.index('high_school_name')].title()
+        hs_city = line[index.index('high_school_city')].title()
+        hs_state = line[index.index('high_school_state')]
+        if hs_name != '' and hs_city != '' and hs_state != '':
+            highschool_exists(hs_name, hs_city, hs_state)
         p = StudentProfile(
             student=account,
             gpa=float(line[index.index('gpa')]),
             residence_state=line[index.index('state')],
-            high_school_name=line[index.index('high_school_name')],
-            high_school_city=line[index.index('high_school_city')],
-            high_school_state=line[index.index('high_school_state')],
-            college_class=line[index.index('college_class')])
+            high_school_name=hs_name,
+            high_school_city=hs_city,
+            high_school_state=hs_state,
+            college_class=int(line[index.index('college_class')]))
         for x in range(index.index('major_1'), len(index)):
             info = index[x]
             data = line[x]
             if data != '':  # the field isn't empty
-                p.grades[info] = data
-                if data == "college_class":
-                    p.college_class = data
+                if info == "major_1":
+                    p.major_1 = data
+                elif info == "major_2":
+                    p.major_2 = data
+                else:
+                    p.grades[info] = int(data)
 
         try:
             p.save()
