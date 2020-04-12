@@ -1,3 +1,4 @@
+from script import calc_academic_similarity as CAS
 def estimate_exam_percentile(minimum, first_quartile, third_quartile,
                              maximum, score):
     if score <= first_quartile:
@@ -109,7 +110,7 @@ def detect_questionable_acceptance(college, student):
 
 
 def calc_academic_similarity(college, student):
-    return -1  # TODO: use function from testing.py
+    return CAS(college, student)
 
 
 def compute_recommendation_score(college, student):
