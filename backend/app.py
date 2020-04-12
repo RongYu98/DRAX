@@ -10,7 +10,7 @@ from classes import College
 from classes import HighSchool
 
 from scraper import highschool_exists
-
+from time import time
 import re
 import hash_utils
 import algorithms
@@ -251,13 +251,15 @@ def submit_admission_decision():
             verification = "Approved"
             if status == "Accepted" and algorithms.detect_questionable_acceptance(college, student) < 50:
                 verification = "Pending"
+                timestamp = str(time())
             if application is not None:
                 application.update(set__status=status)
                 application.update(set__verification=verification)
+                application.update(set__timestamp=timestamp)
                 return jsonify(status=200, result="OK", verification=verification)
             else:
                 ID = hash_utils.sha_hash(username+"+=+"+college_name)
-                Application(ID=ID, student=student, college=college, status=status, verification=verification).save()
+                Application(ID=ID, student=student, college=college, status=status, verification=verification, timestamp=timestamp).save()
                 return jsonify(status=200, result="OK", verification=verification)
         except:
             return jsonify(status=400, result="Submission Failed")
@@ -891,7 +893,7 @@ def get_questionable_decisions():
         del c_data['_id']
         del c_data['majors']
         # print(c_data)
-        d = {'student':s_data, 'college':c_data}
+        d = {'student':s_data, 'college':c_data, 'timestamp':app.timestamp}
         data.append(d)
     return jsonify(status=200, result=data)
 
@@ -908,6 +910,8 @@ def decide_admission_decision():
             return jsonify(status=400, result="Missing Student Name")
         if 'college_name' not in decision:
             return jsonify(status=400, result="Missing College Name")
+        if 'timestamp' not in decision:
+            return jsonify(status=400, result="Missing Timestamp")
         if 'status' not in decision:
             return jsonify(status=400, result="Missing Response")
         if decision['status'] != 'Approved' and decision['status'] != 'Denied':
@@ -921,6 +925,8 @@ def decide_admission_decision():
             return jsonify(status=400, result="Application Does Not Exist")
         if appl.verification != 'Pending':
             return jsonify(status=400, result="Application already decided")
+        if appl.timestamp != decision['timestamp']:
+            return jsonify(status=200, result="Applicant Data Changed")
         appl.update(set__verification=decision['status'])
     return jsonify(status=200, result="OK")
 
