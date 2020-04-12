@@ -51,7 +51,7 @@ def import_student_data(filename):
         # Make student profile class
         # TODO: Decide on what attributes are optional
         # TODO: Add checks for if this data is not pressent?
-        hs_name = line[index.index('high_school_name')].title()
+        hs_name = line[index.index('high_school_name')].title().replace(".", "")
         hs_city = line[index.index('high_school_city')].title()
         hs_state = line[index.index('high_school_state')]
         if hs_name != '' and hs_city != '' and hs_state != '':
