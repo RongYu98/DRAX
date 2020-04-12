@@ -248,7 +248,7 @@ class Admin extends React.Component{
             let key = new Date().getTime();
             questionables.push(
                 <Reviews
-                    key={`${key}_${username}_${college_name}`}
+                    key={`${key}_${student_name}_${college_name}`}
                     questionable_key={`${key}_${student_name}_${college_name}`}
                     btn_info={{
                         username: (student_name == null) ? "-" : student_name,
