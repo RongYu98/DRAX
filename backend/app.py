@@ -183,7 +183,7 @@ def save_profile():
                             set__major_1=major_1,
                             set__major_2=major_2,
                             set__grades=grades)
-            applications = Application.objects.(Q(student=student) & Q(status='Accepted'))
+            applications = Application.objects(Q(student=student) & Q(status='Accepted'))
             for application in applications:
                 if algorithms.detect_questionable_acceptance(application.college, student) < 50:
                     application.update(set__verification="Pending")
@@ -201,7 +201,7 @@ def save_profile():
                             set__high_school_city=None,
                             set__high_school_state=None,
                             set__grades=grades)
-            applications = Application.objects.(Q(student=student) & Q(status='Accepted'))
+            applications = Application.objects(Q(student=student) & Q(status='Accepted'))
             for application in applications:
                 if algorithms.detect_questionable_acceptance(application.college, student) < 50:
                     application.update(set__verification="Pending")
@@ -293,7 +293,7 @@ def track_applications_list():
             return jsonify(status=400, result="College Not Found")
         if 'policy' in info:  # strict or lax
             policy = info["policy"]
-        applications = Application.objects(college=college)
+        applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         profiles = []
         sum_gpa = 0
         count_gpa = 0
@@ -407,7 +407,7 @@ def track_applications_plot():
             return jsonify(status=400, result="College Not Found")
         if 'policy' in info:  # strict or lax
             policy = info["policy"]
-        applications = Application.objects(college=college)
+        applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         test_type = info['test_type']
         coordinates = []
         for application in applications:
