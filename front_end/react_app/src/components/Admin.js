@@ -245,11 +245,11 @@ class Admin extends React.Component{
             let high_school_state = student.hs_state;
             let residence_state = student.residence;
             let high_school_city = student.hs_city;
-            // let key = new Date().getTime();
+            let key = new Date().getTime();
             questionables.push(
                 <Reviews
-                    key={`${i}`}
-                    questionable_key={i}
+                    key={`${key}_${username}_${college_name}`}
+                    questionable_key={`${key}_${student_name}_${college_name}`}
                     btn_info={{
                         username: (student_name == null) ? "-" : student_name,
                         acceptance: "Accepted",
