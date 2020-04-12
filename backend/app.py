@@ -187,6 +187,7 @@ def save_profile():
             for application in applications:
                 if algorithms.detect_questionable_acceptance(application.college, student) < 50:
                     application.update(set__verification="Pending")
+                    application.update(set__timestamp=str(time.time()))
             return jsonify(status=200, result="OK")
         except:
             return jsonify(status=400, result="Save Failed")
@@ -200,6 +201,11 @@ def save_profile():
                             set__high_school_city=None,
                             set__high_school_state=None,
                             set__grades=grades)
+            applications = Application.objects.(Q(student=student) & Q(status='Accepted'))
+            for application in applications:
+                if algorithms.detect_questionable_acceptance(application.college, student) < 50:
+                    application.update(set__verification="Pending")
+                    application.update(set__timestamp=str(time.time()))
             return jsonify(status=200, result="OK")
         except:
             return jsonify(status=400, result="Save Failed")
