@@ -8,6 +8,7 @@ import {account_enum} from "../common/Authenticator";
 import Reviews from "./Admin_Dashboards/Reviews";
 import {SERVER_URL} from "../common/Constants";
 import {AdminProvider} from "../common/GlobalContext";
+import CollegeItem from "./Main_Dashboards/CollegeItem";
 
 const DELETE_ALL_STUDENT_ENDPOINT = "/delete_all_students";
 const DECIDE_ENDPOINT =  "/decide_admission_decision";
@@ -34,8 +35,10 @@ class Admin extends React.Component{
             scrape_college_data_disable: false,
             questionables: [],
             import_data_score_card_disable: false,
-            questionable_decisions : {}
+            questionable_decisions : {},
+            current_page_num: 1
         }
+        this.button_list = [];
         this.on_logout = this.on_logout.bind(this);
         this.get_reviews = this.get_reviews.bind(this);
         this.on_delete_all_click = this.on_delete_all_click.bind(this);
@@ -50,6 +53,8 @@ class Admin extends React.Component{
         this.remove_decision = this.remove_decision.bind(this);
         this.on_acceptable = this.on_acceptable.bind(this);
         this.on_still_questionable = this.on_still_questionable.bind(this);
+        this.get_page_buttons = this.get_page_buttons.bind(this);
+        this.page_clicked = this.page_clicked.bind(this);
     }
 
     async on_acceptable(event){
@@ -221,7 +226,11 @@ class Admin extends React.Component{
     get_reviews(){
         if(this.state.questionables.length === 0) return null;
         let questionables = [];
-        this.state.questionables.forEach((element, index)=>{
+        let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
+        let end_index = beginning + 10;
+
+        for(let i = beginning; (i < this.state.questionables.length) && (i < end_index); i++){
+            let element = this.state.questionables[i];
             let college = element.college;
             let student = element.student;
             let {act_composite_25, act_composite_75, admission_rate, avg_act_composite, avg_gpa, avg_sat_ebrw, avg_sat_math, city, completion_rate, in_cost, institution, median_debt,
@@ -236,10 +245,11 @@ class Admin extends React.Component{
             let high_school_state = student.hs_state;
             let residence_state = student.residence;
             let high_school_city = student.hs_city;
+            // let key = new Date().getTime();
             questionables.push(
                 <Reviews
-                    key={`${student_name}-${college_name}`}
-                    questionable_key={index}
+                    key={`${i}`}
+                    questionable_key={i}
                     btn_info={{
                         username: (student_name == null) ? "-" : student_name,
                         acceptance: "Accepted",
@@ -277,7 +287,7 @@ class Admin extends React.Component{
                     }}
                 />
             );
-        });
+        }
 
         return questionables;
     }
@@ -291,6 +301,12 @@ class Admin extends React.Component{
             let form_data = {file: e.target.result};
             this.state.college_score_card_form_data = form_data;
         }
+    }
+
+    page_clicked(event){
+       let button = event.target;
+       let number = button.innerHTML;
+       this.setState({current_page_num: parseInt(number)})
     }
 
     async on_delete_all_click(){
@@ -374,6 +390,76 @@ class Admin extends React.Component{
         }
     }
 
+    is_whole_number(n) {
+        let result = (n - Math.floor(n)) !== 0;
+
+        if (result)
+            return false;
+        else
+            return true;
+    }
+
+    get_page_buttons(){
+        let page_list = [];
+        let new_button_list = [];
+        let max_pages = this.state.questionables.length / 10;
+        if(!this.is_whole_number(max_pages)) {
+            max_pages = Math.floor(max_pages) + 1;
+        }
+        let next_ten_pages = this.state.current_page_num + 9;
+        let old_beginning = this.button_list[0];
+        let old_end = this.button_list[this.button_list.length - 1];
+        if(this.state.questionables.length <= 10) {
+            max_pages = 1;
+        }
+
+        if(this.state.current_page_num === 1){
+            for(let i = 1 ; i <= max_pages && i <= next_ten_pages; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if(this.state.current_page_num === old_end && !(this.button_list.length < 10) && (this.state.current_page_num !== max_pages)){
+            for(let i = old_end; i <= max_pages && i <= next_ten_pages; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if(this.state.current_page_num === old_beginning){
+            let previous_ten = this.state.current_page_num - 9;
+            if(previous_ten < 1) previous_ten = 1;
+            for(let i = previous_ten ; i <= max_pages && i <= old_beginning; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }else if((this.button_list.includes(this.state.current_page_num)) || (this.button_list.length < 10)){
+            for(let i = old_beginning ; i <= old_end; i++){
+                new_button_list.push(i);
+                page_list.push(
+                    <li  key={`key-${i}`} className="page-item">
+                        <button onClick={this.page_clicked} className={`page-link shadow-none ${(i === this.state.current_page_num) ? "active" : ""}`}>{i}</button>
+                    </li>
+                )
+            }
+        }
+        if(this.state.questionables.length === 0){
+            this.button_list = [];
+            return [];
+        }
+        this.button_list = new_button_list;
+        return page_list;
+    }
+
 
     render() {
         let from = this.props.location;
@@ -389,6 +475,7 @@ class Admin extends React.Component{
         }
 
         let reviews = this.get_reviews();
+        let page_lists = this.get_page_buttons();
         return (
             <AdminProvider value={{append_decision: this.append_decision, remove_decision: this.remove_decision}}>
                 <div className="wrap-dashboard">
@@ -510,7 +597,7 @@ class Admin extends React.Component{
                                 "" : "None"
                             }}>
                             <div>
-                                <button onClick={this.on_still_questionable} className="btn btn-danger">Still Questionable</button>
+                                <button style={{marginRight: "2%"}} onClick={this.on_still_questionable} className="btn btn-danger">Still Questionable</button>
                                 <button onClick={this.on_acceptable} className="btn btn-primary">Acceptable</button>
                             </div>
                             <div className="list-group" id="questionable-list">
@@ -518,6 +605,16 @@ class Admin extends React.Component{
                                 {reviews}
 
                             </div>
+                            <nav>
+                            {/* Initially, there should be no tags inside the tag below. */}
+                            <ul className="pagination" id="pagination">
+                                {/* "active" class below means the current active page button  */}
+                                {/* first page button must be active in default after completing search */}
+                                {
+                                    page_lists
+                                }
+                            </ul>
+                        </nav>
                         </div>
                     </div>
                 </div>
