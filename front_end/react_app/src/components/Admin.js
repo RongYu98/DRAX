@@ -35,6 +35,7 @@ class Admin extends React.Component{
             scrape_college_data_disable: false,
             questionables: [],
             import_data_score_card_disable: false,
+            import_student_data_disable: false,
             questionable_decisions : {},
             current_page_num: 1
         }
@@ -370,6 +371,8 @@ class Admin extends React.Component{
 
     async on_student_profile_import(event){
         try{
+            alert("this may take a couple minutes so please wait patiently until you see a success popup");
+             this.setState({import_student_data_disable: true});
             let response = await fetch(
                 SERVER_URL + IMPORT_STUDENT_PROFILE_ENDPOINT,
                 {
@@ -384,6 +387,7 @@ class Admin extends React.Component{
             let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.result);
             alert("success!");
+            this.setState({import_student_data_disable: false});
         }catch (err) {
             console.log(err.stack);
             alert(err.message);
@@ -573,7 +577,7 @@ class Admin extends React.Component{
                             <div>
                                 <div>
                                     <h3>Import student profile and application dataset</h3>
-                                    <button onClick={this.on_student_profile_import} className="btn btn-primary">Import</button>
+                                    <button disabled={this.state.import_student_data_disable} onClick={this.on_student_profile_import} className="btn btn-primary">Import</button>
                                 </div>
                                 <span>Import previously collected student profile and application dataset </span>
                             </div>

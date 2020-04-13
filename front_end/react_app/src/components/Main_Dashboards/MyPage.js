@@ -266,11 +266,12 @@ class MyPage extends React.Component{
             }
 
             else if(key.includes("class")){
-                if(this.state.profile[key] > 2027 || this.state.profile[key] < 0) throw new Error("College class show be <= 2027")
+                if(this.state.profile[key] > 2027 || this.state.profile[key] < 0) throw new Error("College class should be <= 2027")
                  body[key] = parseInt(this.state.profile[key]);
             }
 
             else if(key.includes("ap")){
+                if(body[key] < 0) throw new Error("AP can not be negative");
                 body[key] = parseInt(this.state.profile[key]);
             }
 
