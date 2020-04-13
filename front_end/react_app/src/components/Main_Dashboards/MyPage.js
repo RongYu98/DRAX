@@ -271,7 +271,7 @@ class MyPage extends React.Component{
             }
 
             else if(key.includes("ap")){
-                if(body[key] < 0) throw new Error("AP can not be negative");
+                if(this.state.profile[key] < 0) throw new Error("AP can not be negative");
                 body[key] = parseInt(this.state.profile[key]);
             }
 
