@@ -11,7 +11,7 @@ from classes import HighSchool
 
 from scraper import highschool_exists
 from time import time
-import re
+
 import hash_utils
 import algorithms
 import file_parser

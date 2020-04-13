@@ -8,7 +8,7 @@ from time import time
 import threading
 from mongoengine import *
 connect('account', host='localhost', port=27017)
-        
+
 
 def import_student_data(filename):
     lines = []
