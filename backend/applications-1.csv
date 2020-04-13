@@ -1,7 +1,7 @@
 userid,college,status
 jcool,Massachusetts Institute of Technology,pending
 jcool,Stony Brook University,accepted
-jcool,University of California, Santa Barbara,wait-listed
+jcool,"University of California, Santa Barbara",wait-listed
 jcool,Centre College,pending
 jcool,Indiana University Bloomington,wait-listed
 jcool,Mercer University,pending
@@ -36,10 +36,10 @@ bobby,Northwestern University,pending
 bobby,The College of St Scholastica,accepted
 bobby,University of Delaware,denied
 bobby,Centre College,pending
-bobby,University of California, Santa Barbara,pending
+bobby,"University of California, Santa Barbara",pending
 bobby,University of Alabama,wait-listed
 bobby,Fordham University,pending
-carol,University of Nevada, Las Vegas,wait-listed
+carol,"University of Nevada, Las Vegas",wait-listed
 carol,Massachusetts Institute of Technology,denied
 carol,The College of Wooster,accepted
 carol,Providence College,wait-listed
@@ -57,7 +57,7 @@ dave,Smith College,accepted
 dave,St Bonaventure University,pending
 dave,Saint Louis University,withdrawn
 dave,Moravian College,denied
-dave,University of California, Santa Cruz,withdrawn
+dave,"University of California, Santa Cruz",withdrawn
 dave,Princeton University,wait-listed
 evelyn,University of Arkansas,wait-listed
 evelyn,Kennesaw State University,accepted
@@ -87,12 +87,12 @@ grace,Central Connecticut State University,accepted
 grace,Nova Southeastern University,deferred
 grace,Stony Brook University,pending
 grace,Suffolk University,wait-listed
-grace,California State University, East Bay,pending
+grace,"California State University, East Bay",pending
 grace,Fordham University,deferred
 heidi,Rider University,deferred
 heidi,Washington & Jefferson College,denied
 heidi,Texas Tech University,denied
-heidi,California State University, Fresno,denied
+heidi,"California State University, Fresno",denied
 heidi,Centre College,wait-listed
 heidi,Rochester Institute of Technology,pending
 heidi,Washington & Jefferson College,denied
@@ -112,7 +112,7 @@ ivan,Lawrence Technological University,withdrawn
 judy,Westmont College,deferred
 judy,Williams College,accepted
 judy,University of Houston,deferred
-judy,California State University, Fresno,wait-listed
+judy,"California State University, Fresno",wait-listed
 judy,Utah State University,withdrawn
 judy,Washington & Jefferson College,withdrawn
 judy,University of San Diego,wait-listed
@@ -130,7 +130,7 @@ mallory,Siena College,withdrawn
 mallory,Transylvania University,withdrawn
 mallory,University of Montana,accepted
 mike,Lawrence Technological University,pending
-mike,University of California, Davis,denied
+mike,"University of California, Davis",denied
 mike,University of Arkansas,withdrawn
 mike,University of Alabama at Birmingham,accepted
 mike,University of San Diego,accepted
@@ -139,7 +139,7 @@ mike,University of Delaware,withdrawn
 mike,Northwestern University,deferred
 mike,Transylvania University,deferred
 mike,Mount Holyoke College,accepted
-niaj,California State University, East Bay,withdrawn
+niaj,"California State University, East Bay",withdrawn
 niaj,Stony Brook University,denied
 niaj,Samford University,withdrawn
 niaj,New Jersey Institute of Technology,deferred
@@ -167,10 +167,10 @@ peggy,Providence College,accepted
 peggy,Colorado College,denied
 peggy,Carnegie Mellon University,wait-listed
 peggy,University of Arizona,pending
-peggy,University of Nevada, Las Vegas,accepted
+peggy,"University of Nevada, Las Vegas",accepted
 peggy,University of San Diego,pending
 rupert,DePauw University,deferred
-rupert,University of California, Davis,deferred
+rupert,"University of California, Davis",deferred
 rupert,Franklin & Marshall College,deferred
 rupert,Colgate University,denied
 rupert,University of Richmond,wait-listed
@@ -205,7 +205,7 @@ victor,University of Delaware,pending
 victor,Merrimack College,denied
 victor,University of Delaware,withdrawn
 victor,Eastern Washington University,deferred
-victor,California State University, Fresno,denied
+victor,"California State University, Fresno",denied
 victor,Williams College,deferred
 victor,Utah State University,withdrawn
 victor,Transylvania University,wait-listed
