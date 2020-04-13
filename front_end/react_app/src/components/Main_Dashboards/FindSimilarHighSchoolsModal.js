@@ -15,17 +15,30 @@ class FindSimilarHighSchoolsModal extends React.Component{
         this.get_high_schools = this.get_high_schools.bind(this)
         this.get_page_buttons = this.get_page_buttons.bind(this);
         this.is_whole_number = this.is_whole_number.bind(this);
+        this.page_clicked = this.page_clicked.bind(this);
         this.button_list = [];
     }
 
 
+    page_clicked(event){
+       let button = event.target;
+       let number = button.innerHTML;
+       this.setState({current_page_num: parseInt(number)})
+    }
 
     get_high_schools(){
       let high_schools = this.props.current_modal_high_schools;
       if(high_schools.length === 0) return (<h1>No similar high schools found</h1>);
-      let result = high_schools.map((element) =>{
-          return(<HighSchoolButtons key={element.name} data={element}/>);
-      });
+      let result = [];
+      let beginning = (this.state.current_page_num === 1) ? 0 : (this.state.current_page_num - 1) * 10;
+      let end_index = beginning + 10;
+
+      for(let i = beginning; (i < high_schools.length) && (i < end_index); i++) {
+         let high_school = high_schools[i];
+         result.push(
+             <HighSchoolButtons key={high_school.name} data={high_school}/>
+         );
+      }
       return result;
     }
 
