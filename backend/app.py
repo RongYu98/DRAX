@@ -348,8 +348,6 @@ def track_applications_list():
             college = College.objects.get(name=college_name)
         except:
             return jsonify(status=400, result="College Not Found")
-        if 'policy' in info:  # strict or lax
-            policy = info["policy"]
         applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         profiles = []
         sum_gpa = 0
@@ -421,8 +419,6 @@ def track_applications_plot():
             college = College.objects.get(name=college_name)
         except:
             return jsonify(status=400, result="College Not Found")
-        if 'policy' in info:  # strict or lax
-            policy = info["policy"]
         applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         test_type = info['test_type']
         coordinates = []
@@ -911,8 +907,8 @@ def decide_admission_decision():
             return jsonify(status=400, result="Missing Student Name")
         if 'college_name' not in decision:
             return jsonify(status=400, result="Missing College Name")
-        # if 'timestamp' not in decision:
-        #     return jsonify(status=400, result="Missing Timestamp")
+        if 'timestamp' not in decision:
+            return jsonify(status=400, result="Missing Timestamp")
         if 'status' not in decision:
             return jsonify(status=400, result="Missing Response")
         if decision['status'] != 'Approved' and decision['status'] != 'Denied':
