@@ -128,4 +128,14 @@ def calc_academic_similarity(college, student, applications):
     # return gpa_percentile, sat_percentile, act_percentile
 # test_compare_highschool('Stuyvesant High School',
 #                          'Ward Melville Senior High School')
-print(calc_academic_similarity('Stony Brook University', 'Alice', None))
+# print(calc_academic_similarity('Stony Brook University', 'Alice', None))
+acc = Account.objects.get(username="carol")
+# alice")
+print(acc.username)
+prof = StudentProfile.objects.get(student=acc)
+print(prof.gpa)
+coll = College.objects.get(name="The College of Wooster") 
+# coll = College.objects.get(name="Washington & Jefferson College")
+appl = Application.objects(college=coll, student=prof)
+for app in appl:
+    print(app.verification)

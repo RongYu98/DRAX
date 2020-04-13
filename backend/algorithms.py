@@ -20,6 +20,10 @@ def estimate_gpa_percentile(minimum, mean, gpa):
         return int((gpa-minimum)/step)
     else:
         step = (4.0-mean)/50
+        if step == 0:
+            if gpa == 4.0:
+                return 50
+            step = 0.001
         return int(50+(gpa-mean)/step)
 
 
@@ -30,7 +34,6 @@ def detect_questionable_acceptance(college, student):
     ACT_MAX = 36
 
     grades = student.grades
-
     # Estimate percentile for SAT Math
     sat_math_percentile = None
     if 'sat_math' in grades and grades["sat_math"] not in {None, ""}:
