@@ -47,10 +47,10 @@ class Signup extends React.Component{
                     }
                 )
 
-            if(!response.ok) throw new Error(response.statusText);
+            if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
             if(response_json.status !== 200){
-                throw new Error(response_json.result);
+                throw new Error(response_json.resuls);
             }else{
                 alert("Successfully signed up. Redirecting to login page.")
                 this.props.history.push({
@@ -60,6 +60,7 @@ class Signup extends React.Component{
             }
         }catch (err) {
             this.setState({err_msg: err.message});
+            console.log(err);
         }
     }
 
