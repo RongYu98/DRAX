@@ -2,14 +2,15 @@ import csv
 import hash_utils
 import requests
 from classes import Account, Application, StudentProfile, College
+# from scraper import highschool_exists  # cannot be here because this is imported into scraper
 from algorithms import detect_questionable_acceptance
-
+from time import time
+import threading
 from mongoengine import *
 connect('account', host='localhost', port=27017)
 
 
 def import_student_data(filename):
-    from scraper import highschool_exists
     lines = []
     with open(filename) as f:
         reader = csv.reader(f)
@@ -17,7 +18,25 @@ def import_student_data(filename):
             lines.append(line)
 
     header = lines[0]
+    threads = []
+    max = 200  # this is lighter
+    lines = lines[1:]
+    for x in range(0, max):
+        start = int(len(lines)/max * x)
+        end = int(len(lines)/max * (x+1))
+        print(start, end)
+        subset = lines[start:end]
+        t = threading.Thread(target=thread_import_student_data, args=(subset,))
+        threads.append(t)
+        # threads.append(target=thread_import_student_data, args=(lines[start:end]))
+        threads[-1].start()
+    for x in threads:
+        x.join()
+    return
 
+
+def thread_import_student_data(lines):
+    from scraper import highschool_exists
     index = ['username', 'password', 'state', 'high_school_name',
              'high_school_city', 'high_school_state', 'gpa', 'college_class',
              'major_1', 'major_2', 'sat_math', 'sat_ebrw', 'act_english',
@@ -26,7 +45,7 @@ def import_student_data(filename):
              'sat_eco_bio', 'sat_mol_bio', 'sat_chem', 'sat_physics',
              'ap_passed']
 
-    for line in lines[1:]:
+    for line in lines:
         username = line[0]
         password = line[1]
         salt = hash_utils.generate_salt()
@@ -34,14 +53,13 @@ def import_student_data(filename):
         account = Account(username=username,
                           hashed_password=digest,
                           salt=salt, type="Student")
-
         try:
             account.save()
         except Exception as e:
             # print(e)
             print("There was an error importing student data: "+username)
 
-    for line in lines[1:]:
+    for line in lines:
         username = line[0]
         try:
             account = Account.objects.get(username=username, type="Student")
@@ -51,7 +69,7 @@ def import_student_data(filename):
         # Make student profile class
         # TODO: Decide on what attributes are optional
         # TODO: Add checks for if this data is not pressent?
-        hs_name = line[index.index('high_school_name')].title()
+        hs_name = line[index.index('high_school_name')].title().replace(".", "")
         hs_city = line[index.index('high_school_city')].title()
         hs_state = line[index.index('high_school_state')]
         if hs_name != '' and hs_city != '' and hs_state != '':
@@ -74,7 +92,6 @@ def import_student_data(filename):
                     p.major_2 = data
                 else:
                     p.grades[info] = int(data)
-
         try:
             p.save()
         except Exception as e:
@@ -89,7 +106,25 @@ def import_application_data(filename):
         reader = csv.reader(f)
         for line in reader:
             lines.append(line)
-    for line in lines[1:]:
+
+    lines = lines[1:]  # ignore header
+    max = 80
+    threads = []
+    for x in range(0, max):
+        start = int(len(lines)/max * x)
+        end = int(len(lines)/max * (x+1))
+        print(start, end)
+        subset = lines[start:end]
+        t = threading.Thread(target=thread_import_application_data, args=(subset,))
+        threads.append(t)
+        threads[-1].start()
+    for x in threads:
+        x.join()
+    return
+
+
+def thread_import_application_data(lines):
+    for line in lines:
         username = line[0]
         college = line[1].strip()
         status = line[2].capitalize()
@@ -118,7 +153,8 @@ def import_application_data(filename):
         app = Application(ID=ID, student=student,
                           college=university,
                           status=status,
-                          verification=verification)
+                          verification=verification,
+                          timestamp=str(time()))
         try:
             app.save()
         except Exception as e:

@@ -267,6 +267,7 @@ def update_all_colleges():
 
 
 def get_highschool_info(name, city, state):
+    # name = name.replace('.', '')  # remove dots, like Mt. Brook
     name = name.replace(' ', '-')+'-'+city.replace(' ', '-')+'-'+state+'/'
     name = name.lower()
     # url = 'https://www.niche.com/k12/'+name

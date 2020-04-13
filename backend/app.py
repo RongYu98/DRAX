@@ -10,20 +10,67 @@ from classes import College
 from classes import HighSchool
 
 from scraper import highschool_exists
+from time import time
 
-import re
 import hash_utils
 import algorithms
 import file_parser
 import scraper
 
 connect('account', host='localhost', port=27017)
-connect('college', alias='college')
 
 app = Flask(__name__)
 app.secret_key = 'Draconian Rich Awesome Xenomorphs'
 CORS(app, supports_credentials=True)
 # may wish to disable cross origin in the cloud server for security
+
+
+# Helper functions to eliminate redundancy
+def get_profile_dict(s):
+    profile = {
+        'username': s.student.username,
+        'residence_state': s.residence_state,
+        'high_school_name': s.high_school_name,
+        'high_school_city': s.high_school_city,
+        'high_school_state': s.high_school_state,
+        'gpa': s.gpa,
+        'college_class': s.college_class,
+        'major_1': s.major_1,
+        'major_2': s.major_2,
+        }
+    grades = s.grades
+    profile.update(grades)
+    return profile
+
+
+def track_applications_filter(info, application, student):
+    if 'statuses' in info and info['statuses'] is not None:
+        if policy == "lax" and application_status is None:
+            pass
+        elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
+            return False
+    if 'high_schools' in info and info['high_schools'] is not None:
+        if policy == "lax" and student.high_school_name is None:
+            pass
+        elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
+            return False
+    if (('college_class_min' in info or 'college_class_max' in info) and
+        (info['college_class_max'] is not None or
+         info['college_class_min'] is not None)):
+        college_year = student.college_class
+        if policy == "strict" and college_year is None:
+            return False
+        if ('college_class_min' in info and
+            info['college_class_min'] is not None and
+            college_year is not None):
+            if college_year < info['college_class_min']:
+                return False
+        if ('college_class_max' in info and
+            info['college_class_max'] is not None and
+            college_year is not None):
+            if college_year > info['college_class_max']:
+                return False
+    return True
 
 
 @app.route('/api/signup', methods=['POST'])
@@ -110,19 +157,7 @@ def get_profile():
     # Get student profile
     try:
         student = StudentProfile.objects.get(student=Account.objects.get(username=username))
-        profile = {
-            'residence_state': student.residence_state,
-            'high_school_name': student.high_school_name,
-            'high_school_city': student.high_school_city,
-            'high_school_state': student.high_school_state,
-            'gpa': student.gpa,
-            'college_class': student.college_class,
-            'major_1': student.major_1,
-            'major_2': student.major_2,
-            }
-        grades = student.grades
-        for field in grades:
-            profile[field] = grades[field]
+        profile = get_profile_dict(student)
         return jsonify(status=200, result="OK", username=username, profile=profile)
     except:
         return jsonify(status=400, result="Get Profile Failed")
@@ -156,9 +191,13 @@ def save_profile():
         elif field == 'gpa':
             gpa = info["gpa"]
         elif field == 'high_school_name':
-            name = info["high_school_name"].title()
+            name = info["high_school_name"]
+            if name is not None:
+                name = name.title().replace(".", "")
         elif field == 'high_school_city':
-            city = info["high_school_city"].title()
+            city = info["high_school_city"]
+            if city is not None:
+                city = city.title()
         elif field == 'high_school_state':
             state = info["high_school_state"]
         elif field == 'college_class':
@@ -183,6 +222,11 @@ def save_profile():
                             set__major_1=major_1,
                             set__major_2=major_2,
                             set__grades=grades)
+            applications = Application.objects(Q(student=student) & Q(status='Accepted'))
+            for application in applications:
+                if algorithms.detect_questionable_acceptance(application.college, student) < 50:
+                    application.update(set__verification="Pending")
+                    application.update(set__timestamp=str(time.time()))
             return jsonify(status=200, result="OK")
         except:
             return jsonify(status=400, result="Save Failed")
@@ -195,7 +239,15 @@ def save_profile():
                             set__high_school_name=None,
                             set__high_school_city=None,
                             set__high_school_state=None,
+                            set__college_class=college_class,
+                            set__major_1=major_1,
+                            set__major_2=major_2,
                             set__grades=grades)
+            applications = Application.objects(Q(student=student) & Q(status='Accepted'))
+            for application in applications:
+                if algorithms.detect_questionable_acceptance(application.college, student) < 50:
+                    application.update(set__verification="Pending")
+                    application.update(set__timestamp=str(time.time()))
             return jsonify(status=200, result="OK")
         except:
             return jsonify(status=400, result="Save Failed")
@@ -251,13 +303,15 @@ def submit_admission_decision():
             verification = "Approved"
             if status == "Accepted" and algorithms.detect_questionable_acceptance(college, student) < 50:
                 verification = "Pending"
+                timestamp = str(time())
             if application is not None:
                 application.update(set__status=status)
                 application.update(set__verification=verification)
+                application.update(set__timestamp=timestamp)
                 return jsonify(status=200, result="OK", verification=verification)
             else:
                 ID = hash_utils.sha_hash(username+"+=+"+college_name)
-                Application(ID=ID, student=student, college=college, status=status, verification=verification).save()
+                Application(ID=ID, student=student, college=college, status=status, verification=verification, timestamp=timestamp).save()
                 return jsonify(status=200, result="OK", verification=verification)
         except:
             return jsonify(status=400, result="Submission Failed")
@@ -281,7 +335,7 @@ def track_applications_list():
             return jsonify(status=400, result="College Not Found")
         if 'policy' in info:  # strict or lax
             policy = info["policy"]
-        applications = Application.objects(college=college)
+        applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         profiles = []
         sum_gpa = 0
         count_gpa = 0
@@ -293,54 +347,13 @@ def track_applications_list():
         count_act = 0
         for application in applications:
             application_status = application.status
-            if 'statuses' in info and info['statuses'] is not None:
-                if policy == "lax" and application_status is None:
-                    pass
-                elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
-                    continue
             student = application.student
-            profile = application.student
-            grades = student.grades
-            for x in profile:
-                print(x)
-                print(profile[x])
-            if 'high_schools' in info and info['high_schools'] is not None:
-                if policy == "lax" and student.high_school_name is None:
-                    pass
-                elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
-                    continue
-            if (('college_class_min' in info or 'college_class_max' in info) and
-                (info['college_class_max'] is not None or
-                 info['college_class_min'] is not None)):
-                college_year = student.college_class
-                if policy == "strict" and college_year is None:
-                    continue
-                if ('college_class_min' in info and
-                    info['college_class_min'] is not None and
-                    college_year is not None):
-                    if college_year < info['college_class_min']:
-                        continue
-                if ('college_class_max' in info and
-                    info['college_class_max'] is not None and
-                    college_year is not None):
-                    if college_year > info['college_class_max']:
-                        continue
-            profile = {
-                'username': student.student.username,
-                'residence_state': student.residence_state,
-                'high_school_name': student.high_school_name,
-                'high_school_city': student.high_school_city,
-                'high_school_state': student.high_school_state,
-                'gpa': student.gpa,
-                'college_class': student.college_class,
-                'major_1': student.major_1,
-                'major_2': student.major_2,
-                'application_status': application_status,
-                }
-            grades = student.grades
-            for field in grades:
-                profile[field] = grades[field]
+            if not track_applications_filter(info, application, student):
+                continue
+            profile = get_profile_dict(student)
+            profile['application_status'] = application_status
             profiles.append(profile)
+            grades = student.grades
             if student.gpa not in {None, ""}:
                 sum_gpa += student.gpa
                 count_gpa += 1
@@ -395,36 +408,15 @@ def track_applications_plot():
             return jsonify(status=400, result="College Not Found")
         if 'policy' in info:  # strict or lax
             policy = info["policy"]
-        applications = Application.objects(college=college)
+        applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         test_type = info['test_type']
         coordinates = []
         for application in applications:
             application_status = application.status
-            if 'statuses' in info and info['statuses'] is not None:
-                if policy == "lax" and application_status is None:
-                    pass
-                elif info['statuses'] != [] and application_status.lower() not in info['statuses']:
-                    continue
             student = application.student
-            grades = student.grades
-            if 'high_schools' in info and info['high_schools'] is not None:
-                if policy == "lax" and student.high_school_name is None:
-                    pass
-                elif info['high_schools'] != [] and student.high_school_name not in info['high_schools']:
-                    continue
-            college_year = student.college_class
-            if policy == "strict" and college_year is None:
+            if not track_applications_filter(info, application, student):
                 continue
-            if ('college_class_min' in info and
-                info['college_class_min'] is not None and
-                college_year is not None):
-                if college_year < info['college_class_min']:
-                    continue
-            if ('college_class_max' in info and
-                info['college_class_max'] is not None and
-                college_year is not None):
-                if (college_year > info['college_class_max']):
-                    continue
+            grades = student.grades
             test_score = None
             if test_type == "SAT":
                 if ('sat_math' in grades and grades['sat_math'] not in {None, ""} and
@@ -454,7 +446,7 @@ def track_applications_plot():
                     if ('sat_' in field and
                         field not in {'sat_math', 'sat_ebrw'}):
                         if grades[field] not in {None, ""}:
-                            weighted_subjects += grades[field]*0.1
+                            weighted_subjects += int(grades[field])*0.1
                             remaining_weight -= 0.05
                 test_score = weighted_subjects + remainder*remaining_weight
             if test_score is None:
@@ -737,20 +729,7 @@ def get_similar_profiles():
         students = students[0:10]
         profiles = []
         for student in students:
-            profile = {
-                'username': student.student.username,
-                'residence_state': student.residence_state,
-                'high_school_name': student.high_school_name,
-                'high_school_city': student.high_school_city,
-                'high_school_state': student.high_school_state,
-                'gpa': student.gpa,
-                'college_class': student.college_class,
-                'major_1': student.major_1,
-                'major_2': student.major_2,
-                }
-            grades = student.grades
-            for field in grades:
-                profile[field] = grades[field]
+            profile = get_profile_dict(student)
             profiles.append(profile)
         return jsonify(status=200, result="OK", profiles=profiles)
     return jsonify(status=400, result="Missing Fields")
@@ -824,8 +803,10 @@ def get_highschool():
 
 @app.route('/api/update_rankings')
 def update_rankings():
-    # if 'username' not in session or session['username'] != "admin":
-    #    return jsonify(status=400, result="Invalid User")
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     scraper.update_college_ranking()
     return jsonify(status=200, result="OK")
 
@@ -834,6 +815,8 @@ def update_rankings():
 def import_scorecard():
     if 'username' not in session or session['username'] is None:
         return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     try:
         file_parser.import_college_scorecard()
         return jsonify(status=200, result="OK")
@@ -844,16 +827,25 @@ def import_scorecard():
 
 @app.route('/api/update_all_college_data')
 def update_all_college_data():
-    # if 'username' not in session or session['username'] != "admin":
-    #    return jsonify(status=400, result="Invalid User")
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     scraper.update_all_colleges()
     return jsonify(status=200, result="OK")
 
 
 @app.route('/api/import_student_profile_applications')
 def import_student_profile_applications():
-    file_parser.import_student_data("students-1.csv")
+    if 'username' not in session or session['username'] is None:
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
+    from time import time
+    t = time()
+    # file_parser.import_student_data("students-1.csv")
     file_parser.import_application_data('applications-1.csv')
+    print(time() - t)
     return jsonify(status=200, result="OK")
 
 
@@ -872,26 +864,20 @@ def delete_all_students():
 @app.route('/api/get_questionable_decisions')
 def get_questionable_decisions():
     if 'username' not in session or session['username'] is None:
-        return jsonify(status=400, result="Invalid User")
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     apps = Application.objects(verification='Pending')
-    # apps = Application.objects(status='Pending')
     data = []
     for app in apps:
         profile = app.student
-        s_data = {"name":profile.student.username,
-                "residence":profile.residence_state,
-                "gpa":profile.gpa,
-                "hs_name":profile.high_school_name,
-                "hs_city":profile.high_school_city,
-                "hs_state":profile.high_school_state,
-                }
-        s_data.update(profile.grades)
+        s_data = get_profile_dict(profile)
         coll = app.college
         c_data = dict(coll.to_mongo())
         del c_data['_id']
         del c_data['majors']
         # print(c_data)
-        d = {'student':s_data, 'college':c_data}
+        d = {'student':s_data, 'college':c_data, 'timestamp':app.timestamp}
         data.append(d)
     return jsonify(status=200, result=data)
 
@@ -899,7 +885,9 @@ def get_questionable_decisions():
 @app.route('/api/decide_admission_decision', methods=['POST'])
 def decide_admission_decision():
     if 'username' not in session or session['username'] is None:
-        return jsonify(status=400, result="Invalid User")
+        return jsonify(status=400, result="Not Logged In")
+    if Account.objects.get(username=session['username']).type != "Admin":
+        return jsonify(status=400, result="Unauthorized Access")
     info = request.json
     if info is None:
         info = request.form
@@ -908,6 +896,8 @@ def decide_admission_decision():
             return jsonify(status=400, result="Missing Student Name")
         if 'college_name' not in decision:
             return jsonify(status=400, result="Missing College Name")
+        if 'timestamp' not in decision:
+            return jsonify(status=400, result="Missing Timestamp")
         if 'status' not in decision:
             return jsonify(status=400, result="Missing Response")
         if decision['status'] != 'Approved' and decision['status'] != 'Denied':
@@ -921,13 +911,15 @@ def decide_admission_decision():
             return jsonify(status=400, result="Application Does Not Exist")
         if appl.verification != 'Pending':
             return jsonify(status=400, result="Application already decided")
+        if appl.timestamp != decision['timestamp']:
+            return jsonify(status=200, result="Applicant Data Changed")
         appl.update(set__verification=decision['status'])
     return jsonify(status=200, result="OK")
 
 if __name__ == "__main__":
-    profile = StudentProfile.objects.get(student=Account.objects.get(username="test"))
-    profile.high_school_name = "Academic Magnet High School"
-    profile.high_school_city = "North Charleston"
-    profile.high_school_state = "SC"
-    profile.save()
+    # profile = StudentProfile.objects.get(student=Account.objects.get(username="test"))
+    # profile.high_school_name = "Academic Magnet High School"
+    # profile.high_school_city = "North Charleston"
+    # profile.high_school_state = "SC"
+    # profile.save()
     app.run(host='0.0.0.0', port=9000, debug=True)
