@@ -58,7 +58,7 @@ class Reviews extends React.Component{
 
 
     render() {
-        let {btn_info,  personal, sat2, act} = this.props;
+        let {timestamp, btn_info,  personal, sat2, act} = this.props;
         let style = this.get_badge_style(btn_info.acceptance);
         return (
             <React.Fragment>
@@ -80,7 +80,7 @@ class Reviews extends React.Component{
                                             defaultValue={btn_info.username}
                                             checked={this.state.checked}
                                             onChange={(event)=>{
-                                                let decision = {key: this.props.questionable_key, student_name: btn_info.username, college_name: btn_info.college_name, status: null}
+                                                let decision = {timestamp: timestamp, key: this.props.questionable_key, student_name: btn_info.username, college_name: btn_info.college_name, status: null}
                                                 let check = !this.state.checked;
                                                 if(check){
                                                     append_decision(decision);

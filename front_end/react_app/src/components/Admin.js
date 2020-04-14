@@ -246,11 +246,10 @@ class Admin extends React.Component{
             let high_school_state = student.high_school_state;
             let residence_state = student.residence_state;
             let high_school_city = student.high_school_city;
-            let key = new Date().getTime();
             questionables.push(
                 <Reviews
-                    key={`${key}_${student_name}_${college_name}`}
-                    questionable_key={`${key}_${student_name}_${college_name}`}
+                    key={`${element.timestamp}_${student_name}_${college_name}`}
+                    questionable_key={`${element.timestamp}_${student_name}_${college_name}`}
                     btn_info={{
                         username: (student_name == null) ? "-" : student_name,
                         acceptance: "Accepted",
@@ -286,6 +285,7 @@ class Admin extends React.Component{
                         science: (act_science == null) ? "-" : act_science,
                         composite: (act_composite == null) ? "-" : act_composite
                     }}
+                    timestamp={element.timestamp}
                 />
             );
         }
