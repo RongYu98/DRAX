@@ -225,7 +225,6 @@ def save_profile():
                             set__major_1=major_1,
                             set__major_2=major_2,
                             set__grades=grades)
-
             applications = Application.objects(Q(student=student) & Q(status='Accepted'))
             for application in applications:
                 if algorithms.detect_questionable_acceptance(application.college, student) < 50:
@@ -348,6 +347,8 @@ def track_applications_list():
             college = College.objects.get(name=college_name)
         except:
             return jsonify(status=400, result="College Not Found")
+        if 'policy' in info:  # strict or lax
+            policy = info["policy"]
         applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         profiles = []
         sum_gpa = 0
@@ -419,6 +420,8 @@ def track_applications_plot():
             college = College.objects.get(name=college_name)
         except:
             return jsonify(status=400, result="College Not Found")
+        if 'policy' in info:  # strict or lax
+            policy = info["policy"]
         applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         test_type = info['test_type']
         coordinates = []
@@ -920,10 +923,7 @@ def decide_admission_decision():
         except Exception as e:
             print(e)
             return jsonify(status=400, result="Application Does Not Exist")
-        print(appl.verification)
-        
         if appl.verification != 'Pending':
-            print(appl.verification)
             return jsonify(status=400, result="Application already decided")
         if appl.timestamp != decision['timestamp']:
             return jsonify(status=200, result="Applicant Data Changed")

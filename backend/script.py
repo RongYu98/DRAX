@@ -72,7 +72,6 @@ def calc_academic_similarity(college, student):
             for x in range(0, len(grades[status][grade_type])):
                 if grades[status][grade_type][x] is not None:
                     grades[status][grade_type][x] = int(grades[status][grade_type][x])
-
     percent = {
         'Accepted': {
             'gpa': None, 'sat': None, 'act': None
