@@ -84,7 +84,7 @@ class Admin extends React.Component{
             let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.result);
             await this.fetch_questionables();
-            console.log(this.state.questionables);
+            this.state.questionable_decisions = {};
             this.forceUpdate();
         }catch (err) {
             console.log(err.stack);
@@ -118,7 +118,7 @@ class Admin extends React.Component{
             let response_json = await response.json();
             if(response_json.status !== 200) throw new Error(response_json.result);
             await this.fetch_questionables();
-            console.log(this.state.questionables);
+            this.state.questionable_decisions = {};
             this.forceUpdate();
         }catch (err) {
             console.log(err.stack);
