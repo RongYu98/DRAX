@@ -149,6 +149,13 @@ def thread_import_application_data(lines):
             detect_questionable_acceptance(university, student) < 50):
             verification = "Pending"
 
+        duplicate = False
+        try:
+            app = Application.objects.get(student=student,college=university)
+            print("Application already exists, moving on")
+            continue
+        except:
+            duplicate = False
         ID = hash_utils.sha_hash(username+"+=+"+college)
         app = Application(ID=ID, student=student,
                           college=university,

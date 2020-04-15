@@ -1,0 +1,65 @@
+app.py:76:1: W293 blank line contains whitespace
+app.py:85:1: W293 blank line contains whitespace
+app.py:88:60: E271 multiple spaces after keyword
+app.py:108:80: E501 line too long (103 > 79 characters)
+app.py:124:1: W293 blank line contains whitespace
+app.py:164:9: E129 visually indented line with same indent as next logical line
+app.py:169:38: E231 missing whitespace after ','
+app.py:169:43: E231 missing whitespace after ','
+app.py:180:80: E501 line too long (103 > 79 characters)
+app.py:181:51: E251 unexpected spaces around keyword / parameter equals
+app.py:181:53: E251 unexpected spaces around keyword / parameter equals
+app.py:190:80: E501 line too long (88 > 79 characters)
+app.py:201:80: E501 line too long (99 > 79 characters)
+app.py:215:80: E501 line too long (94 > 79 characters)
+app.py:220:80: E501 line too long (90 > 79 characters)
+app.py:242:29: E261 at least two spaces before inline comment
+app.py:256:56: E711 comparison to None should be 'if cond is not None:'
+app.py:259:80: E501 line too long (99 > 79 characters)
+app.py:267:64: E711 comparison to None should be 'if cond is not None:'
+app.py:270:80: E501 line too long (105 > 79 characters)
+app.py:272:80: E501 line too long (80 > 79 characters)
+app.py:284:21: E129 visually indented line with same indent as next logical line
+app.py:289:21: E129 visually indented line with same indent as next logical line
+app.py:299:80: E501 line too long (96 > 79 characters)
+app.py:315:80: E501 line too long (87 > 79 characters)
+app.py:334:80: E501 line too long (83 > 79 characters)
+app.py:352:34: E251 unexpected spaces around keyword / parameter equals
+app.py:352:36: E251 unexpected spaces around keyword / parameter equals
+app.py:352:48: E251 unexpected spaces around keyword / parameter equals
+app.py:352:50: E251 unexpected spaces around keyword / parameter equals
+app.py:353:29: E261 at least two spaces before inline comment
+app.py:360:56: E711 comparison to None should be 'if cond is not None:'
+app.py:363:80: E501 line too long (99 > 79 characters)
+app.py:375:80: E501 line too long (105 > 79 characters)
+app.py:381:17: E129 visually indented line with same indent as next logical line
+app.py:382:80: E501 line too long (102 > 79 characters)
+app.py:386:17: E129 visually indented line with same indent as next logical line
+app.py:387:80: E501 line too long (102 > 79 characters)
+app.py:391:80: E501 line too long (85 > 79 characters)
+app.py:392:5: E129 visually indented line with same indent as next logical line
+app.py:392:80: E501 line too long (83 > 79 characters)
+app.py:393:80: E501 line too long (82 > 79 characters)
+app.py:395:80: E501 line too long (91 > 79 characters)
+app.py:400:80: E501 line too long (85 > 79 characters)
+app.py:401:21: E129 visually indented line with same indent as next logical line
+app.py:401:80: E501 line too long (83 > 79 characters)
+app.py:403:80: E501 line too long (80 > 79 characters)
+app.py:404:80: E501 line too long (91 > 79 characters)
+app.py:406:80: E501 line too long (85 > 79 characters)
+app.py:410:45: W291 trailing whitespace
+app.py:414:80: E501 line too long (81 > 79 characters)
+app.py:439:80: E501 line too long (99 > 79 characters)
+app.py:442:1: W293 blank line contains whitespace
+app.py:571:1: W293 blank line contains whitespace
+app.py:574:23: E261 at least two spaces before inline comment
+app.py:582:13: E265 block comment should start with '# '
+app.py:582:80: E501 line too long (104 > 79 characters)
+app.py:601:9: E301 expected 1 blank line, found 0
+app.py:604:57: E251 unexpected spaces around keyword / parameter equals
+app.py:604:59: E251 unexpected spaces around keyword / parameter equals
+app.py:613:1: W293 blank line contains whitespace
+app.py:637:21: E711 comparison to None should be 'if cond is not None:'
+app.py:642:53: E251 unexpected spaces around keyword / parameter equals
+app.py:642:55: E251 unexpected spaces around keyword / parameter equals
+app.py:732:80: E501 line too long (85 > 79 characters)

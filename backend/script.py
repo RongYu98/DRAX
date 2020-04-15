@@ -57,17 +57,21 @@ def calc_academic_similarity(college, student):
     for s in applications:
         status = s.status if s.status == 'Accepted' else 'Not Accepted'
         s = s.student
-        if 'gpa' in s:
+        if 'gpa' in s and s.gpa is not None:
             grades[status]['gpa_avg'].append(s.gpa)
         if 'grades' not in s:
             continue
-        if 'act_composite' in s.grades:
-            grades[status]['act_avg'].append(int(s.grades['act_composite']))
-        if 'sat_ebrw' in s.grades and 'sat_math' in s.grades:
-            grades[status]['sat_avg'].append(int(s.grades['sat_ebrw']))
-        if 'sat_math' in s.grades:
-            grades[status]['sat_avg'].append(int(s.grades['sat_math']))
-
+        if 'act_composite' in s.grades and s.grades['act_composite'] is not None:
+            grades[status]['act_avg'].append(s.grades['act_composite']) 
+        if 'sat_ebrw' in s.grades and s.grades['sat_ebrw'] is not None:
+            grades[status]['sat_avg'].append(s.grades['sat_ebrw'])
+        if 'sat_math' in s.grades and s.grades['sat_math'] is not None:
+            grades[status]['sat_avg'].append(s.grades['sat_math'])
+    for status in grades:
+        for grade_type in grades[status]:
+            for x in range(0, len(grades[status][grade_type])):
+                if grades[status][grade_type][x] is not None:
+                    grades[status][grade_type][x] = int(grades[status][grade_type][x])
     percent = {
         'Accepted': {
             'gpa': None, 'sat': None, 'act': None
@@ -85,29 +89,30 @@ def calc_academic_similarity(college, student):
             # NOTE: reverse sort goes from high to low, 100th to 0th
             percent[status]['gpa'] = g.index(profile.gpa) / 1.0 / len(g) * 100
             percent[status]['gpa'] = 100 - percent[status]['gpa']
-            print(profile.gpa)
-            print(g)
-            print(percent[status]['gpa'])
+            # print(profile.gpa)
+            # print(g)
+            # print(percent[status]['gpa'])
 
-        if 'act_composite' in profile.grades:
+        if 'act_composite' in profile.grades and profile.grades['act_composite'] is not None:
             g = grades[status]['act_avg']
+            print(g)
             score = int(profile.grades['act_composite'])
             g.append(score)
             g.sort(reverse=True)
             percent[status]['act'] = 100 - g.index(score) / 1.0 / len(g) * 100
-            print()
-            print(profile.grades['act_composite'])
-            print(g)
-            print(percent[status]['act'])
+            # print()
+            # print(profile.grades['act_composite'])
+            # print(g)
+            # print(percent[status]['act'])
 
         if 'sat_math' in profile.grades or 'sat_ebrw' in profile.grades:
             g = grades['Accepted']['sat_avg']
             score = 0
             count = 0
-            if 'sat_math' in profile.grades:
+            if 'sat_math' in profile.grades and profile.grades['sat_math'] is not None:
                 score += int(profile.grades['sat_math'])/2.0
                 count += 1
-            if 'sat_ebrw' in profile.grades:
+            if 'sat_ebrw' in profile.grades and profile.grades['sat_ebrw'] is not None:
                 score += int(profile.grades['sat_ebrw'])/2.0
                 count += 1
             if count == 1:
@@ -115,10 +120,10 @@ def calc_academic_similarity(college, student):
             g.append(score)
             g.sort(reverse=True)
             percent[status]['sat'] = 100 - g.index(score) / 1.0 / len(g) * 100
-            print()
-            print(score)
-            print(g)
-            print(percent[status]['sat'])
+            # print()
+            # print(score)
+            # print(g)
+            # print(percent[status]['sat'])
 
     print()
     print(percent)

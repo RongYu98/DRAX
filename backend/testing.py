@@ -128,4 +128,4 @@ def calc_academic_similarity(college, student, applications):
     # return gpa_percentile, sat_percentile, act_percentile
 # test_compare_highschool('Stuyvesant High School',
 #                          'Ward Melville Senior High School')
-print(calc_academic_similarity('Stony Brook University', 'Alice', None))
+# print(calc_academic_similarity('Stony Brook University', 'Alice', None))

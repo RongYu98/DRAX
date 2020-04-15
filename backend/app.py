@@ -44,6 +44,9 @@ def get_profile_dict(s):
 
 
 def track_applications_filter(info, application, student):
+    application_status = application.status
+    if 'policy' in info:  # strict or lax
+        policy = info["policy"]    
     if 'statuses' in info and info['statuses'] is not None:
         if policy == "lax" and application_status is None:
             pass
@@ -226,9 +229,13 @@ def save_profile():
             for application in applications:
                 if algorithms.detect_questionable_acceptance(application.college, student) < 50:
                     application.update(set__verification="Pending")
-                    application.update(set__timestamp=str(time.time()))
+                    application.update(set__timestamp=str(time()))
+                elif application.verification == "Pending":
+                    application.update(set__verification="Approved")
+                    application.update(set__timestamp=str(time()))
             return jsonify(status=200, result="OK")
-        except:
+        except Exception as e:
+            print(e)
             return jsonify(status=400, result="Save Failed")
     elif (name in {None, ""} and
             city in {None, ""} and
@@ -247,9 +254,13 @@ def save_profile():
             for application in applications:
                 if algorithms.detect_questionable_acceptance(application.college, student) < 50:
                     application.update(set__verification="Pending")
-                    application.update(set__timestamp=str(time.time()))
+                    application.update(set__timestamp=str(time()))
+                elif application.verification == "Pending":  # if you're >= 50, and pending, you're now approved
+                    application.update(set__verification="Approved")
+                    application.update(set__timestamp=str(time()))
             return jsonify(status=200, result="OK")
-        except:
+        except Exception as e:
+            print(e)
             return jsonify(status=400, result="Save Failed")
     return jsonify(status=400, result="High School Not Found")
 
@@ -300,20 +311,23 @@ def submit_admission_decision():
                 application = Application.objects.get(Q(student=student) & Q(college=college))
             except:
                 print("Application Not Found")
+                application = None
             verification = "Approved"
+            timestamp = str(time())
             if status == "Accepted" and algorithms.detect_questionable_acceptance(college, student) < 50:
                 verification = "Pending"
-                timestamp = str(time())
             if application is not None:
                 application.update(set__status=status)
                 application.update(set__verification=verification)
                 application.update(set__timestamp=timestamp)
                 return jsonify(status=200, result="OK", verification=verification)
             else:
+                print("is none")
                 ID = hash_utils.sha_hash(username+"+=+"+college_name)
                 Application(ID=ID, student=student, college=college, status=status, verification=verification, timestamp=timestamp).save()
                 return jsonify(status=200, result="OK", verification=verification)
-        except:
+        except Exception as e:
+            print(e)
             return jsonify(status=400, result="Submission Failed")
     return jsonify(status=400, result="Missing Fields")
 
@@ -843,7 +857,7 @@ def import_student_profile_applications():
         return jsonify(status=400, result="Unauthorized Access")
     from time import time
     t = time()
-    # file_parser.import_student_data("students-1.csv")
+    file_parser.import_student_data("students-1.csv")
     file_parser.import_application_data('applications-1.csv')
     print(time() - t)
     return jsonify(status=200, result="OK")
