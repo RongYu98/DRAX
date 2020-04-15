@@ -178,7 +178,7 @@ class Track extends React.Component{
 
     input_check(){
         let filter_data = this.state.filter_data;
-        if(filter_data.college_class.from > 2027 || filter_data.college_class.to > 2027) throw new Error("collage class should be < 2027");
+        if(filter_data.college_class.from > 2027 || filter_data.college_class.to > 2027) throw new Error("collage class should be <= 2027");
         if(filter_data.name === "") throw new Error("college name can not be empty");
     }
 
@@ -478,7 +478,7 @@ class Track extends React.Component{
                                                 <td id="wrap-college-class"><b>College class</b>
                                                     <div className="wrap-filter">
                                                         <input type="number" className="form-control shadow-none"
-                                                               id="college-class-min" placeholder="< 2027" max={2027}
+                                                               id="college-class-min" placeholder="<= 2027" max={2027}
                                                                value={this.state.filter_data.college_class.from}
                                                                onChange={(event)=> {
                                                                    this.setState({filter_data: {...this.state.filter_data,
@@ -487,7 +487,7 @@ class Track extends React.Component{
                                                                }}
                                                         />
                                                         - <input type="number" className="form-control shadow-none"
-                                                                 id="college-class-max" placeholder="< 2027"
+                                                                 id="college-class-max" placeholder="<= 2027"
                                                                  max={2027}
                                                                  value={this.state.filter_data.college_class.to}
                                                                  onChange={(event)=> {
