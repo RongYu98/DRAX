@@ -11,6 +11,7 @@ from classes import HighSchool
 
 from scraper import highschool_exists
 from time import time
+from datetime import timedelta
 
 import hash_utils
 import algorithms
@@ -21,6 +22,8 @@ connect('account', host='localhost', port=27017)
 
 app = Flask(__name__)
 app.secret_key = 'Draconian Rich Awesome Xenomorphs'
+app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=5)
+app.config['SESSION_REFRESH_EACH_REQUEST'] = True
 CORS(app, supports_credentials=True)
 # may wish to disable cross origin in the cloud server for security
 
@@ -144,8 +147,10 @@ def logout():
 
 @app.route('/api/alive', methods=['POST'])
 def alive():
-    if 'username' not in session or session['username'] is None:
-        return jsonify(status=400, result="Not Logged In")
+    if 'username' not in session:
+        return jsonify(status=400, result="No Session")
+    if session['username']==None:
+        return jsonify(status=400, result="User Logged Out")
     account = Account.objects.get(username=session['username']).type
     return jsonify(status=200, result="OK", account=account)
 
