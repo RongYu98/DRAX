@@ -104,6 +104,12 @@ class Authenticator{
     getAccountType(){
         return this.account;
     }
+
+    expiredSession(){
+        this.userID = "";
+        this.account = "";
+        this.authenticated = false;
+    }
 }
 
 // exporting a new instance as singleton
