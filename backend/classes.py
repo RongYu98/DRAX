@@ -55,7 +55,6 @@ class College(Document):
 
 
 class Application(Document):
-    # TODO: add cascade, so if student deleted, delete this too?
     # TODO: reference the correct student class?
     # id will be built from the hash of the student and college
     ID = StringField(required=True, unique=True)

@@ -308,8 +308,7 @@ def highschool_exists(name, city, state):
         if (c.scraped == True):
             print("DONE SCRAPING, WORKS!")
             return True
-        print("WHHAT?")
-        return False  # scraping failed
+        return False  # the scraping we waited for failed, 
     except Exception as e:
         print(e)
         if existed:  # there was data that was no longer there
@@ -338,7 +337,6 @@ def highschool_exists(name, city, state):
             print("STARTING SCRAPING")
             success = update_highschool_data(name, city, state)
             if not success:  # failed scraping
-                sleep(1)
                 c.delete()
                 print("SCRAPING FAILED>>>>")
                 return False  # failed
