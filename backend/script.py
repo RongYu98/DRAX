@@ -12,6 +12,7 @@ def get_clean_majors():
     majors = list(set(majors))
     cleaned_majors = []
     for m in majors:
+        # we want to trim the list down, so start by replacing these:
         m = m.replace(', General', '')
         m = m.replace(', Other', '')
         if ('(' in m):
@@ -21,17 +22,20 @@ def get_clean_majors():
         cleaned_majors.append(m)
     cleaned_majors = list(set(cleaned_majors))
     cleaned_majors.sort()
-    majors = []
     prev = cleaned_majors[0].strip()
+    majors = [prev]
     for m in cleaned_majors[1:]:
         if m.startswith(prev):  # purge or no purge?
             if (m.startswith(prev+" and ")):
                 # then likely different, so we want this.
+                # Example, some colleges have Accounting
                 majors.append(m)
                 continue
             continue
+            # not "and" => then it's something like Art and Art Education
         prev = m
         majors.append(m)
+    print(majors[:5])
     return majors
 
 
