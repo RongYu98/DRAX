@@ -21,7 +21,7 @@ import scraper
 connect('account', host='localhost', port=27017)
 
 app = Flask(__name__)
-app.secret_key = 'Draconian Rich Awesome Xenomorphs'
+app.secret_key = 'Draconian Rambunctious Awesome Xenomorphs'
 app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=5)
 app.config['SESSION_REFRESH_EACH_REQUEST'] = True
 CORS(app, supports_credentials=True)
@@ -352,8 +352,6 @@ def track_applications_list():
             college = College.objects.get(name=college_name)
         except:
             return jsonify(status=400, result="College Not Found")
-        if 'policy' in info:  # strict or lax
-            policy = info["policy"]
         applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         profiles = []
         sum_gpa = 0
@@ -425,8 +423,6 @@ def track_applications_plot():
             college = College.objects.get(name=college_name)
         except:
             return jsonify(status=400, result="College Not Found")
-        if 'policy' in info:  # strict or lax
-            policy = info["policy"]
         applications = Application.objects(Q(college=college) & Q(verification="Approved"))
         test_type = info['test_type']
         coordinates = []
