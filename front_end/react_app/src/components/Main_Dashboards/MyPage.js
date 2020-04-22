@@ -5,8 +5,9 @@ import StudentImg from '../../gui/img/student.png';
 import ConfirmImg from '../../gui/img/confirmed.png';
 import QuestionImg from '../../gui/img/question.png';
 import FindSimilarHighSchoolsModal from "./FindSimilarHighSchoolsModal";
-import {SERVER_URL} from "../../common/Constants";
+import {SERVER_URL, NOT_AUTHENTICATED_ERROR, EXPIRED_MSG} from "../../common/Constants";
 import SearchCollege from "./SearchCollege";
+import Authenticator from "../../common/Authenticator";
 
 const SIMILAR_HIGH_SCHOOLS_ENDPOINT = "/find_similar_highschools";
 const GET_PROFILE_ENDPOINT = "/get_profile";
@@ -129,6 +130,14 @@ class MyPage extends React.Component{
         this.fetch_similar_high_schools().then(() =>{
              this.setState({show_high_school_modal: !this.state.show_high_school_modal});
         }).catch((err)=>{
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             alert(err.message);
         });
     }
@@ -175,6 +184,14 @@ class MyPage extends React.Component{
             response_json.profile.username = response_json.username;
             this.setState({unedited_user_high_school:response_json.profile.high_school_name, mounted: true, profile: {...this.state.profile, ...response_json.profile}});
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -196,6 +213,14 @@ class MyPage extends React.Component{
             let response_json = await response.json();
             this.state.admission_decisions = response_json.admission_decisions;
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -213,8 +238,17 @@ class MyPage extends React.Component{
             let response = await fetch(SERVER_URL + MAJOR_ENDPOINT);
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
             this.state.majors_list = response_json.majors;
         } catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -307,6 +341,14 @@ class MyPage extends React.Component{
             alert("success!");
             window.location.reload(false);
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
            console.log(err.stack);
            alert(`Failed to save: ${err.message}`);
         }
@@ -412,11 +454,20 @@ class MyPage extends React.Component{
             );
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
             let result = response_json.colleges.map((element)=>{
                 return element.name;
             });
             this.state.colleges = result;
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -472,6 +523,14 @@ class MyPage extends React.Component{
             await this.fetch_admissions();
             this.forceUpdate();
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }

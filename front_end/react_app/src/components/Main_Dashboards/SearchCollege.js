@@ -2,8 +2,9 @@ import React from "react";
 import '../../gui/css/search_college.css';
 import CollegeItem from "./CollegeItem";
 import {DropdownButton, Dropdown} from "react-bootstrap";
-import {SERVER_URL, STATUS_OK} from "../../common/Constants";
+import {EXPIRED_MSG, NOT_AUTHENTICATED_ERROR, SERVER_URL, STATUS_OK} from "../../common/Constants";
 import FindSimilarApplicantsModal from "./FindSimilarApplicantsModal";
+import Authenticator from "../../common/Authenticator";
 
 const RECOMMENDED_COLLEGE_ENDPOINT = "/get_college_list";
 const MAJOR_ENDPOINT = "/all_majors";
@@ -199,8 +200,17 @@ class SearchCollege extends React.Component{
             let response = await fetch(SERVER_URL + MAJOR_ENDPOINT);
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
             this.setState({majors_list: response_json.majors});
         } catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -287,6 +297,7 @@ class SearchCollege extends React.Component{
             );
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
             if(this.state.filter_data.sort === SearchCollege.sort_enum.RECOMMENDATION) this.old_recommendation = response_json.list;
             if(response_json.colleges.length === 0)
                 this.state.not_found = true;
@@ -294,6 +305,14 @@ class SearchCollege extends React.Component{
                 this.state.not_found = false;
             this.setState({current_page_num: 1, college_list: response_json.colleges});
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -382,8 +401,17 @@ class SearchCollege extends React.Component{
             );
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
             return response_json.profiles;
         }catch (err) {
+          if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
             return [];

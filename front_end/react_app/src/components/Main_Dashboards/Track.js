@@ -1,9 +1,10 @@
 import React from "react";
 import '../../gui/css/track_application.css';
 import Application from "./Application";
-import {SERVER_URL, STATUS_OK} from "../../common/Constants";
+import {EXPIRED_MSG, NOT_AUTHENTICATED_ERROR, SERVER_URL, STATUS_OK} from "../../common/Constants";
 import ScatterPlotModal from "./ScatterPlotModal";
 import SearchCollege from "./SearchCollege";
+import Authenticator from "../../common/Authenticator";
 const RECOMMENDED_COLLEGE_ENDPOINT = "/get_college_list";
 
 
@@ -104,8 +105,17 @@ class Track extends React.Component{
 
             if(response.status !== STATUS_OK) throw new Error(response.statusText);
             let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
             this.setState({high_schools: response_json.highschools});
         }catch (err) {
+            if(err.msg === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -145,6 +155,7 @@ class Track extends React.Component{
 
             if(response.status !== STATUS_OK) throw new Error(response.statusText);
             let response_json = await response.json();
+            if(response_json.result === NOT_AUTHENTICATED_ERROR) throw new Error(NOT_AUTHENTICATED_ERROR);
             if(response_json.status !== STATUS_OK) {
                 let summary = {
                 avg_gpa: "",
@@ -171,6 +182,14 @@ class Track extends React.Component{
             this.state.not_found = (response_json.profiles.length === 0) ? true : false;
             this.setState({suggestions: [], applications: response_json.profiles, summary: response_json.summary});
         }catch (err) {
+            if(err.msg === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(`failed to fetch new application list, err msg: ${err.message}`);
         }
@@ -424,12 +443,21 @@ class Track extends React.Component{
             );
             if(response.status !== 200) throw new Error(response.statusText);
             let response_json = await response.json();
+            if(response_json.status !== 200) throw new Error(response_json.result);
             let result = response_json.colleges.slice(0,5);
             result = result.map((element)=>{
                 return element.name;
             });
             this.setState({suggestions: result});
         }catch (err) {
+            if(err.msg === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }

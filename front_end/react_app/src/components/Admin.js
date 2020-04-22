@@ -6,9 +6,8 @@ import Authenticator from "../common/Authenticator";
 import {Redirect} from "react-router-dom";
 import {account_enum} from "../common/Authenticator";
 import Reviews from "./Admin_Dashboards/Reviews";
-import {SERVER_URL} from "../common/Constants";
+import {SERVER_URL, NOT_AUTHENTICATED_ERROR, EXPIRED_MSG} from "../common/Constants";
 import {AdminProvider} from "../common/GlobalContext";
-import CollegeItem from "./Main_Dashboards/CollegeItem";
 
 const DELETE_ALL_STUDENT_ENDPOINT = "/delete_all_students";
 const DECIDE_ENDPOINT =  "/decide_admission_decision";
@@ -87,6 +86,14 @@ class Admin extends React.Component{
             this.state.questionable_decisions = {};
             this.forceUpdate();
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -121,6 +128,14 @@ class Admin extends React.Component{
             this.state.questionable_decisions = {};
             this.forceUpdate();
         }catch (err) {
+             if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -164,6 +179,14 @@ class Admin extends React.Component{
             if(response_json.status !== 200) throw new Error(`Recieved ${response_json.result} for {${body.student_name}, ${body.college_name}, ${body.status}`);
             return null;
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             return err;
         }
     }
@@ -186,6 +209,14 @@ class Admin extends React.Component{
             alert("Success!")
             this.setState({scrape_college_data_disable: false});
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
             this.setState({scrape_college_data_disable: false});
@@ -206,6 +237,14 @@ class Admin extends React.Component{
             if(response_json.status !== 200) throw new Error(response_json.result);
             alert("Success!")
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -219,6 +258,14 @@ class Admin extends React.Component{
             if(response_json.status !== 200) throw new Error(response_json.result);
             this.state.questionables = response_json.result;
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
@@ -327,6 +374,14 @@ class Admin extends React.Component{
             if(response_json.status !== 200) throw new Error(response_json.result);
             alert("Success!");
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err);
         }
@@ -363,6 +418,14 @@ class Admin extends React.Component{
             alert("success");
             this.setState({import_data_score_card_disable: false});
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
             this.setState({scrape_college_data_disable: false});
@@ -389,6 +452,14 @@ class Admin extends React.Component{
             alert("success!");
             this.setState({import_student_data_disable: false});
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }

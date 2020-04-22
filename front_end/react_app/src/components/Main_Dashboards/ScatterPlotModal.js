@@ -1,8 +1,9 @@
 import React from "react";
 import Modal from 'react-bootstrap/Modal'
-import {SERVER_URL, STATUS_OK} from "../../common/Constants";
+import {EXPIRED_MSG, NOT_AUTHENTICATED_ERROR, SERVER_URL, STATUS_OK} from "../../common/Constants";
 import Plotly from "plotly.js"
 import createPlotlyComponent from 'react-plotly.js/factory';
+import Authenticator from "../../common/Authenticator";
 const Plot = createPlotlyComponent(Plotly);
 
 const PLOT_ENDPOINT = "/track_applications_plot";
@@ -75,6 +76,14 @@ class ScatterPlotModal extends React.Component{
             );
             this.state.empty = (response_json.coordinates.length === 0) ? true : false;
         }catch (err) {
+            if(err.message === NOT_AUTHENTICATED_ERROR){
+                alert(EXPIRED_MSG);
+                Authenticator.expiredSession();
+                this.props.history.push({
+                    pathname: '/login'
+                });
+                return;
+            }
             console.log(err.stack);
             alert(err.message);
         }
