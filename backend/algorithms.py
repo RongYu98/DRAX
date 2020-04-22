@@ -156,6 +156,7 @@ def compute_recommendation_score(college, student):
         denominator += 0.4
     if non_academic_suitability > 0:
         score += non_academic_suitability*0.2
+        denominator += 0.2
     if denominator != 0:
         return round(score/denominator, 2)
     return 0
