@@ -1,6 +1,0 @@
-def t1():
-    t2()
-    return 1
-
-def t2():
-    return 2
