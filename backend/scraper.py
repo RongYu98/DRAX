@@ -295,7 +295,6 @@ def get_highschool_info(name, city, state):
 
 def highschool_exists(name, city, state):
     existed = False
-    sleep(2)
     try:
         c = HighSchool.objects.get(name=name, city=city, state=state)
         # HS in DB, and is scraped, we're done
@@ -341,7 +340,7 @@ def highschool_exists(name, city, state):
                 print("SCRAPING FAILED>>>>")
                 return False  # failed
             return True
-        except Exception as e:  # failed somehow
+        except Exception as e:
             print(e)
             print("Last error")
             try:
