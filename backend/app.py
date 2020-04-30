@@ -22,7 +22,7 @@ connect('account', host='localhost', port=27017)
 
 app = Flask(__name__)
 app.secret_key = 'Draconian Rambunctious Awesome Xenomorphs'
-app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=5)
+app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=30)
 app.config['SESSION_REFRESH_EACH_REQUEST'] = True
 CORS(app, supports_credentials=True)
 # may wish to disable cross origin in the cloud server for security
