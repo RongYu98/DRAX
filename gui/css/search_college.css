@@ -5,6 +5,7 @@
 #admission-rate-max, #sat-ebrw-max, #sat-math-max, #act-composite-max{margin-left: 5px;}
 #admission-rate-min, #admission-rate-max, #major1, #major2, #size, #cost-of-attendance, #act-composite-min, #act-composite-max{width: 100px;height: 25px;}
 #sat-ebrw-min, #sat-ebrw-max, #sat-math-min, #sat-math-max{width: 115px;height: 25px;}
+#ranking{width:200px;}
 #ranking-val{color: red;font-weight: bold;padding-left: 5px;}
 .slider {
     height: 25px;
