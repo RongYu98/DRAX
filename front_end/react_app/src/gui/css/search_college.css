@@ -27,6 +27,7 @@ div.search-result-top > div{display: inline;position: absolute; right: 0;z-index
 div.search-result-top > div > button {width: 204px;}
 /***************************************************************** react fixes ********************************************************/
 
+#ranking{width:200px;}
 .range{display: flex;}
 #admission-rate-min, #sat-ebrw-min, #sat-math-min, #act-composite-min{margin-right: 5px;}
 #admission-rate-max, #sat-ebrw-max, #sat-math-max, #act-composite-max{margin-left: 5px;}

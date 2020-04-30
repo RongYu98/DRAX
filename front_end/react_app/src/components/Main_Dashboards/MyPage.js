@@ -575,6 +575,7 @@ class MyPage extends React.Component{
                                                                                    value={this.state.profile.college_class}
                                                                                    onChange={(event)=>{this.setState({profile: {...this.state.profile, college_class: event.target.value}})}}
                                                                                    id="profile-college-class"
+                                                                                   min="0"
                                                                                    max={2027}/></td>
                                     </tr>
                                     <tr>
