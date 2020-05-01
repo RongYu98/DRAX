@@ -17,14 +17,16 @@ def estimate_gpa_percentile(minimum, mean, gpa):
     if gpa < minimum:
         return 0
     elif gpa < mean:
-        step = (mean-minimum)/50
+        if mean < 4:
+            step = (mean-minimum)/50
+        else:
+            step = (mean-minimum)/100
         return int((gpa-minimum)/step)
     else:
-        step = (4.0-mean)/50
-        if step == 0:
-            if gpa == 4.0:
-                return 50
-            step = 0.001
+        if mean < 4:
+            step = (4.0-mean)/50
+        else:
+            return 100
         return int(50+(gpa-mean)/step)
 
 
