@@ -13,6 +13,7 @@ def estimate_exam_percentile(minimum, first_quartile, third_quartile,
 
 
 def estimate_gpa_percentile(minimum, mean, gpa):
+    print(minimum, mean, gpa)
     if gpa < minimum:
         return 0
     elif gpa < mean:
@@ -119,7 +120,6 @@ def calc_academic_similarity(college, student):
 def compute_recommendation_score(college, student):
     # Calculate acceptance likelihood aspect
     acceptance_likelihood = detect_questionable_acceptance(college, student)
-
     # Calculate academic similarity aspect
     academic_similarity = calc_academic_similarity(college, student)
 
@@ -142,9 +142,10 @@ def compute_recommendation_score(college, student):
         non_academic_factors.append(float(completion_rate/100))
     non_academic_suitability = 0
     if non_academic_factors != []:
-        non_academic_suitability = max(1, sum(non_academic_factors) /
+        non_academic_suitability = max(2, sum(non_academic_factors) /
                                        len(non_academic_factors))*100
-
+    
+    print(acceptance_likelihood, academic_similarity, non_academic_suitability)
     # Calculate final score
     score = 0
     denominator = 0
@@ -157,8 +158,12 @@ def compute_recommendation_score(college, student):
     if non_academic_suitability > 0:
         score += non_academic_suitability*0.2
         denominator += 0.2
+    ranking = (600 - college.ranking) / 6 if college.ranking is not None else 0.0
     if denominator != 0:
-        return round(score/denominator, 2)
+        score = score/denominator
+        score += ranking
+        score = score / .250
+        return round(score, 2)
     return 0
 
 

@@ -231,6 +231,7 @@ def save_profile():
                             set__major_2=major_2,
                             set__grades=grades)
             applications = Application.objects(Q(student=student) & Q(status='Accepted'))
+            student = StudentProfile.objects.get(student=account)
             for application in applications:
                 if algorithms.detect_questionable_acceptance(application.college, student) < 50:
                     application.update(set__verification="Pending")
@@ -256,7 +257,9 @@ def save_profile():
                             set__major_2=major_2,
                             set__grades=grades)
             applications = Application.objects(Q(student=student) & Q(status='Accepted'))
+            student = StudentProfile.objects.get(student=account)
             for application in applications:
+                print(student.grades)
                 if algorithms.detect_questionable_acceptance(application.college, student) < 50:
                     application.update(set__verification="Pending")
                     application.update(set__timestamp=str(time()))
