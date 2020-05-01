@@ -934,11 +934,28 @@ def decide_admission_decision():
         appl.update(set__verification=decision['status'])
     return jsonify(status=200, result="OK")
 
+
+def admin_init():
+    # check if there's an admin
+    try:
+        admin = Account.objects.get(username="Admin", type="Admin")
+        print("Admin exists")
+    except Exception as e:
+        password = "admin1@DRAX"
+        salt = hash_utils.generate_salt()
+        digest = hash_utils.hmac_hash(password, salt)
+        Account(username="Admin",
+                hashed_password=digest,
+                salt=salt, type="Admin").save()
+        print("Created Admin")
+    return
+
 if __name__ == "__main__":
     # profile = StudentProfile.objects.get(student=Account.objects.get(username="test"))
     # profile.high_school_name = "Academic Magnet High School"
     # profile.high_school_city = "North Charleston"
     # profile.high_school_state = "SC"
     # profile.save()
+    admin_init()
     app.run(host='0.0.0.0', port=9000, debug=True)
 
