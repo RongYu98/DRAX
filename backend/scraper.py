@@ -91,9 +91,9 @@ def update_college_ranking():
 
 def get_college_data_data(name):
     url_name = college_name_conversion(name)
-    # url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/collegedata/'
+    url = 'http://allv22.all.cs.stonybrook.edu/~stoller/cse416/collegedata/'
     # url = 'https://www.niche.com/k12/'
-    url = 'https://www.collegedata.com/college/'
+    # url = 'https://www.collegedata.com/college/'
     url = url + url_name
     print(url)
     majors = []
