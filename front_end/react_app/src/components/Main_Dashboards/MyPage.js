@@ -83,6 +83,13 @@ class MyPage extends React.Component{
         this.filter_acceptances = this.filter_acceptances.bind(this);
         this.fetch_colleges = this.fetch_colleges.bind(this);
         this.on_admission_submit = this.on_admission_submit.bind(this);
+        this.page_clicked = this.page_clicked.bind(this);
+    }
+
+    page_clicked(event){
+       let button = event.target;
+       let number = button.innerHTML;
+       this.setState({current_page_num: parseInt(number)})
     }
 
 

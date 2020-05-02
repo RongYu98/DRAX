@@ -71,6 +71,13 @@ class Track extends React.Component{
         this.update_search_input = this.update_search_input.bind(this);
         this.fetch_suggestions = this.fetch_suggestions.bind(this);
         this.get_suggestions = this.get_suggestions.bind(this);
+        this.page_clicked = this.page_clicked.bind(this)
+    }
+
+    page_clicked(event){
+       let button = event.target;
+       let number = button.innerHTML;
+       this.setState({current_page_num: parseInt(number)})
     }
 
     get_suggestions(){
