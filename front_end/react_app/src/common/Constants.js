@@ -1,4 +1,4 @@
-const SERVER_URL = "https://35.224.171.20/api";
+const SERVER_URL = "https://35.225.234.66/api";
 const STATUS_OK = 200;
 const DEBUGGING = true;
 const NOT_AUTHENTICATED_ERROR= "Not Logged In";
